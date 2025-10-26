@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        serif: ['"Libre Baskerville"', 'Merriweather', 'Georgia', 'serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -21,6 +25,7 @@ export default {
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
+          600: "hsl(var(--primary-600))",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
@@ -47,18 +52,42 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        neutral: {
+          900: "hsl(var(--neutral-900))",
+          700: "hsl(var(--neutral-700))",
+          500: "hsl(var(--neutral-500))",
+          300: "hsl(var(--neutral-300))",
+          100: "hsl(var(--neutral-100))",
+        },
         body: "hsl(var(--text-body))",
         subtle: "hsl(var(--text-subtle))",
         success: "hsl(var(--success))",
         warning: "hsl(var(--warning))",
       },
-      fontFamily: {
-        sans: ['Inter var', 'Inter', 'system-ui', 'sans-serif'],
-      },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        none: "0",
+        sm: "4px",
+        DEFAULT: "8px",
+        md: "8px",
+        lg: "12px",
+        xl: "12px",
+      },
+      boxShadow: {
+        sm: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+        md: "0 2px 4px 0 rgba(0, 0, 0, 0.06)",
+        lg: "0 4px 6px -1px rgba(0, 0, 0, 0.08)",
+      },
+      spacing: {
+        '1': '4px',
+        '2': '8px',
+        '3': '12px',
+        '4': '16px',
+        '6': '24px',
+        '8': '32px',
+        '12': '48px',
+        '16': '64px',
+        '20': '80px',
+        '24': '96px',
       },
       keyframes: {
         "accordion-down": {

@@ -1,6 +1,7 @@
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Clock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Overline } from "@/components/ui/typography";
 import { Meta } from "@/components/seo/Meta";
 import { PreviewBanner } from "@/components/ui/preview-banner";
 import { usePreviewContent } from "@/hooks/usePreviewContent";
@@ -127,10 +128,8 @@ const InsightDetail = () => {
 
           <div className="max-w-3xl mx-auto">
             {/* Header */}
-            <header className="mb-12">
-              <div className="text-sm font-medium text-accent mb-4">
-                {insight.category}
-              </div>
+            <header className="mb-12 pb-12 border-b border-border">
+              <Overline className="mb-4">{insight.category}</Overline>
               <h1 className="mb-6">{insight.title}</h1>
 
               <div className="flex items-center gap-4 text-sm text-subtle">
@@ -152,12 +151,12 @@ const InsightDetail = () => {
             </header>
 
             {/* Content */}
-            <div className="prose prose-lg max-w-none">
+            <div className="prose-article">
               {insight.excerpt && (
-                <p className="text-xl text-body leading-relaxed">{insight.excerpt}</p>
+                <p className="text-lead mb-8">{insight.excerpt}</p>
               )}
               <div 
-                className="text-body leading-relaxed"
+                className="text-body space-y-6"
                 dangerouslySetInnerHTML={{ __html: insight.content }}
               />
             </div>

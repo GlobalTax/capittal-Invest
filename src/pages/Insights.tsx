@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { BadgeFilter } from "@/components/ui/badge-filter";
 import { CustomPagination } from "@/components/ui/custom-pagination";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Overline } from "@/components/ui/typography";
 import { Meta } from "@/components/seo/Meta";
 import { useNewsSearch, useNewsFilterOptions } from "@/hooks/useNewsSearch";
 import { insights } from "@/data/mockData";
@@ -60,8 +61,9 @@ const Insights = () => {
         {/* Hero */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="max-w-4xl mb-12">
-            <h1 className="mb-6">Insights</h1>
-            <p className="text-xl text-body">
+            <Overline className="mb-4">Insights</Overline>
+            <h1 className="mb-6">Latest Insights</h1>
+            <p className="text-lead">
               Perspectives on investing, building, and scaling exceptional businesses
             </p>
           </div>

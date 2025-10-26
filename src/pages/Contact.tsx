@@ -5,6 +5,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Overline } from "@/components/ui/typography";
 import {
   Form,
   FormControl,
@@ -73,7 +74,6 @@ const Contact = () => {
       if (error) {
         console.error("Contact form error:", error);
         
-        // Handle rate limiting
         if (error.message?.includes("429") || error.message?.includes("Too many")) {
           toast({
             title: "Too many submissions",
@@ -84,7 +84,6 @@ const Contact = () => {
           return;
         }
         
-        // Handle other errors
         toast({
           title: "Error",
           description: "Something went wrong. Please try again.",
@@ -126,8 +125,9 @@ const Contact = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="max-w-2xl mx-auto">
             <div className="mb-12">
+              <Overline className="mb-4">Contact</Overline>
               <h1 className="mb-6">Get in Touch</h1>
-              <p className="text-xl text-body">
+              <p className="text-lead">
                 Interested in learning more about Ethos Ventures or discussing a
                 potential partnership? We'd love to hear from you.
               </p>
@@ -140,15 +140,18 @@ const Contact = () => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name *</FormLabel>
+                      <FormLabel className="text-sm font-medium text-foreground">
+                        Name *
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="John Smith"
                           {...field}
+                          className="h-11 border-border focus:ring-accent"
                           aria-required="true"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-sm text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -158,16 +161,19 @@ const Contact = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email *</FormLabel>
+                      <FormLabel className="text-sm font-medium text-foreground">
+                        Email *
+                      </FormLabel>
                       <FormControl>
                         <Input
                           type="email"
                           placeholder="john@example.com"
                           {...field}
+                          className="h-11 border-border focus:ring-accent"
                           aria-required="true"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-sm text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -177,15 +183,18 @@ const Contact = () => {
                   name="company"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Company *</FormLabel>
+                      <FormLabel className="text-sm font-medium text-foreground">
+                        Company *
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Acme Corp"
                           {...field}
+                          className="h-11 border-border focus:ring-accent"
                           aria-required="true"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-sm text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -195,7 +204,9 @@ const Contact = () => {
                   name="subject"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Subject *</FormLabel>
+                      <FormLabel className="text-sm font-medium text-foreground">
+                        Subject *
+                      </FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger aria-required="true">
@@ -210,7 +221,7 @@ const Contact = () => {
                           <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
                       </Select>
-                      <FormMessage />
+                      <FormMessage className="text-sm text-destructive" />
                     </FormItem>
                   )}
                 />
@@ -220,7 +231,9 @@ const Contact = () => {
                   name="message"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Message *</FormLabel>
+                      <FormLabel className="text-sm font-medium text-foreground">
+                        Message *
+                      </FormLabel>
                       <FormControl>
                         <Textarea
                           placeholder="Tell us about your inquiry..."
@@ -229,12 +242,12 @@ const Contact = () => {
                           aria-required="true"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-sm text-destructive" />
                     </FormItem>
                   )}
                 />
 
-                <Button type="submit" size="lg" disabled={isSubmitting}>
+                <Button type="submit" size="lg" disabled={isSubmitting} className="w-full md:w-auto">
                   {isSubmitting ? "Sending..." : "Send Message"}
                 </Button>
               </form>

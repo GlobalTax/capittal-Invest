@@ -2,6 +2,8 @@ import { useParams, Link, useSearchParams } from "react-router-dom";
 import { ArrowLeft, ExternalLink, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Overline } from "@/components/ui/typography";
 import { Meta } from "@/components/seo/Meta";
 import { PreviewBanner } from "@/components/ui/preview-banner";
 import { usePreviewContent } from "@/hooks/usePreviewContent";
@@ -112,20 +114,14 @@ const PortfolioDetail = () => {
 
           <div className="max-w-4xl">
             {/* Header */}
-            <div className="mb-12">
+            <div className="mb-12 pb-12 border-b border-border">
               <div className="flex items-start justify-between mb-6">
                 <div>
                   <h1 className="mb-4">{company.name}</h1>
-                  <div className="flex gap-2 mb-4">
-                    <span className="px-3 py-1 bg-secondary rounded text-sm">
-                      {company.sector}
-                    </span>
-                    <span className="px-3 py-1 bg-secondary rounded text-sm">
-                      {company.country}
-                    </span>
-                    <span className="px-3 py-1 bg-accent/10 text-accent rounded text-sm">
-                      {company.stage}
-                    </span>
+                  <div className="flex gap-2 mb-6">
+                    <Badge>{company.sector}</Badge>
+                    <Badge>{company.country}</Badge>
+                    <Badge variant="selected">{company.stage}</Badge>
                   </div>
                 </div>
               </div>

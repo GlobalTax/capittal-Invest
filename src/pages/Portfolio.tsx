@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { BadgeFilter } from "@/components/ui/badge-filter";
 import { CustomPagination } from "@/components/ui/custom-pagination";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Overline } from "@/components/ui/typography";
+import { Badge } from "@/components/ui/badge";
 import { Meta } from "@/components/seo/Meta";
 import { usePortfolioSearch, usePortfolioFilterOptions } from "@/hooks/usePortfolioSearch";
 import { portfolioCompanies } from "@/data/mockData";
@@ -75,8 +77,9 @@ const Portfolio = () => {
         {/* Hero */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="max-w-4xl mb-12">
+            <Overline className="mb-4">Portfolio</Overline>
             <h1 className="mb-6">Portfolio Companies</h1>
-            <p className="text-xl text-body">
+            <p className="text-lead">
               We partner with exceptional companies building the future across our core sectors.
             </p>
           </div>

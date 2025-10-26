@@ -5,41 +5,57 @@ export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-primary text-neutral-100">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="inline-block mb-4">
-              <span className="text-xl font-bold tracking-tight">Ethos Ventures</span>
+              <span className="text-xl font-serif font-semibold text-white">
+                Ethos Ventures
+              </span>
             </Link>
-            <p className="text-sm text-body max-w-md">
-              A growth equity firm investing in exceptional companies across technology,
-              consumer, education, and services sectors.
+            <p className="text-sm text-neutral-300 max-w-md leading-relaxed">
+              A growth equity firm investing in exceptional companies across 
+              technology, consumer, education, and services sectors.
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Links */}
           <div>
-            <h3 className="text-sm font-semibold mb-4">Company</h3>
-            <ul className="space-y-2">
+            <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
+              Company
+            </h3>
+            <ul className="space-y-3">
               <li>
-                <Link to="/strategy" className="text-sm text-body hover:text-foreground transition-smooth">
+                <Link 
+                  to="/strategy" 
+                  className="text-sm text-neutral-300 hover:text-white hover:underline transition-smooth"
+                >
                   Strategy
                 </Link>
               </li>
               <li>
-                <Link to="/portfolio" className="text-sm text-body hover:text-foreground transition-smooth">
+                <Link 
+                  to="/portfolio" 
+                  className="text-sm text-neutral-300 hover:text-white hover:underline transition-smooth"
+                >
                   Portfolio
                 </Link>
               </li>
               <li>
-                <Link to="/team" className="text-sm text-body hover:text-foreground transition-smooth">
+                <Link 
+                  to="/team" 
+                  className="text-sm text-neutral-300 hover:text-white hover:underline transition-smooth"
+                >
                   Team
                 </Link>
               </li>
               <li>
-                <Link to="/insights" className="text-sm text-body hover:text-foreground transition-smooth">
+                <Link 
+                  to="/insights" 
+                  className="text-sm text-neutral-300 hover:text-white hover:underline transition-smooth"
+                >
                   Insights
                 </Link>
               </li>
@@ -48,13 +64,15 @@ export const Footer = () => {
 
           {/* Social */}
           <div>
-            <h3 className="text-sm font-semibold mb-4">Connect</h3>
+            <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
+              Connect
+            </h3>
             <div className="flex gap-4">
               <a
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-body hover:text-foreground transition-smooth"
+                className="text-neutral-300 hover:text-white transition-smooth"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-5 w-5" />
@@ -63,7 +81,7 @@ export const Footer = () => {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-body hover:text-foreground transition-smooth"
+                className="text-neutral-300 hover:text-white transition-smooth"
                 aria-label="Twitter"
               >
                 <Twitter className="h-5 w-5" />
@@ -72,8 +90,9 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border">
-          <p className="text-sm text-subtle">
+        {/* Legal */}
+        <div className="mt-12 pt-8 border-t border-primary-600">
+          <p className="text-sm text-neutral-300">
             © {currentYear} Ethos Ventures. All rights reserved.
           </p>
         </div>
