@@ -1,13 +1,78 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
+import { ArrowLeft, ExternalLink, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Meta } from "@/components/seo/Meta";
+import { PreviewBanner } from "@/components/ui/preview-banner";
+import { usePreviewContent } from "@/hooks/usePreviewContent";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { portfolioCompanies } from "@/data/mockData";
-import { ExternalLink, ArrowLeft } from "lucide-react";
 
 const PortfolioDetail = () => {
   const { id } = useParams();
-  const company = portfolioCompanies.find((c) => c.id === id);
+  const [searchParams] = useSearchParams();
+  const previewToken = searchParams.get('preview');
+
+  // Try preview mode first if token exists
+  const { data: previewData, isLoading: isPreviewLoading, error: previewError } = usePreviewContent(
+    'portfolio_company',
+    id || '',
+    previewToken
+  );
+
+  // Fetch from database for published content
+  const { data: dbData, isLoading: isDbLoading } = useQuery({
+    queryKey: ['portfolio-company', id],
+    queryFn: async () => {
+      if (!id) return null;
+      // @ts-ignore - Avoid deep type instantiation
+      const response = await supabase
+        .from('portfolio_companies')
+        .select('id, name, slug, description, logo_url, website_url, sector, stage, country, founded_year, investment_date, investment_thesis, metrics, timeline, is_featured, created_at')
+        .eq('id', id)
+        .eq('status', 'published')
+        .single();
+      
+      if (response.error) throw response.error;
+      return response.data;
+    },
+    enabled: !previewToken && !!id,
+  });
+
+  // Determine which data source to use
+  const isLoading = previewToken ? isPreviewLoading : isDbLoading;
+  const dbCompany: any = previewToken ? previewData?.data : dbData;
+  const mockCompany = portfolioCompanies.find(c => c.id === id);
+  const company = dbCompany || mockCompany;
+  const isPreviewMode = !!previewToken && !!previewData;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (previewError) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-2xl mx-auto text-center">
+          <h1 className="text-2xl font-bold mb-4">Preview Not Available</h1>
+          <p className="text-muted-foreground mb-8">
+            The preview token is invalid or has expired.
+          </p>
+          <Button asChild>
+            <Link to="/portfolio">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Portfolio
+            </Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (!company) {
     return (
@@ -24,9 +89,15 @@ const PortfolioDetail = () => {
 
   return (
     <>
-      <Meta
+      {isPreviewMode && previewData?.preview_info && (
+        <PreviewBanner 
+          expiresAt={previewData.preview_info.expires_at}
+          accessedCount={previewData.preview_info.accessed_count}
+        />
+      )}
+      <Meta 
         title={company.name}
-        description={company.thesis}
+        description={company.description || company.investment_thesis || ''}
         canonicalUrl={`${window.location.origin}/portfolio/${company.id}`}
       />
 
@@ -59,20 +130,22 @@ const PortfolioDetail = () => {
                 </div>
               </div>
 
-              <a
-                href={company.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-primary hover:text-accent transition-smooth"
-              >
-                Visit website <ExternalLink className="h-4 w-4" />
-              </a>
+              {company.website_url && (
+                <a
+                  href={company.website_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-primary hover:text-accent transition-smooth"
+                >
+                  Visit website <ExternalLink className="h-4 w-4" />
+                </a>
+              )}
             </div>
 
             {/* Investment Thesis */}
             <Card className="p-8 mb-8">
               <h2 className="text-2xl mb-4">Investment Thesis</h2>
-              <p className="text-body">{company.thesis}</p>
+              <p className="text-body">{company.investment_thesis || company.description}</p>
             </Card>
 
             {/* Key Metrics */}
@@ -103,11 +176,11 @@ const PortfolioDetail = () => {
             )}
 
             {/* Timeline */}
-            {company.timeline && (
+            {company.timeline && Array.isArray(company.timeline) && company.timeline.length > 0 && (
               <Card className="p-8">
                 <h2 className="text-2xl mb-6">Timeline</h2>
                 <div className="space-y-4">
-                  {company.timeline.map((item, idx) => (
+                  {company.timeline.map((item: any, idx: number) => (
                     <div key={idx} className="flex gap-4">
                       <div className="font-semibold text-primary min-w-[60px]">
                         {item.date}

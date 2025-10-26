@@ -1,12 +1,93 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
+import { ArrowLeft, Clock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Meta } from "@/components/seo/Meta";
+import { PreviewBanner } from "@/components/ui/preview-banner";
+import { usePreviewContent } from "@/hooks/usePreviewContent";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { insights } from "@/data/mockData";
-import { ArrowLeft, Clock } from "lucide-react";
 
 const InsightDetail = () => {
   const { slug } = useParams();
-  const insight = insights.find((i) => i.slug === slug);
+  const [searchParams] = useSearchParams();
+  const previewToken = searchParams.get('preview');
+
+  // First get the article ID from slug
+  const { data: articleId, isLoading: isIdLoading } = useQuery({
+    queryKey: ['article-id', slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('news_articles')
+        .select('id')
+        .eq('slug', slug)
+        .single();
+      
+      if (error) throw error;
+      return data?.id;
+    },
+    enabled: !!slug && !!previewToken,
+  });
+
+  // Try preview mode if token exists
+  const { data: previewData, isLoading: isPreviewLoading, error: previewError } = usePreviewContent(
+    'news_article',
+    articleId || '',
+    previewToken && articleId ? previewToken : null
+  );
+
+  // Fetch from database for published content
+  const { data: dbData, isLoading: isDbLoading } = useQuery({
+    queryKey: ['news-article', slug],
+    queryFn: async () => {
+      if (!slug) return null;
+      // @ts-ignore - Avoid deep type instantiation
+      const response = await supabase
+        .from('news_articles')
+        .select('id, title, slug, excerpt, content, featured_image_url, author_name, author_avatar_url, category, tags, read_time, is_featured, published_at, created_at')
+        .eq('slug', slug)
+        .eq('status', 'published')
+        .single();
+      
+      if (response.error) throw response.error;
+      return response.data;
+    },
+    enabled: !previewToken && !!slug,
+  });
+
+  // Determine which data source to use
+  const isLoading = previewToken ? (isIdLoading || isPreviewLoading) : isDbLoading;
+  const dbInsight: any = previewToken ? previewData?.data : dbData;
+  const mockInsight = insights.find(i => i.slug === slug);
+  const insight = dbInsight || mockInsight;
+  const isPreviewMode = !!previewToken && !!previewData;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (previewError) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-2xl mx-auto text-center">
+          <h1 className="text-2xl font-bold mb-4">Preview Not Available</h1>
+          <p className="text-muted-foreground mb-8">
+            The preview token is invalid or has expired.
+          </p>
+          <Button asChild>
+            <Link to="/insights">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Insights
+            </Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (!insight) {
     return (
@@ -23,9 +104,15 @@ const InsightDetail = () => {
 
   return (
     <>
-      <Meta
+      {isPreviewMode && previewData?.preview_info && (
+        <PreviewBanner 
+          expiresAt={previewData.preview_info.expires_at}
+          accessedCount={previewData.preview_info.accessed_count}
+        />
+      )}
+      <Meta 
         title={insight.title}
-        description={insight.excerpt}
+        description={insight.excerpt || ''}
         canonicalUrl={`${window.location.origin}/insights/${insight.slug}`}
       />
 
@@ -47,10 +134,10 @@ const InsightDetail = () => {
               <h1 className="mb-6">{insight.title}</h1>
 
               <div className="flex items-center gap-4 text-sm text-subtle">
-                <span>By {insight.author}</span>
+                <span>By {insight.author_name || insight.author}</span>
                 <span>•</span>
-                <time dateTime={insight.date}>
-                  {new Date(insight.date).toLocaleDateString("en-US", {
+                <time dateTime={insight.published_at || insight.date}>
+                  {new Date(insight.published_at || insight.date).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
@@ -59,22 +146,20 @@ const InsightDetail = () => {
                 <span>•</span>
                 <span className="inline-flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  {insight.readTime}
+                  {insight.read_time ? `${insight.read_time} min` : insight.readTime}
                 </span>
               </div>
             </header>
 
             {/* Content */}
             <div className="prose prose-lg max-w-none">
-              <p className="text-xl text-body leading-relaxed">{insight.excerpt}</p>
-              <p className="text-body leading-relaxed">{insight.content}</p>
-              
-              {/* Placeholder for full article content */}
-              <p className="text-body leading-relaxed mt-6">
-                This is where the full article content would appear. In a production
-                implementation, this would be rendered from markdown or a rich text editor,
-                with proper formatting, images, and embedded media.
-              </p>
+              {insight.excerpt && (
+                <p className="text-xl text-body leading-relaxed">{insight.excerpt}</p>
+              )}
+              <div 
+                className="text-body leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: insight.content }}
+              />
             </div>
           </div>
         </article>
