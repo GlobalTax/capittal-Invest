@@ -54,18 +54,64 @@ const Contact = () => {
     setIsSubmitting(true);
     trackCTAClick("Contact Form Submit", "Contact Page");
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      
+      const { data: response, error } = await supabase.functions.invoke(
+        "submit-contact",
+        {
+          body: {
+            name: data.name,
+            email: data.email,
+            company: data.company,
+            subject: data.subject,
+            message: data.message,
+          },
+        }
+      );
 
-    console.log("Contact form submission:", data);
+      if (error) {
+        console.error("Contact form error:", error);
+        
+        // Handle rate limiting
+        if (error.message?.includes("429") || error.message?.includes("Too many")) {
+          toast({
+            title: "Too many submissions",
+            description: "Please try again later.",
+            variant: "destructive",
+          });
+          setIsSubmitting(false);
+          return;
+        }
+        
+        // Handle other errors
+        toast({
+          title: "Error",
+          description: "Something went wrong. Please try again.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
 
-    toast({
-      title: "Message sent!",
-      description: "We'll get back to you as soon as possible.",
-    });
+      console.log("Contact form success:", response);
 
-    form.reset();
-    setIsSubmitting(false);
+      toast({
+        title: "Message sent!",
+        description: "We'll get back to you as soon as possible.",
+      });
+
+      form.reset();
+    } catch (error) {
+      console.error("Contact form submission error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
