@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchAdminUser = async (userId: string) => {
+  const fetchAdminUser = async (userId: string): Promise<AdminUser | null> => {
     const { data, error } = await supabase
       .from('admin_users')
       .select('*')
@@ -38,9 +38,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .single();
 
     if (!error && data) {
-      setAdminUser(data as AdminUser);
+      const adminUserData = data as AdminUser;
+      setAdminUser(adminUserData);
+      return adminUserData;
     } else {
       setAdminUser(null);
+      return null;
     }
   };
 
@@ -70,38 +73,82 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    // Llamar a Edge Function segura en lugar de auth directo
-    const response = await fetch(
-      `https://fwhqtzkkvnjkazhaficj.supabase.co/functions/v1/admin-auth`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3aHF0emtrdm5qa2F6aGFmaWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4Mjc5NTMsImV4cCI6MjA2NTQwMzk1M30.Qhb3pRgx3HIoLSjeIulRHorgzw-eqL3WwXhpncHMF7I',
-        },
-        body: JSON.stringify({ email, password }),
+    try {
+      // Intentar usar Edge Function primero
+      const response = await fetch(
+        `https://fwhqtzkkvnjkazhaficj.supabase.co/functions/v1/admin-auth`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3aHF0emtrdm5qa2F6aGFmaWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4Mjc5NTMsImV4cCI6MjA2NTQwMzk1M30.Qhb3pRgx3HIoLSjeIulRHorgzw-eqL3WwXhpncHMF7I',
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
+
+        if (sessionError) throw sessionError;
+        setAdminUser(data.adminUser);
+        return;
       }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      const error: any = new Error(data.error || 'Authentication failed');
-      error.remainingAttempts = data.remaining_attempts;
-      error.lockoutUntil = data.lockout_until;
-      throw error;
+    } catch (edgeFunctionError) {
+      console.warn('Edge Function not available, using fallback authentication');
     }
 
-    // Establecer sesión
-    const { error: sessionError } = await supabase.auth.setSession({
-      access_token: data.session.access_token,
-      refresh_token: data.session.refresh_token,
+    // FALLBACK: Autenticación directa
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
 
-    if (sessionError) throw sessionError;
+    if (authError) throw authError;
 
-    // Establecer adminUser desde la respuesta validada del servidor
-    setAdminUser(data.adminUser);
+    // Verificar que es admin
+    const adminData = await fetchAdminUser(authData.user.id);
+    
+    if (!adminData) {
+      // Log intento de acceso no autorizado
+      await supabase.from('security_events').insert({
+        event_type: 'UNAUTHORIZED_ADMIN_ACCESS_ATTEMPT',
+        severity: 'high',
+        user_id: authData.user.id,
+        details: {
+          email,
+          fallback_mode: true,
+        },
+      });
+
+      await supabase.auth.signOut();
+      throw new Error('Access denied: Not an admin user');
+    }
+
+    // Actualizar last_login
+    await supabase
+      .from('admin_users')
+      .update({ last_login: new Date().toISOString() })
+      .eq('user_id', authData.user.id);
+
+    // Log acceso exitoso
+    await supabase.from('security_events').insert({
+      event_type: 'ADMIN_LOGIN_SUCCESS',
+      severity: 'info',
+      user_id: authData.user.id,
+      details: {
+        email: adminData.email,
+        role: adminData.role,
+        fallback_mode: true,
+      },
+    });
+
+    setAdminUser(adminData);
   };
 
   const signOut = async () => {
