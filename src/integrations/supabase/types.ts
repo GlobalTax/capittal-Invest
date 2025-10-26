@@ -3906,6 +3906,33 @@ export type Database = {
         }
         Relationships: []
       }
+      login_attempts: {
+        Row: {
+          attempted_at: string
+          email: string
+          id: string
+          ip_address: unknown
+          success: boolean
+          user_agent: string | null
+        }
+        Insert: {
+          attempted_at?: string
+          email: string
+          id?: string
+          ip_address?: unknown
+          success?: boolean
+          user_agent?: string | null
+        }
+        Update: {
+          attempted_at?: string
+          email?: string
+          id?: string
+          ip_address?: unknown
+          success?: boolean
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       ma_resources_requests: {
         Row: {
           company: string
@@ -6396,6 +6423,15 @@ export type Database = {
         }[]
       }
       bootstrap_first_admin: { Args: { user_email: string }; Returns: boolean }
+      check_login_rate_limit: {
+        Args: {
+          p_email: string
+          p_ip_address: unknown
+          p_max_attempts?: number
+          p_window_minutes?: number
+        }
+        Returns: Json
+      }
       check_rate_limit:
         | {
             Args: {
@@ -6442,6 +6478,15 @@ export type Database = {
         Args: { p_mandato_id: string }
         Returns: number
       }
+      create_admin_user_record: {
+        Args: {
+          p_email: string
+          p_full_name: string
+          p_role?: Database["public"]["Enums"]["admin_role"]
+          p_user_id: string
+        }
+        Returns: Json
+      }
       create_temporary_user: {
         Args: {
           p_email: string
@@ -6467,6 +6512,7 @@ export type Database = {
         Returns: Json
       }
       current_user_is_admin: { Args: never; Returns: boolean }
+      deactivate_admin_user: { Args: { p_user_id: string }; Returns: boolean }
       disk_usage_monitor: {
         Args: never
         Returns: {
@@ -6498,6 +6544,18 @@ export type Database = {
           role: Database["public"]["Enums"]["admin_role"]
         }[]
       }
+      get_admin_user_info: {
+        Args: { check_user_id: string }
+        Returns: {
+          email: string
+          full_name: string
+          id: string
+          is_active: boolean
+          last_login: string
+          role: Database["public"]["Enums"]["admin_role"]
+          user_id: string
+        }[]
+      }
       get_news_filter_options: {
         Args: never
         Returns: {
@@ -6514,6 +6572,13 @@ export type Database = {
         }[]
       }
       get_user_role: { Args: { check_user_id: string }; Returns: string }
+      has_role: {
+        Args: {
+          check_user_id: string
+          required_role: Database["public"]["Enums"]["admin_role"]
+        }
+        Returns: boolean
+      }
       is_admin_user: { Args: { _user_id: string }; Returns: boolean }
       is_user_admin: { Args: { check_user_id: string }; Returns: boolean }
       is_user_super_admin: { Args: { check_user_id: string }; Returns: boolean }
@@ -6539,6 +6604,15 @@ export type Database = {
       }
       log_critical_security_violation: {
         Args: { details?: Json; table_name: string; violation_type: string }
+        Returns: undefined
+      }
+      log_login_attempt: {
+        Args: {
+          p_email: string
+          p_ip_address: unknown
+          p_success: boolean
+          p_user_agent?: string
+        }
         Returns: undefined
       }
       log_security_event:
@@ -6629,6 +6703,13 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      update_admin_user_role: {
+        Args: {
+          p_new_role: Database["public"]["Enums"]["admin_role"]
+          p_user_id: string
+        }
+        Returns: boolean
+      }
       update_kanban_order: { Args: { updates: Json }; Returns: undefined }
       validate_data_access_security: {
         Args: never

@@ -9,6 +9,7 @@ import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminLogin } from "@/pages/admin/AdminLogin";
 import { AdminDashboard } from "@/pages/admin/AdminDashboard";
+import { AdminUsers } from "@/pages/admin/AdminUsers";
 import Home from "./pages/Home";
 import Strategy from "./pages/Strategy";
 import Sectors from "./pages/Sectors";
@@ -52,6 +53,14 @@ const App = () => (
               }
             >
               <Route index element={<AdminDashboard />} />
+              <Route 
+                path="users" 
+                element={
+                  <ProtectedRoute requiredRole="super_admin">
+                    <AdminUsers />
+                  </ProtectedRoute>
+                } 
+              />
               {/* Additional admin routes will be added here */}
             </Route>
 

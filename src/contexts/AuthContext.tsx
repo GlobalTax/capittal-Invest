@@ -70,11 +70,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    // Llamar a Edge Function segura en lugar de auth directo
+    const response = await fetch(
+      `https://fwhqtzkkvnjkazhaficj.supabase.co/functions/v1/admin-auth`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3aHF0emtrdm5qa2F6aGFmaWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4Mjc5NTMsImV4cCI6MjA2NTQwMzk1M30.Qhb3pRgx3HIoLSjeIulRHorgzw-eqL3WwXhpncHMF7I',
+        },
+        body: JSON.stringify({ email, password }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      const error: any = new Error(data.error || 'Authentication failed');
+      error.remainingAttempts = data.remaining_attempts;
+      error.lockoutUntil = data.lockout_until;
+      throw error;
+    }
+
+    // Establecer sesión
+    const { error: sessionError } = await supabase.auth.setSession({
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
     });
-    if (error) throw error;
+
+    if (sessionError) throw sessionError;
+
+    // Establecer adminUser desde la respuesta validada del servidor
+    setAdminUser(data.adminUser);
   };
 
   const signOut = async () => {
