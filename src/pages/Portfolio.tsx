@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,8 +6,9 @@ import { BadgeFilter } from "@/components/ui/badge-filter";
 import { CustomPagination } from "@/components/ui/custom-pagination";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Meta } from "@/components/seo/Meta";
+import { usePortfolioSearch, usePortfolioFilterOptions } from "@/hooks/usePortfolioSearch";
 import { portfolioCompanies } from "@/data/mockData";
-import { ExternalLink, Search } from "lucide-react";
+import { ExternalLink, Search, Loader2 } from "lucide-react";
 
 const ITEMS_PER_PAGE = 9;
 
@@ -18,29 +19,38 @@ const Portfolio = () => {
   const [activeCountry, setActiveCountry] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const sectors = Array.from(new Set(portfolioCompanies.map((c) => c.sector)));
-  const stages = Array.from(new Set(portfolioCompanies.map((c) => c.stage)));
-  const countries = Array.from(new Set(portfolioCompanies.map((c) => c.country)));
+  // Fetch filter options from database
+  const { data: filterOptions, isLoading: isLoadingOptions } = usePortfolioFilterOptions();
 
-  const filteredCompanies = useMemo(() => {
-    return portfolioCompanies.filter((company) => {
-      const matchesSearch =
-        searchTerm === "" ||
-        company.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        company.thesis.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesSector = !activeSector || company.sector === activeSector;
-      const matchesStage = !activeStage || company.stage === activeStage;
-      const matchesCountry = !activeCountry || company.country === activeCountry;
+  // Fetch portfolio companies with search and filters
+  const { data: dbCompanies, isLoading: isLoadingCompanies } = usePortfolioSearch({
+    searchQuery: searchTerm || undefined,
+    sector: activeSector || undefined,
+    stage: activeStage || undefined,
+    country: activeCountry || undefined,
+    limit: ITEMS_PER_PAGE,
+    offset: (currentPage - 1) * ITEMS_PER_PAGE,
+  });
 
-      return matchesSearch && matchesSector && matchesStage && matchesCountry;
-    });
-  }, [searchTerm, activeSector, activeStage, activeCountry]);
+  // Use database data if available, otherwise fallback to mock data
+  const companies = dbCompanies && dbCompanies.length > 0 
+    ? dbCompanies.map(c => ({
+        id: c.id,
+        name: c.name,
+        sector: c.sector,
+        stage: c.stage,
+        country: c.country,
+        thesis: c.investment_thesis || c.description || "",
+        website: c.website_url || "#",
+      }))
+    : portfolioCompanies;
 
-  const totalPages = Math.ceil(filteredCompanies.length / ITEMS_PER_PAGE);
-  const paginatedCompanies = filteredCompanies.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  const sectors = filterOptions?.sectors || Array.from(new Set(portfolioCompanies.map((c) => c.sector)));
+  const stages = filterOptions?.stages || Array.from(new Set(portfolioCompanies.map((c) => c.stage)));
+  const countries = filterOptions?.countries || Array.from(new Set(portfolioCompanies.map((c) => c.country)));
+
+  const isLoading = isLoadingOptions || isLoadingCompanies;
+  const totalPages = Math.max(1, Math.ceil(companies.length / ITEMS_PER_PAGE));
 
   return (
     <>
@@ -128,7 +138,11 @@ const Portfolio = () => {
           </div>
 
           {/* Results */}
-          {paginatedCompanies.length === 0 ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : companies.length === 0 ? (
             <EmptyState
               title="No companies found"
               description="Try adjusting your filters or search term"
@@ -136,7 +150,7 @@ const Portfolio = () => {
           ) : (
             <>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {paginatedCompanies.map((company) => (
+                {companies.map((company) => (
                   <Card
                     key={company.id}
                     className="p-6 hover:shadow-lg transition-smooth"

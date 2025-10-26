@@ -4628,6 +4628,72 @@ export type Database = {
           },
         ]
       }
+      news_articles: {
+        Row: {
+          author_avatar_url: string | null
+          author_name: string
+          category: string
+          content: string
+          created_at: string
+          excerpt: string | null
+          featured_image_url: string | null
+          id: string
+          is_featured: boolean | null
+          is_published: boolean | null
+          meta_description: string | null
+          meta_title: string | null
+          published_at: string | null
+          read_time: number | null
+          search_vector: unknown
+          slug: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_avatar_url?: string | null
+          author_name?: string
+          category: string
+          content: string
+          created_at?: string
+          excerpt?: string | null
+          featured_image_url?: string | null
+          id?: string
+          is_featured?: boolean | null
+          is_published?: boolean | null
+          meta_description?: string | null
+          meta_title?: string | null
+          published_at?: string | null
+          read_time?: number | null
+          search_vector?: unknown
+          slug: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_avatar_url?: string | null
+          author_name?: string
+          category?: string
+          content?: string
+          created_at?: string
+          excerpt?: string | null
+          featured_image_url?: string | null
+          id?: string
+          is_featured?: boolean | null
+          is_published?: boolean | null
+          meta_description?: string | null
+          meta_title?: string | null
+          published_at?: string | null
+          read_time?: number | null
+          search_vector?: unknown
+          slug?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           company: string | null
@@ -4776,6 +4842,75 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      portfolio_companies: {
+        Row: {
+          country: string
+          created_at: string
+          description: string | null
+          display_order: number | null
+          founded_year: number | null
+          id: string
+          investment_date: string | null
+          investment_thesis: string | null
+          is_active: boolean | null
+          is_featured: boolean | null
+          logo_url: string | null
+          metrics: Json | null
+          name: string
+          search_vector: unknown
+          sector: string
+          slug: string
+          stage: string
+          timeline: Json | null
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          country: string
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          founded_year?: number | null
+          id?: string
+          investment_date?: string | null
+          investment_thesis?: string | null
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          logo_url?: string | null
+          metrics?: Json | null
+          name: string
+          search_vector?: unknown
+          sector: string
+          slug: string
+          stage: string
+          timeline?: Json | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          founded_year?: number | null
+          id?: string
+          investment_date?: string | null
+          investment_thesis?: string | null
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          logo_url?: string | null
+          metrics?: Json | null
+          name?: string
+          search_vector?: unknown
+          sector?: string
+          slug?: string
+          stage?: string
+          timeline?: Json | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
       }
       rate_limits: {
         Row: {
@@ -6363,6 +6498,21 @@ export type Database = {
           role: Database["public"]["Enums"]["admin_role"]
         }[]
       }
+      get_news_filter_options: {
+        Args: never
+        Returns: {
+          all_tags: string[]
+          categories: string[]
+        }[]
+      }
+      get_portfolio_filter_options: {
+        Args: never
+        Returns: {
+          countries: string[]
+          sectors: string[]
+          stages: string[]
+        }[]
+      }
       get_user_role: { Args: { check_user_id: string }; Returns: string }
       is_admin_user: { Args: { _user_id: string }; Returns: boolean }
       is_user_admin: { Args: { check_user_id: string }; Returns: boolean }
@@ -6424,6 +6574,59 @@ export type Database = {
         Returns: boolean
       }
       rollback_import: { Args: { p_import_log_id: string }; Returns: Json }
+      search_news_articles: {
+        Args: {
+          filter_category?: string
+          filter_tags?: string[]
+          limit_count?: number
+          offset_count?: number
+          search_query?: string
+        }
+        Returns: {
+          author_avatar_url: string
+          author_name: string
+          category: string
+          content: string
+          excerpt: string
+          featured_image_url: string
+          id: string
+          is_featured: boolean
+          published_at: string
+          read_time: number
+          relevance: number
+          slug: string
+          tags: string[]
+          title: string
+        }[]
+      }
+      search_portfolio_companies: {
+        Args: {
+          filter_country?: string
+          filter_sector?: string
+          filter_stage?: string
+          limit_count?: number
+          offset_count?: number
+          search_query?: string
+        }
+        Returns: {
+          country: string
+          description: string
+          founded_year: number
+          id: string
+          investment_date: string
+          investment_thesis: string
+          is_featured: boolean
+          logo_url: string
+          metrics: Json
+          name: string
+          relevance: number
+          sector: string
+          slug: string
+          stage: string
+          timeline: Json
+          website_url: string
+        }[]
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       update_kanban_order: { Args: { updates: Json }; Returns: undefined }
