@@ -42,12 +42,11 @@ const InsightDetail = () => {
     queryKey: ['news-article', slug],
     queryFn: async () => {
       if (!slug) return null;
-      // @ts-ignore - Avoid deep type instantiation
       const response = await supabase
         .from('news_articles')
         .select('id, title, slug, excerpt, content, featured_image_url, author_name, author_avatar_url, category, tags, read_time, is_featured, published_at, created_at')
         .eq('slug', slug)
-        .eq('is_active', true)
+        .eq('is_published', true)
         .single();
       
       if (response.error) throw response.error;

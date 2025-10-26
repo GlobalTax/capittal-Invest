@@ -10,6 +10,9 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminLogin } from "@/pages/admin/AdminLogin";
 import { AdminDashboard } from "@/pages/admin/AdminDashboard";
 import { AdminUsers } from "@/pages/admin/AdminUsers";
+import { AdminPortfolio } from "@/pages/admin/AdminPortfolio";
+import { AdminNews } from "@/pages/admin/AdminNews";
+import { AdminTeam } from "@/pages/admin/AdminTeam";
 import Home from "./pages/Home";
 import Strategy from "./pages/Strategy";
 import Sectors from "./pages/Sectors";
@@ -53,15 +56,17 @@ const App = () => (
               }
             >
               <Route index element={<AdminDashboard />} />
-              <Route 
-                path="users" 
-                element={
-                  <ProtectedRoute requiredRole="super_admin">
-                    <AdminUsers />
-                  </ProtectedRoute>
-                } 
-              />
-              {/* Additional admin routes will be added here */}
+            <Route path="portfolio" element={<AdminPortfolio />} />
+            <Route path="news" element={<AdminNews />} />
+            <Route path="team" element={<AdminTeam />} />
+            <Route
+              path="users" 
+              element={
+                <ProtectedRoute requiredRole="super_admin">
+                  <AdminUsers />
+                </ProtectedRoute>
+              } 
+            />
             </Route>
 
             <Route path="*" element={<Layout><NotFound /></Layout>} />

@@ -17,10 +17,8 @@ import { Separator } from '@/components/ui/separator';
 const navItems = [
   { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
   { path: '/admin/portfolio', icon: Briefcase, label: 'Portfolio Companies' },
-  { path: '/admin/investments', icon: TrendingUp, label: 'Investments' },
-  { path: '/admin/exits', icon: ExitIcon, label: 'Exits' },
-  { path: '/admin/team', icon: Users, label: 'Team Members' },
   { path: '/admin/news', icon: Newspaper, label: 'News Articles' },
+  { path: '/admin/team', icon: Users, label: 'Team Members' },
 ];
 
 export const AdminSidebar = () => {
