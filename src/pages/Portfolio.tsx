@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { BadgeFilter } from "@/components/ui/badge-filter";
 import { CustomPagination } from "@/components/ui/custom-pagination";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Overline } from "@/components/ui/typography";
-import { Badge } from "@/components/ui/badge";
 import { Meta } from "@/components/seo/Meta";
 import { usePortfolioSearch, usePortfolioFilterOptions } from "@/hooks/usePortfolioSearch";
-import { portfolioCompanies } from "@/data/mockData";
-import { ExternalLink, Search, Loader2, Download, FileText, FileSpreadsheet } from "lucide-react";
+import { Search, Loader2, Download, FileText, FileSpreadsheet, Filter, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,9 +15,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Badge } from "@/components/ui/badge";
 import { usePortfolioExport } from "@/hooks/usePortfolioExport";
+import { CompanyCard } from "@/components/portfolio/CompanyCard";
+import { CompanySkeleton } from "@/components/portfolio/CompanySkeleton";
+import { ViewToggle } from "@/components/portfolio/ViewToggle";
+import { cn } from "@/lib/utils";
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 12;
 
 const Portfolio = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,6 +35,7 @@ const Portfolio = () => {
   const [activeStage, setActiveStage] = useState<string | null>(null);
   const [activeCountry, setActiveCountry] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Export hook
   const { exportData, isExporting } = usePortfolioExport();
@@ -45,25 +53,23 @@ const Portfolio = () => {
     offset: (currentPage - 1) * ITEMS_PER_PAGE,
   });
 
-  // Use database data if available, otherwise fallback to mock data
-  const companies = dbCompanies && dbCompanies.length > 0 
-    ? dbCompanies.map(c => ({
-        id: c.id,
-        name: c.name,
-        sector: c.sector,
-        stage: c.stage,
-        country: c.country,
-        thesis: c.investment_thesis || c.description || "",
-        website: c.website_url || "#",
-      }))
-    : portfolioCompanies;
+  const companies = dbCompanies || [];
 
-  const sectors = filterOptions?.sectors || Array.from(new Set(portfolioCompanies.map((c) => c.sector)));
-  const stages = filterOptions?.stages || Array.from(new Set(portfolioCompanies.map((c) => c.stage)));
-  const countries = filterOptions?.countries || Array.from(new Set(portfolioCompanies.map((c) => c.country)));
+  const sectors = filterOptions?.sectors || [];
+  const stages = filterOptions?.stages || [];
+  const countries = filterOptions?.countries || [];
 
   const isLoading = isLoadingOptions || isLoadingCompanies;
   const totalPages = Math.max(1, Math.ceil(companies.length / ITEMS_PER_PAGE));
+
+  const activeFilterCount = [activeSector, activeStage, activeCountry].filter(Boolean).length;
+
+  const clearFilters = () => {
+    setActiveSector(null);
+    setActiveStage(null);
+    setActiveCountry(null);
+    setCurrentPage(1);
+  };
 
   return (
     <>
@@ -75,21 +81,133 @@ const Portfolio = () => {
 
       <div className="min-h-screen">
         {/* Hero */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="max-w-4xl mb-12">
-            <Overline className="mb-4">Portfolio</Overline>
-            <h1 className="mb-6">Portfolio Companies</h1>
-            <p className="text-lead">
-              We partner with exceptional companies building the future across our core sectors.
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="max-w-4xl mb-16 text-center mx-auto">
+            <Overline className="mb-6">Our Portfolio</Overline>
+            <h1 className="mb-6 text-5xl lg:text-6xl">
+              Building Tomorrow's Digital Leaders
+            </h1>
+            <p className="text-lead text-xl text-muted-foreground">
+              We partner with visionary entrepreneurs building exceptional companies across our core sectors.
             </p>
           </div>
 
-          {/* Filters */}
-          <div className="space-y-4 mb-8">
-            {/* Search and Export */}
+          {/* Stats */}
+          {!isLoading && companies.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 max-w-3xl mx-auto">
+              <div className="text-center">
+                <div className="text-4xl font-bold text-primary mb-2">
+                  {companies.length}+
+                </div>
+                <div className="text-sm text-muted-foreground">Portfolio Companies</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-primary mb-2">
+                  {sectors.length}
+                </div>
+                <div className="text-sm text-muted-foreground">Sectors</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-primary mb-2">
+                  {countries.length}
+                </div>
+                <div className="text-sm text-muted-foreground">Countries</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-primary mb-2">
+                  {stages.length}
+                </div>
+                <div className="text-sm text-muted-foreground">Stages</div>
+              </div>
+            </div>
+          )}
+
+          {/* Filters Row */}
+          <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
             <div className="flex items-center gap-4">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-subtle" />
+              {/* View Toggle */}
+              <ViewToggle value={viewMode} onChange={setViewMode} />
+
+              {/* Filters Button */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline">
+                    <Filter className="h-4 w-4 mr-2" />
+                    Filters
+                    {activeFilterCount > 0 && (
+                      <Badge className="ml-2" variant="secondary">
+                        {activeFilterCount}
+                      </Badge>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80" align="start">
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-semibold mb-3">Sector</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {sectors.map((sector) => (
+                          <BadgeFilter
+                            key={sector}
+                            label={sector}
+                            active={activeSector === sector}
+                            onClick={() => {
+                              setActiveSector(activeSector === sector ? null : sector);
+                              setCurrentPage(1);
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold mb-3">Stage</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {stages.map((stage) => (
+                          <BadgeFilter
+                            key={stage}
+                            label={stage}
+                            active={activeStage === stage}
+                            onClick={() => {
+                              setActiveStage(activeStage === stage ? null : stage);
+                              setCurrentPage(1);
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold mb-3">Country</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {countries.map((country) => (
+                          <BadgeFilter
+                            key={country}
+                            label={country}
+                            active={activeCountry === country}
+                            onClick={() => {
+                              setActiveCountry(activeCountry === country ? null : country);
+                              setCurrentPage(1);
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {activeFilterCount > 0 && (
+                      <Button variant="outline" size="sm" onClick={clearFilters} className="w-full">
+                        Clear All Filters
+                      </Button>
+                    )}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            {/* Search + Export */}
+            <div className="flex gap-3">
+              <div className="relative w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="text"
                   placeholder="Search companies..."
@@ -103,11 +221,10 @@ const Portfolio = () => {
                 />
               </div>
 
-              {/* Export dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     disabled={isExporting || companies.length === 0}
                     aria-label="Export portfolio companies"
                   >
@@ -125,7 +242,7 @@ const Portfolio = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     onClick={() => exportData({
                       searchQuery: searchTerm,
                       sector: activeSector || undefined,
@@ -136,7 +253,7 @@ const Portfolio = () => {
                     <FileText className="h-4 w-4 mr-2" />
                     Export as CSV
                   </DropdownMenuItem>
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     onClick={() => exportData({
                       searchQuery: searchTerm,
                       sector: activeSector || undefined,
@@ -150,60 +267,52 @@ const Portfolio = () => {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-
-            {/* Filter badges */}
-            <div className="space-y-3">
-              <div className="flex flex-wrap gap-2 items-center">
-                <span className="text-sm font-medium text-subtle">Sector:</span>
-                {sectors.map((sector) => (
-                  <BadgeFilter
-                    key={sector}
-                    label={sector}
-                    active={activeSector === sector}
-                    onClick={() => {
-                      setActiveSector(activeSector === sector ? null : sector);
-                      setCurrentPage(1);
-                    }}
-                  />
-                ))}
-              </div>
-
-              <div className="flex flex-wrap gap-2 items-center">
-                <span className="text-sm font-medium text-subtle">Stage:</span>
-                {stages.map((stage) => (
-                  <BadgeFilter
-                    key={stage}
-                    label={stage}
-                    active={activeStage === stage}
-                    onClick={() => {
-                      setActiveStage(activeStage === stage ? null : stage);
-                      setCurrentPage(1);
-                    }}
-                  />
-                ))}
-              </div>
-
-              <div className="flex flex-wrap gap-2 items-center">
-                <span className="text-sm font-medium text-subtle">Country:</span>
-                {countries.map((country) => (
-                  <BadgeFilter
-                    key={country}
-                    label={country}
-                    active={activeCountry === country}
-                    onClick={() => {
-                      setActiveCountry(activeCountry === country ? null : country);
-                      setCurrentPage(1);
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
           </div>
+
+          {/* Active Filters Chips */}
+          {activeFilterCount > 0 && (
+            <div className="flex gap-2 mb-6">
+              {activeSector && (
+                <Badge
+                  variant="secondary"
+                  className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
+                  onClick={() => setActiveSector(null)}
+                >
+                  {activeSector} <X className="ml-1 h-3 w-3" />
+                </Badge>
+              )}
+              {activeStage && (
+                <Badge
+                  variant="secondary"
+                  className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
+                  onClick={() => setActiveStage(null)}
+                >
+                  {activeStage} <X className="ml-1 h-3 w-3" />
+                </Badge>
+              )}
+              {activeCountry && (
+                <Badge
+                  variant="secondary"
+                  className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-smooth"
+                  onClick={() => setActiveCountry(null)}
+                >
+                  {activeCountry} <X className="ml-1 h-3 w-3" />
+                </Badge>
+              )}
+            </div>
+          )}
 
           {/* Results */}
           {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className={cn(
+              "mb-8",
+              viewMode === 'grid'
+                ? "grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                : "space-y-4"
+            )}>
+              {[...Array(8)].map((_, i) => (
+                <CompanySkeleton key={i} variant={viewMode} />
+              ))}
             </div>
           ) : companies.length === 0 ? (
             <EmptyState
@@ -212,48 +321,18 @@ const Portfolio = () => {
             />
           ) : (
             <>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              <div className={cn(
+                "mb-8",
+                viewMode === 'grid'
+                  ? "grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                  : "space-y-4"
+              )}>
                 {companies.map((company) => (
-                  <Card
+                  <CompanyCard
                     key={company.id}
-                    className="p-6 hover:shadow-lg transition-smooth"
-                  >
-                    <div className="flex flex-col h-full">
-                      <div className="mb-4">
-                        <h3 className="text-xl mb-2">{company.name}</h3>
-                        <div className="flex gap-2 text-xs">
-                          <span className="px-2 py-1 bg-secondary rounded text-body">
-                            {company.sector}
-                          </span>
-                          <span className="px-2 py-1 bg-secondary rounded text-body">
-                            {company.country}
-                          </span>
-                        </div>
-                      </div>
-
-                      <p className="text-sm text-body mb-4 flex-grow">
-                        {company.thesis}
-                      </p>
-
-                      <div className="flex items-center gap-4">
-                        <Link
-                          to={`/portfolio/${company.id}`}
-                          className="text-sm font-medium text-primary hover:text-accent transition-smooth"
-                        >
-                          View details
-                        </Link>
-                        <a
-                          href={company.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-subtle hover:text-body transition-smooth inline-flex items-center gap-1"
-                          aria-label={`Visit ${company.name} website`}
-                        >
-                          Website <ExternalLink className="h-3 w-3" />
-                        </a>
-                      </div>
-                    </div>
-                  </Card>
+                    company={company}
+                    variant={viewMode}
+                  />
                 ))}
               </div>
 

@@ -115,27 +115,39 @@ const PortfolioDetail = () => {
           <div className="max-w-4xl">
             {/* Header */}
             <div className="mb-12 pb-12 border-b border-border">
-              <div className="flex items-start justify-between mb-6">
-                <div>
-                  <h1 className="mb-4">{company.name}</h1>
-                  <div className="flex gap-2 mb-6">
+              <div className="flex items-start gap-8 mb-8">
+                {/* Logo */}
+                {company.logo_url && (
+                  <div className="w-32 h-32 bg-muted rounded-lg flex items-center justify-center p-4 flex-shrink-0">
+                    <img
+                      src={company.logo_url}
+                      alt={company.name}
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </div>
+                )}
+
+                <div className="flex-1">
+                  <h1 className="mb-4 text-4xl">{company.name}</h1>
+                  <div className="flex gap-2 mb-6 flex-wrap">
                     <Badge>{company.sector}</Badge>
                     <Badge>{company.country}</Badge>
-                    <Badge variant="selected">{company.stage}</Badge>
+                    <Badge variant="secondary">{company.stage}</Badge>
                   </div>
+
+                  {company.website_url && (
+                    <a
+                      href={company.website_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Button variant="outline">
+                        Visit Website <ExternalLink className="ml-2 h-4 w-4" />
+                      </Button>
+                    </a>
+                  )}
                 </div>
               </div>
-
-              {company.website_url && (
-                <a
-                  href={company.website_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-primary hover:text-accent transition-smooth"
-                >
-                  Visit website <ExternalLink className="h-4 w-4" />
-                </a>
-              )}
             </div>
 
             {/* Investment Thesis */}
@@ -145,29 +157,35 @@ const PortfolioDetail = () => {
             </Card>
 
             {/* Key Metrics */}
-            {company.metrics && (
+            {company.metrics && Object.values(company.metrics).some(v => v) && (
               <Card className="p-8 mb-8">
                 <h2 className="text-2xl mb-6">Key Metrics</h2>
-                <dl className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {company.metrics.revenue && (
-                    <div>
-                      <dt className="text-sm text-subtle mb-1">Revenue</dt>
-                      <dd className="text-2xl font-semibold">{company.metrics.revenue}</dd>
-                    </div>
+                    <Card className="p-6 text-center bg-muted">
+                      <div className="text-sm text-muted-foreground mb-2">Revenue</div>
+                      <div className="text-3xl font-bold text-primary">
+                        {company.metrics.revenue}
+                      </div>
+                    </Card>
                   )}
                   {company.metrics.employees && (
-                    <div>
-                      <dt className="text-sm text-subtle mb-1">Employees</dt>
-                      <dd className="text-2xl font-semibold">{company.metrics.employees}</dd>
-                    </div>
+                    <Card className="p-6 text-center bg-muted">
+                      <div className="text-sm text-muted-foreground mb-2">Employees</div>
+                      <div className="text-3xl font-bold text-primary">
+                        {company.metrics.employees}
+                      </div>
+                    </Card>
                   )}
                   {company.metrics.valuation && (
-                    <div>
-                      <dt className="text-sm text-subtle mb-1">Valuation</dt>
-                      <dd className="text-2xl font-semibold">{company.metrics.valuation}</dd>
-                    </div>
+                    <Card className="p-6 text-center bg-muted">
+                      <div className="text-sm text-muted-foreground mb-2">Valuation</div>
+                      <div className="text-3xl font-bold text-primary">
+                        {company.metrics.valuation}
+                      </div>
+                    </Card>
                   )}
-                </dl>
+                </div>
               </Card>
             )}
 
@@ -175,13 +193,14 @@ const PortfolioDetail = () => {
             {company.timeline && Array.isArray(company.timeline) && company.timeline.length > 0 && (
               <Card className="p-8">
                 <h2 className="text-2xl mb-6">Timeline</h2>
-                <div className="space-y-4">
+                <div className="relative pl-8 border-l-2 border-border space-y-6">
                   {company.timeline.map((item: any, idx: number) => (
-                    <div key={idx} className="flex gap-4">
-                      <div className="font-semibold text-primary min-w-[60px]">
+                    <div key={idx} className="relative">
+                      <div className="absolute -left-[33px] w-3 h-3 rounded-full bg-primary" />
+                      <div className="font-semibold text-primary mb-1">
                         {item.date}
                       </div>
-                      <div className="text-body">{item.event}</div>
+                      <div className="text-muted-foreground">{item.event}</div>
                     </div>
                   ))}
                 </div>
