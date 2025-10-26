@@ -8,7 +8,15 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Meta } from "@/components/seo/Meta";
 import { usePortfolioSearch, usePortfolioFilterOptions } from "@/hooks/usePortfolioSearch";
 import { portfolioCompanies } from "@/data/mockData";
-import { ExternalLink, Search, Loader2 } from "lucide-react";
+import { ExternalLink, Search, Loader2, Download, FileText, FileSpreadsheet } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { usePortfolioExport } from "@/hooks/usePortfolioExport";
 
 const ITEMS_PER_PAGE = 9;
 
@@ -18,6 +26,9 @@ const Portfolio = () => {
   const [activeStage, setActiveStage] = useState<string | null>(null);
   const [activeCountry, setActiveCountry] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Export hook
+  const { exportData, isExporting } = usePortfolioExport();
 
   // Fetch filter options from database
   const { data: filterOptions, isLoading: isLoadingOptions } = usePortfolioFilterOptions();
@@ -72,20 +83,69 @@ const Portfolio = () => {
 
           {/* Filters */}
           <div className="space-y-4 mb-8">
-            {/* Search */}
-            <div className="relative max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-subtle" />
-              <Input
-                type="text"
-                placeholder="Search companies..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="pl-10"
-                aria-label="Search portfolio companies"
-              />
+            {/* Search and Export */}
+            <div className="flex items-center gap-4">
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-subtle" />
+                <Input
+                  type="text"
+                  placeholder="Search companies..."
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="pl-10"
+                  aria-label="Search portfolio companies"
+                />
+              </div>
+
+              {/* Export dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    disabled={isExporting || companies.length === 0}
+                    aria-label="Export portfolio companies"
+                  >
+                    {isExporting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        Exporting...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-4 w-4 mr-2" />
+                        Export
+                      </>
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem 
+                    onClick={() => exportData({
+                      searchQuery: searchTerm,
+                      sector: activeSector || undefined,
+                      stage: activeStage || undefined,
+                      country: activeCountry || undefined,
+                    }, 'csv')}
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    Export as CSV
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => exportData({
+                      searchQuery: searchTerm,
+                      sector: activeSector || undefined,
+                      stage: activeStage || undefined,
+                      country: activeCountry || undefined,
+                    }, 'excel')}
+                  >
+                    <FileSpreadsheet className="h-4 w-4 mr-2" />
+                    Export as Excel
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             {/* Filter badges */}
