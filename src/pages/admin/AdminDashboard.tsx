@@ -7,21 +7,14 @@ export const AdminDashboard = () => {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
-      const [portfolio, investments, exits, team, news] = await Promise.all([
+      const [portfolio, team, news] = await Promise.all([
         supabase.from('portfolio_companies').select('id', { count: 'exact', head: true }),
-        // @ts-ignore - New tables, types will update after migration
-        supabase.from('investments').select('id', { count: 'exact', head: true }),
-        // @ts-ignore - New tables, types will update after migration
-        supabase.from('exits').select('id', { count: 'exact', head: true }),
-        // @ts-ignore - New tables, types will update after migration
         supabase.from('team_members').select('id', { count: 'exact', head: true }),
         supabase.from('news_articles').select('id', { count: 'exact', head: true }),
       ]);
 
       return {
         portfolio: portfolio.count || 0,
-        investments: investments.count || 0,
-        exits: exits.count || 0,
         team: team.count || 0,
         news: news.count || 0,
       };
@@ -35,20 +28,6 @@ export const AdminDashboard = () => {
       icon: Briefcase,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
-    },
-    {
-      title: 'Investments',
-      value: stats?.investments || 0,
-      icon: TrendingUp,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-    },
-    {
-      title: 'Exits',
-      value: stats?.exits || 0,
-      icon: ExitIcon,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
     },
     {
       title: 'Team Members',
@@ -81,7 +60,7 @@ export const AdminDashboard = () => {
         <p className="text-muted-foreground mt-1">Welcome to the admin panel</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {statCards.map((stat) => (
           <Card key={stat.title}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">

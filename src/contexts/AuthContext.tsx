@@ -115,16 +115,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const adminData = await fetchAdminUser(authData.user.id);
     
     if (!adminData) {
-      // Log intento de acceso no autorizado
-      await supabase.from('security_events').insert({
-        event_type: 'UNAUTHORIZED_ADMIN_ACCESS_ATTEMPT',
-        severity: 'high',
-        user_id: authData.user.id,
-        details: {
-          email,
-          fallback_mode: true,
-        },
-      });
+      // Log intento de acceso no autorizado (silenciar errores de RLS)
+      try {
+        await supabase.from('security_events').insert({
+          event_type: 'UNAUTHORIZED_ADMIN_ACCESS_ATTEMPT',
+          severity: 'high',
+          user_id: authData.user.id,
+          details: {
+            email,
+            fallback_mode: true,
+          },
+        });
+      } catch (logError) {
+        console.warn('Security event logging failed (fallback mode):', logError);
+      }
 
       await supabase.auth.signOut();
       throw new Error('Access denied: Not an admin user');
@@ -136,17 +140,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .update({ last_login: new Date().toISOString() })
       .eq('user_id', authData.user.id);
 
-    // Log acceso exitoso
-    await supabase.from('security_events').insert({
-      event_type: 'ADMIN_LOGIN_SUCCESS',
-      severity: 'info',
-      user_id: authData.user.id,
-      details: {
-        email: adminData.email,
-        role: adminData.role,
-        fallback_mode: true,
-      },
-    });
+    // Log acceso exitoso (silenciar errores de RLS)
+    try {
+      await supabase.from('security_events').insert({
+        event_type: 'ADMIN_LOGIN_SUCCESS',
+        severity: 'info',
+        user_id: authData.user.id,
+        details: {
+          email: adminData.email,
+          role: adminData.role,
+          fallback_mode: true,
+        },
+      });
+    } catch (logError) {
+      // Ignorar errores de logging en fallback mode
+      console.warn('Security event logging failed (fallback mode):', logError);
+    }
 
     setAdminUser(adminData);
   };

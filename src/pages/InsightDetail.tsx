@@ -47,7 +47,7 @@ const InsightDetail = () => {
         .from('news_articles')
         .select('id, title, slug, excerpt, content, featured_image_url, author_name, author_avatar_url, category, tags, read_time, is_featured, published_at, created_at')
         .eq('slug', slug)
-        .eq('status', 'published')
+        .eq('is_active', true)
         .single();
       
       if (response.error) throw response.error;
