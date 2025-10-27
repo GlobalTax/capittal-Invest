@@ -80,7 +80,7 @@ export const PortfolioDashboard = () => {
       {/* Header */}
       <div className="flex items-center justify-between pb-2 border-b border-border">
         <div>
-          <h3 className="text-lg font-semibold text-foreground">Portfolio Dashboard</h3>
+          <h3 className="text-lg font-medium text-foreground">Portfolio Dashboard</h3>
           <p className="text-xs text-muted-foreground">Real-time performance metrics</p>
         </div>
         <div className="flex items-center gap-1.5 px-2 py-1 bg-success/10 rounded-full">
@@ -100,7 +100,7 @@ export const PortfolioDashboard = () => {
               <stat.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl md:text-3xl font-bold text-foreground">{stat.value}</div>
+              <div className="text-2xl md:text-3xl font-medium text-foreground">{stat.value}</div>
               <p className="text-xs text-success mt-1 flex items-center gap-1">
                 <TrendingUp className="h-3 w-3" />
                 {stat.trend}

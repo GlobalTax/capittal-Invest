@@ -37,7 +37,7 @@ export const Navbar = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo (serif) */}
           <Link to="/" className="flex items-center">
-            <span className="text-xl font-serif font-semibold tracking-tight">
+            <span className="text-xl font-serif font-medium tracking-tight">
               Ethos Ventures
             </span>
           </Link>

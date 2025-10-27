@@ -24,7 +24,7 @@ export const CompanyCard = ({ company, variant = 'grid' }: CompanyCardProps) => 
                 className="max-w-full max-h-full object-contain p-2"
               />
             ) : (
-              <div className="text-2xl font-bold text-muted-foreground">
+              <div className="text-2xl font-medium text-muted-foreground">
                 {company.name.charAt(0)}
               </div>
             )}
@@ -33,7 +33,7 @@ export const CompanyCard = ({ company, variant = 'grid' }: CompanyCardProps) => 
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h3 className="text-xl font-semibold mb-2">{company.name}</h3>
+                <h3 className="text-xl font-medium mb-2">{company.name}</h3>
                 <div className="flex gap-2 flex-wrap">
                   <Badge variant="outline">{company.sector}</Badge>
                   <Badge variant="outline">{company.country}</Badge>
@@ -78,7 +78,7 @@ export const CompanyCard = ({ company, variant = 'grid' }: CompanyCardProps) => 
             className="max-w-full max-h-full object-contain"
           />
         ) : (
-          <div className="text-4xl font-bold text-muted-foreground">
+          <div className="text-4xl font-medium text-muted-foreground">
             {company.name.charAt(0)}
           </div>
         )}
@@ -86,7 +86,7 @@ export const CompanyCard = ({ company, variant = 'grid' }: CompanyCardProps) => 
 
       <div className="p-6 space-y-4">
         <div>
-          <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+          <h3 className="text-xl font-medium mb-2 group-hover:text-primary transition-colors">
             {company.name}
           </h3>
           <div className="flex gap-2 flex-wrap">

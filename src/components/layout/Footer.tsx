@@ -11,7 +11,7 @@ export const Footer = () => {
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="inline-block mb-4">
-              <span className="text-xl font-serif font-semibold text-white">
+              <span className="text-xl font-serif font-medium text-white">
                 Ethos Ventures
               </span>
             </Link>
@@ -23,7 +23,7 @@ export const Footer = () => {
 
           {/* Links */}
           <div>
-            <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
+            <h3 className="text-sm font-medium text-white mb-4 uppercase tracking-wider">
               Company
             </h3>
             <ul className="space-y-3">
@@ -64,7 +64,7 @@ export const Footer = () => {
 
           {/* Social */}
           <div>
-            <h3 className="text-sm font-semibold text-white mb-4 uppercase tracking-wider">
+            <h3 className="text-sm font-medium text-white mb-4 uppercase tracking-wider">
               Connect
             </h3>
             <div className="flex gap-4">
