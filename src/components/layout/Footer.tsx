@@ -12,7 +12,7 @@ export const Footer = () => {
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="inline-block mb-4">
               <span className="text-xl font-serif font-medium text-white">
-                Ethos Ventures
+                Capittal Invest
               </span>
             </Link>
             <p className="text-sm text-neutral-300 max-w-md leading-relaxed">
@@ -93,7 +93,7 @@ export const Footer = () => {
         {/* Legal */}
         <div className="mt-12 pt-8 border-t border-primary-600">
           <p className="text-sm text-neutral-300">
-            © {currentYear} Ethos Ventures. All rights reserved.
+            © {currentYear} Capittal Invest. All rights reserved.
           </p>
         </div>
       </div>

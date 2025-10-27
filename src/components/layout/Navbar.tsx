@@ -38,7 +38,7 @@ export const Navbar = () => {
           {/* Logo (serif) */}
           <Link to="/" className="flex items-center">
             <span className="text-xl font-serif font-medium tracking-tight">
-              Ethos Ventures
+              Capittal Invest
             </span>
           </Link>
 

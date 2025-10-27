@@ -9,7 +9,7 @@ const Team = () => {
     <>
       <Meta
         title="Team"
-        description="Meet the Ethos Ventures team - experienced investors committed to building exceptional companies"
+        description="Meet the Capittal Invest team - experienced investors committed to building exceptional companies"
         canonicalUrl={`${window.location.origin}/team`}
       />
 

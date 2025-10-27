@@ -17,17 +17,17 @@ export const Meta = ({
 }: MetaProps) => {
   useEffect(() => {
     // Update title
-    document.title = `${title} | Ethos Ventures`;
+    document.title = `${title} | Capittal Invest`;
 
     // Update meta tags
     const metaTags = [
       { name: "description", content: description },
-      { property: "og:title", content: `${title} | Ethos Ventures` },
+      { property: "og:title", content: `${title} | Capittal Invest` },
       { property: "og:description", content: description },
       { property: "og:image", content: ogImage },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: `${title} | Ethos Ventures` },
+      { name: "twitter:title", content: `${title} | Capittal Invest` },
       { name: "twitter:description", content: description },
       { name: "twitter:image", content: ogImage },
     ];

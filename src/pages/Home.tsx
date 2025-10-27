@@ -27,7 +27,7 @@ const Home = () => {
     <>
       <Meta
         title="Home"
-        description="Ethos Ventures is a growth equity firm investing in exceptional companies across technology, consumer, education, and services sectors"
+        description="Capittal Invest is a growth equity firm investing in exceptional companies across technology, consumer, education, and services sectors"
         keywords="venture capital, growth equity, private equity, technology investment"
         canonicalUrl={window.location.origin}
       />

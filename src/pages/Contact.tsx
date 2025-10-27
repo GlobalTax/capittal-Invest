@@ -117,7 +117,7 @@ const Contact = () => {
     <>
       <Meta
         title="Contact"
-        description="Get in touch with the Ethos Ventures team to discuss investment opportunities"
+        description="Get in touch with the Capittal Invest team to discuss investment opportunities"
         canonicalUrl={`${window.location.origin}/contact`}
       />
 
@@ -128,7 +128,7 @@ const Contact = () => {
               <Overline className="mb-4">Contact</Overline>
               <h1 className="mb-6">Get in Touch</h1>
               <p className="text-lead">
-                Interested in learning more about Ethos Ventures or discussing a
+                Interested in learning more about Capittal Invest or discussing a
                 potential partnership? We'd love to hear from you.
               </p>
             </div>

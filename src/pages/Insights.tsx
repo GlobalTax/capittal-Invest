@@ -53,7 +53,7 @@ const Insights = () => {
     <>
       <Meta
         title="Insights"
-        description="Perspectives on investing, building, and scaling exceptional businesses from the Ethos Ventures team"
+        description="Perspectives on investing, building, and scaling exceptional businesses from the Capittal Invest team"
         canonicalUrl={`${window.location.origin}/insights`}
       />
 
