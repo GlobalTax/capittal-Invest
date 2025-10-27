@@ -21,6 +21,7 @@ import PortfolioDetail from "./pages/PortfolioDetail";
 import Team from "./pages/Team";
 import Insights from "./pages/Insights";
 import InsightDetail from "./pages/InsightDetail";
+import News from "./pages/News";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/team" element={<Layout><Team /></Layout>} />
             <Route path="/insights" element={<Layout><Insights /></Layout>} />
             <Route path="/insights/:slug" element={<Layout><InsightDetail /></Layout>} />
+            <Route path="/news" element={<Layout><News /></Layout>} />
             <Route path="/contact" element={<Layout><Contact /></Layout>} />
 
             {/* Admin routes */}
