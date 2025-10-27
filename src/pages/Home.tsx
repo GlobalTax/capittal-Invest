@@ -34,13 +34,14 @@ const Home = () => {
 
       <div className="min-h-screen">
         {/* Hero Section - Editorial Two Column */}
-        <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            {/* Left: Text */}
-            <div>
-              <h1 className="mb-6">
-                Investing in exceptional companies at inflection points
-              </h1>
+        <section className="bg-primary text-primary-foreground py-24 md:py-32">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Left: Text */}
+              <div>
+                <h1 className="hero-title mb-6">
+                  Investing in exceptional companies at inflection points
+                </h1>
               <p className="text-lead mb-8">
                 We partner with ambitious founders and management teams to build
                 category-defining businesses across technology, consumer, education,
@@ -50,11 +51,12 @@ const Home = () => {
                 <Button
                   asChild
                   size="lg"
+                  variant="secondary"
                   onClick={() => trackCTAClick("View Portfolio", "Hero")}
                 >
                   <Link to="/portfolio">View Portfolio</Link>
                 </Button>
-                <Button asChild size="lg" variant="outline">
+                <Button asChild size="lg" variant="outline" className="border-white/20 bg-white/10 text-white hover:bg-white/20">
                   <Link to="/strategy">Our Strategy</Link>
                 </Button>
               </div>
@@ -68,6 +70,7 @@ const Home = () => {
                 ratio="3:2"
                 className="border border-border"
               />
+            </div>
             </div>
           </div>
         </section>
