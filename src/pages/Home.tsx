@@ -4,9 +4,9 @@ import { Card } from "@/components/ui/card";
 import { Stat } from "@/components/ui/stat";
 import { LogoGrid } from "@/components/ui/logo-grid";
 import { SectionHeader, Overline } from "@/components/ui/typography";
-import { Image } from "@/components/ui/image";
 import { Meta } from "@/components/seo/Meta";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { PortfolioDashboard } from "@/components/home/PortfolioDashboard";
 import { insights, portfolioCompanies } from "@/data/mockData";
 import { ArrowRight } from "lucide-react";
 
@@ -62,14 +62,9 @@ const Home = () => {
               </div>
             </div>
             
-            {/* Right: Editorial Image */}
+            {/* Right: Interactive Dashboard */}
             <div>
-              <Image 
-                src="/hero-investment.jpg"
-                alt="Investment Growth - Venture Capital Excellence"
-                ratio="3:2"
-                className="border border-border"
-              />
+              <PortfolioDashboard />
             </div>
             </div>
           </div>
