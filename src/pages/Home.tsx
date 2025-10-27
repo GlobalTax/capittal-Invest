@@ -65,8 +65,8 @@ const Home = () => {
             {/* Right: Editorial Image */}
             <div>
               <Image 
-                src="/placeholder.svg" 
-                alt="Ethos Ventures" 
+                src="/hero-investment.jpg"
+                alt="Investment Growth - Venture Capital Excellence"
                 ratio="3:2"
                 className="border border-border"
               />
