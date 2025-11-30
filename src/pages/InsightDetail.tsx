@@ -8,6 +8,7 @@ import { usePreviewContent } from "@/hooks/usePreviewContent";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { insights } from "@/data/mockData";
+import { sanitizeHtml } from "@/lib/utils";
 
 const InsightDetail = () => {
   const { slug } = useParams();
@@ -156,7 +157,7 @@ const InsightDetail = () => {
               )}
               <div 
                 className="text-body space-y-6"
-                dangerouslySetInnerHTML={{ __html: insight.content }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(insight.content) }}
               />
             </div>
           </div>
