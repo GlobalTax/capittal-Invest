@@ -17,6 +17,15 @@ interface Slide {
   subtitle?: string;
 }
 
+// Animation patterns for each slide position
+const SLIDE_ANIMATIONS = [
+  "animate-ken-burns-right",  // Slide 1: pan right
+  "animate-ken-burns-left",   // Slide 2: pan left
+  "animate-ken-burns-up",     // Slide 3: ascend (mountain)
+  "animate-ken-burns-right",  // Slide 4: pan right
+  "animate-ken-burns-center", // Slide 5: zoom center (logo focus)
+];
+
 const fallbackSlides: Slide[] = [
   { image: slide01, title: "Décadas construyendo un legado..." },
   { image: slide02, title: "Llega el momento de decidir su futuro" },
@@ -131,11 +140,11 @@ export function VideoSlideshow({ autoPlay = true, onComplete }: VideoSlideshowPr
             transitionDuration: `${TRANSITION_DURATION}ms`,
           }}
         >
-          {/* Image with Ken Burns effect */}
+          {/* Image with Ken Burns effect - varied movement per slide */}
           <div
             className={cn(
               "absolute inset-0 bg-cover bg-center transition-transform",
-              index === currentSlide && isPlaying && "animate-ken-burns"
+              index === currentSlide && isPlaying && (SLIDE_ANIMATIONS[index % SLIDE_ANIMATIONS.length] || "animate-ken-burns-right")
             )}
             style={{
               backgroundImage: `url(${slide.image})`,
