@@ -373,6 +373,20 @@ All colors MUST be HSL.
   animation: ken-burns-center linear forwards;
 }
 
+/* Cloud drift animation for mountain slide */
+@keyframes cloud-drift {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-20%);
+  }
+}
+
+.animate-clouds {
+  animation: cloud-drift 30s linear infinite;
+}
+
 
 
 @layer base {
