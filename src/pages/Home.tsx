@@ -77,10 +77,12 @@ const Home = () => {
             {hero?.video_url ? (
               <video
                 src={hero.video_url}
+                poster={(hero as any).poster_image_url || hero.image_url || undefined}
                 autoPlay
                 muted
                 loop
                 playsInline
+                preload="auto"
                 className="w-full h-full object-cover"
               />
             ) : (
