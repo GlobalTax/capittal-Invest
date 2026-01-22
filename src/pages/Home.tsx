@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Meta } from "@/components/seo/Meta";
@@ -5,10 +6,14 @@ import { useAnalytics } from "@/hooks/useAnalytics";
 import { ArrowRight, Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
 
 const Home = () => {
   const { trackCTAClick } = useAnalytics();
-
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
   // Fetch real stats from database
   const { data: stats } = useQuery({
     queryKey: ['home-stats'],
@@ -83,7 +88,10 @@ const Home = () => {
             </h1>
             <button
               className="inline-flex items-center gap-3 text-white/90 hover:text-white transition-smooth group"
-              onClick={() => trackCTAClick("Watch Video", "Hero")}
+              onClick={() => {
+                setIsVideoOpen(true);
+                trackCTAClick("Watch Video", "Hero");
+              }}
             >
               <span className="w-16 h-16 rounded-full border-2 border-white/50 flex items-center justify-center group-hover:border-white group-hover:bg-white/10 transition-smooth">
                 <Play className="w-6 h-6 ml-1" fill="currentColor" />
@@ -93,6 +101,44 @@ const Home = () => {
               </span>
             </button>
           </div>
+
+          {/* Video Modal */}
+          <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
+            <DialogContent className="max-w-5xl p-0 bg-black border-none [&>button]:text-white [&>button]:hover:bg-white/20">
+              <div className="aspect-video w-full">
+                {/* Placeholder - Reemplazar con tu vídeo cuando esté listo */}
+                {/* 
+                  Para YouTube: 
+                  <iframe 
+                    src="https://youtube.com/embed/TU_VIDEO_ID?autoplay=1" 
+                    className="w-full h-full" 
+                    allow="autoplay; fullscreen" 
+                    allowFullScreen 
+                  />
+                  
+                  Para Vimeo:
+                  <iframe 
+                    src="https://player.vimeo.com/video/TU_VIDEO_ID?autoplay=1" 
+                    className="w-full h-full" 
+                    allow="autoplay; fullscreen" 
+                    allowFullScreen 
+                  />
+                  
+                  Para MP4:
+                  <video src="/videos/corporate.mp4" controls autoPlay className="w-full h-full" />
+                */}
+                <div className="w-full h-full flex items-center justify-center bg-neutral-900">
+                  <div className="text-center text-white/60">
+                    <div className="w-20 h-20 rounded-full border-2 border-white/30 flex items-center justify-center mx-auto mb-6">
+                      <Play className="w-8 h-8 ml-1 opacity-50" fill="currentColor" />
+                    </div>
+                    <p className="text-lg font-serif mb-2">Vídeo corporativo</p>
+                    <p className="text-sm text-white/40">Próximamente</p>
+                  </div>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           {/* Scroll indicator */}
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
