@@ -72,13 +72,24 @@ const Home = () => {
       <div className="min-h-screen bg-background">
         {/* Hero Section - Full Screen with Video/Image */}
         <section className="relative h-screen flex items-center justify-center overflow-hidden">
-          {/* Background Image */}
+          {/* Background - Video or Image */}
           <div className="absolute inset-0">
-            <img
-              src={hero?.image_url || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop"}
-              alt="Nature background"
-              className="w-full h-full object-cover"
-            />
+            {hero?.video_url ? (
+              <video
+                src={hero.video_url}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <img
+                src={hero?.image_url || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop"}
+                alt="Nature background"
+                className="w-full h-full object-cover"
+              />
+            )}
             <div className="absolute inset-0 bg-neutral-900/40" />
           </div>
 
