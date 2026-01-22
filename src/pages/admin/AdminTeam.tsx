@@ -15,7 +15,7 @@ export const AdminTeam = () => {
       const { data, error } = await supabase
         .from('team_members')
         .select('*')
-        .order('order_index', { ascending: true });
+        .order('display_order', { ascending: true });
       
       if (error) throw error;
       return data;
