@@ -19,14 +19,13 @@ interface TeamMember {
 }
 
 const TeamMemberSkeleton = () => (
-  <Card className="overflow-hidden">
-    <Skeleton className="aspect-square" />
-    <div className="p-6 space-y-3">
-      <Skeleton className="h-6 w-3/4" />
-      <Skeleton className="h-4 w-1/2" />
-      <Skeleton className="h-16 w-full" />
+  <div>
+    <Skeleton className="aspect-[4/5] w-full" />
+    <div className="pt-4 space-y-2">
+      <Skeleton className="h-5 w-3/4" />
+      <Skeleton className="h-3 w-1/2" />
     </div>
-  </Card>
+  </div>
 );
 
 const Team = () => {
@@ -83,41 +82,45 @@ const Team = () => {
             </div>
           ) : (
             Object.entries(groupedMembers || {}).map(([section, sectionMembers]) => (
-              <div key={section} className="mb-16 last:mb-0">
-                <h2 className="text-2xl font-serif mb-8 text-foreground">{section}</h2>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl">
+              <div key={section} className="mb-20 last:mb-0">
+                <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-8">{section}</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {sectionMembers.map((member) => (
-                    <Card key={member.id} className="overflow-hidden group">
-                      {/* Avatar with b/w → color hover */}
-                      <div className="aspect-square bg-muted grayscale group-hover:grayscale-0 transition-smooth overflow-hidden">
+                    <div key={member.id} className="group cursor-pointer">
+                      {/* Photo with zoom effect */}
+                      <div className="aspect-[4/5] overflow-hidden bg-muted mb-4">
                         {member.image_url ? (
                           <img
                             src={member.image_url}
                             alt={member.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-secondary">
-                            <span className="text-4xl font-serif text-muted-foreground">
+                          <div className="w-full h-full flex items-center justify-center bg-secondary grayscale group-hover:grayscale-0 transition-all duration-500">
+                            <span className="text-5xl font-serif text-muted-foreground">
                               {member.name.charAt(0)}
                             </span>
                           </div>
                         )}
                       </div>
                       
-                      <div className="p-6">
-                        <h3 className="text-xl font-serif mb-1 text-foreground">{member.name}</h3>
-                        <p className="text-sm text-accent font-medium mb-4">{member.position}</p>
-                        {member.bio && (
-                          <p className="text-sm text-muted-foreground leading-relaxed mb-6">{member.bio}</p>
-                        )}
+                      {/* Info - minimal style */}
+                      <div>
+                        <h3 className="text-base font-medium text-foreground group-hover:text-primary transition-colors">
+                          {member.name}
+                        </h3>
+                        <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mt-1">
+                          {member.position}
+                        </p>
                         
-                        <div className="flex items-center gap-4">
+                        {/* Icons - appear on hover */}
+                        <div className="flex items-center gap-3 mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           {member.email && (
                             <a
                               href={`mailto:${member.email}`}
-                              className="inline-flex items-center gap-2 text-sm text-primary hover:text-accent transition-smooth"
+                              className="text-muted-foreground hover:text-primary transition-colors"
                               aria-label={`Email ${member.name}`}
+                              onClick={(e) => e.stopPropagation()}
                             >
                               <Mail className="h-4 w-4" />
                             </a>
@@ -127,15 +130,16 @@ const Team = () => {
                               href={member.linkedin_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 text-sm text-primary hover:text-accent transition-smooth"
+                              className="text-muted-foreground hover:text-primary transition-colors"
                               aria-label={`${member.name}'s LinkedIn profile`}
+                              onClick={(e) => e.stopPropagation()}
                             >
                               <Linkedin className="h-4 w-4" />
                             </a>
                           )}
                         </div>
                       </div>
-                    </Card>
+                    </div>
                   ))}
                 </div>
               </div>
