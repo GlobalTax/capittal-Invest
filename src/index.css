@@ -316,18 +316,61 @@ All colors MUST be HSL.
   }
 }
 
-/* Ken Burns animation for slideshow */
-@keyframes ken-burns {
+/* Ken Burns animations for slideshow - varied movement directions */
+@keyframes ken-burns-right {
+  0% {
+    transform: scale(1.05) translateX(-2%);
+  }
+  100% {
+    transform: scale(1.15) translateX(2%);
+  }
+}
+
+@keyframes ken-burns-left {
+  0% {
+    transform: scale(1.05) translateX(2%);
+  }
+  100% {
+    transform: scale(1.15) translateX(-2%);
+  }
+}
+
+@keyframes ken-burns-up {
+  0% {
+    transform: scale(1.1) translateY(3%);
+  }
+  100% {
+    transform: scale(1.2) translateY(-3%);
+  }
+}
+
+@keyframes ken-burns-center {
   0% {
     transform: scale(1);
   }
   100% {
-    transform: scale(1.1);
+    transform: scale(1.12);
   }
 }
 
 .animate-ken-burns {
-  animation: ken-burns linear forwards;
+  animation: ken-burns-right linear forwards;
+}
+
+.animate-ken-burns-right {
+  animation: ken-burns-right linear forwards;
+}
+
+.animate-ken-burns-left {
+  animation: ken-burns-left linear forwards;
+}
+
+.animate-ken-burns-up {
+  animation: ken-burns-up linear forwards;
+}
+
+.animate-ken-burns-center {
+  animation: ken-burns-center linear forwards;
 }
 
 
