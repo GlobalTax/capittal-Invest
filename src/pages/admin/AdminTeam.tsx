@@ -1,3 +1,4 @@
+// Force rebuild - display_order fix v2
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
