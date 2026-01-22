@@ -39,6 +39,7 @@ import InvestorFunds from "./pages/investor/InvestorFunds";
 import InvestorDocuments from "./pages/investor/InvestorDocuments";
 import InvestorProfile from "./pages/investor/InvestorProfile";
 import InvestorNotifications from "./pages/investor/InvestorNotifications";
+import InvestorAcceptInvitation from "./pages/investor/InvestorAcceptInvitation";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +72,7 @@ const App = () => (
               <Route path="/investor/documents" element={<ProtectedInvestorRoute><InvestorLayout><InvestorDocuments /></InvestorLayout></ProtectedInvestorRoute>} />
               <Route path="/investor/profile" element={<ProtectedInvestorRoute><InvestorLayout><InvestorProfile /></InvestorLayout></ProtectedInvestorRoute>} />
               <Route path="/investor/notifications" element={<ProtectedInvestorRoute><InvestorLayout><InvestorNotifications /></InvestorLayout></ProtectedInvestorRoute>} />
+              <Route path="/investor/accept-invitation" element={<InvestorAcceptInvitation />} />
 
               {/* Admin routes */}
               <Route path="/admin/login" element={<AdminLogin />} />

@@ -94,7 +94,8 @@ const AdminInvestors = () => {
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 7); // 7 days expiry
 
-      const { error } = await supabase
+      // First create the investor record
+      const { data: newInvestor, error } = await supabase
         .from('investor_users')
         .insert({
           email: formData.email,
@@ -105,11 +106,23 @@ const AdminInvestors = () => {
           invited_at: new Date().toISOString(),
           invitation_token: token,
           invitation_expires_at: expiresAt.toISOString(),
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
       
-      // TODO: Send invitation email via edge function
+      // Send invitation email via edge function
+      const { error: emailError } = await supabase.functions.invoke('send-investor-invitation', {
+        body: { investor_user_id: newInvestor.id },
+      });
+
+      if (emailError) {
+        console.error('Error sending invitation email:', emailError);
+        // Don't throw - the investor was created, just email failed
+        toast.warning('Inversor creado, pero hubo un error al enviar el email');
+      }
+
       return { token };
     },
     onSuccess: () => {
@@ -124,6 +137,23 @@ const AdminInvestors = () => {
       } else {
         toast.error('Error al invitar al inversor');
       }
+    },
+  });
+
+  // Resend invitation mutation
+  const resendInvitation = useMutation({
+    mutationFn: async (investorId: string) => {
+      const { error } = await supabase.functions.invoke('send-investor-invitation', {
+        body: { investor_user_id: investorId },
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-investors'] });
+      toast.success('Invitación reenviada');
+    },
+    onError: () => {
+      toast.error('Error al reenviar la invitación');
     },
   });
 
@@ -414,7 +444,10 @@ const AdminInvestors = () => {
                             </DropdownMenuItem>
                           )}
                           {investor.status === 'pending' && (
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => resendInvitation.mutate(investor.id)}
+                              disabled={resendInvitation.isPending}
+                            >
                               <Mail className="h-4 w-4 mr-2" />
                               Reenviar Invitación
                             </DropdownMenuItem>
