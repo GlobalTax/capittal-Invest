@@ -7,7 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ImageUpload } from '@/components/admin/ImageUpload';
-import { Loader2, Save, RotateCcw } from 'lucide-react';
+import { VideoUpload } from '@/components/admin/VideoUpload';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Loader2, Save, RotateCcw, Image, Video } from 'lucide-react';
 
 interface HomeContent {
   id: string;
@@ -15,6 +17,7 @@ interface HomeContent {
   title: string | null;
   subtitle: string | null;
   image_url: string | null;
+  video_url: string | null;
   value: string | null;
   label: string | null;
   display_order: number;
@@ -25,6 +28,7 @@ interface HeroFormData {
   title: string;
   subtitle: string;
   image_url: string;
+  video_url: string;
 }
 
 interface KpiFormData {
@@ -40,9 +44,12 @@ export function AdminHome() {
     title: '',
     subtitle: '',
     image_url: '',
+    video_url: '',
   });
   const [kpis, setKpis] = useState<KpiFormData[]>([]);
   const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
+  const [heroVideoFile, setHeroVideoFile] = useState<File | null>(null);
+  const [heroMediaType, setHeroMediaType] = useState<'image' | 'video'>('image');
 
   // Fetch home content
   const { data: homeContent, isLoading } = useQuery({
@@ -67,7 +74,12 @@ export function AdminHome() {
           title: hero.title || '',
           subtitle: hero.subtitle || '',
           image_url: hero.image_url || '',
+          video_url: hero.video_url || '',
         });
+        // Set initial tab based on existing content
+        if (hero.video_url) {
+          setHeroMediaType('video');
+        }
       }
 
       const kpiItems = homeContent
@@ -102,14 +114,46 @@ export function AdminHome() {
     return data.publicUrl;
   };
 
+  // Upload video to storage
+  const uploadVideo = async (file: File): Promise<string> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `hero-video-${Date.now()}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('admin-videos')
+      .upload(filePath, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage
+      .from('admin-videos')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  };
+
   // Save hero mutation
   const saveHeroMutation = useMutation({
     mutationFn: async () => {
       let imageUrl = heroForm.image_url;
+      let videoUrl = heroForm.video_url;
 
       // Upload new image if selected
       if (heroImageFile) {
         imageUrl = await uploadImage(heroImageFile);
+      }
+
+      // Upload new video if selected
+      if (heroVideoFile) {
+        videoUrl = await uploadVideo(heroVideoFile);
+      }
+
+      // Clear the other media type if switching
+      if (heroMediaType === 'video') {
+        imageUrl = heroForm.image_url; // Keep image as fallback
+      } else {
+        videoUrl = ''; // Clear video when using image
       }
 
       const { error } = await supabase
@@ -118,6 +162,7 @@ export function AdminHome() {
           title: heroForm.title,
           subtitle: heroForm.subtitle,
           image_url: imageUrl,
+          video_url: heroMediaType === 'video' ? videoUrl : null,
           updated_at: new Date().toISOString(),
         })
         .eq('section', 'hero');
@@ -128,6 +173,7 @@ export function AdminHome() {
       queryClient.invalidateQueries({ queryKey: ['admin-home-content'] });
       queryClient.invalidateQueries({ queryKey: ['home-content'] });
       setHeroImageFile(null);
+      setHeroVideoFile(null);
       toast.success('Hero actualizado correctamente');
     },
     onError: (error) => {
@@ -161,17 +207,29 @@ export function AdminHome() {
     },
   });
 
-  const handleImageChange = (value: string | File | null) => {
-    if (value instanceof File) {
-      setHeroImageFile(value);
-      // Create preview URL
-      const previewUrl = URL.createObjectURL(value);
+  const handleImageChange = (url: string | null, file: File | null) => {
+    if (file) {
+      setHeroImageFile(file);
+      const previewUrl = URL.createObjectURL(file);
       setHeroForm(prev => ({ ...prev, image_url: previewUrl }));
-    } else if (typeof value === 'string') {
-      setHeroForm(prev => ({ ...prev, image_url: value }));
+    } else if (url) {
+      setHeroForm(prev => ({ ...prev, image_url: url }));
     } else {
       setHeroImageFile(null);
       setHeroForm(prev => ({ ...prev, image_url: '' }));
+    }
+  };
+
+  const handleVideoChange = (url: string | null, file: File | null) => {
+    if (file) {
+      setHeroVideoFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setHeroForm(prev => ({ ...prev, video_url: previewUrl }));
+    } else if (url) {
+      setHeroForm(prev => ({ ...prev, video_url: url }));
+    } else {
+      setHeroVideoFile(null);
+      setHeroForm(prev => ({ ...prev, video_url: '' }));
     }
   };
 
@@ -182,8 +240,11 @@ export function AdminHome() {
         title: hero.title || '',
         subtitle: hero.subtitle || '',
         image_url: hero.image_url || '',
+        video_url: hero.video_url || '',
       });
       setHeroImageFile(null);
+      setHeroVideoFile(null);
+      setHeroMediaType(hero.video_url ? 'video' : 'image');
     }
   };
 
@@ -232,7 +293,7 @@ export function AdminHome() {
         <CardHeader>
           <CardTitle>Hero Principal</CardTitle>
           <CardDescription>
-            Edita el título, imagen de fondo y texto del botón de vídeo.
+            Edita el título, fondo (imagen o video) y texto del botón de vídeo.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -260,12 +321,34 @@ export function AdminHome() {
             </div>
 
             <div className="space-y-2">
-              <Label>Imagen de Fondo</Label>
-              <ImageUpload
-                value={heroForm.image_url}
-                onChange={handleImageChange}
-                className="h-48"
-              />
+              <Label>Fondo del Hero</Label>
+              <Tabs value={heroMediaType} onValueChange={(v) => setHeroMediaType(v as 'image' | 'video')}>
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="image" className="flex items-center gap-2">
+                    <Image className="h-4 w-4" />
+                    Imagen
+                  </TabsTrigger>
+                  <TabsTrigger value="video" className="flex items-center gap-2">
+                    <Video className="h-4 w-4" />
+                    Video
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="image" className="mt-4">
+                  <ImageUpload
+                    value={heroForm.image_url}
+                    onChange={handleImageChange}
+                  />
+                </TabsContent>
+                <TabsContent value="video" className="mt-4">
+                  <VideoUpload
+                    value={heroForm.video_url}
+                    onChange={handleVideoChange}
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    El video se reproducirá automáticamente en bucle, sin sonido.
+                  </p>
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
 
