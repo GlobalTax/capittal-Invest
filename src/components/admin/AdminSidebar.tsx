@@ -3,12 +3,11 @@ import { useAdminAuth } from '@/hooks/useAdminAuth';
 import {
   LayoutDashboard,
   Briefcase,
-  TrendingUp,
-  LogOut as ExitIcon,
   Users,
   Newspaper,
   UserCog,
   Home,
+  Film,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +16,7 @@ import { Separator } from '@/components/ui/separator';
 const navItems = [
   { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
   { path: '/admin/portfolio', icon: Briefcase, label: 'Portfolio Companies' },
+  { path: '/admin/video', icon: Film, label: 'Video Slideshow' },
   { path: '/admin/news', icon: Newspaper, label: 'News Articles' },
   { path: '/admin/team', icon: Users, label: 'Team Members' },
 ];
