@@ -10,6 +10,7 @@ import {
   Dialog,
   DialogContent,
 } from "@/components/ui/dialog";
+import { VideoSlideshow } from "@/components/home/VideoSlideshow";
 
 const Home = () => {
   const { trackCTAClick } = useAnalytics();
@@ -104,38 +105,9 @@ const Home = () => {
 
           {/* Video Modal */}
           <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
-            <DialogContent className="max-w-5xl p-0 bg-black border-none [&>button]:text-white [&>button]:hover:bg-white/20">
+            <DialogContent className="max-w-5xl p-0 bg-black border-none [&>button]:text-white [&>button]:hover:bg-white/20 [&>button]:z-50">
               <div className="aspect-video w-full">
-                {/* Placeholder - Reemplazar con tu vídeo cuando esté listo */}
-                {/* 
-                  Para YouTube: 
-                  <iframe 
-                    src="https://youtube.com/embed/TU_VIDEO_ID?autoplay=1" 
-                    className="w-full h-full" 
-                    allow="autoplay; fullscreen" 
-                    allowFullScreen 
-                  />
-                  
-                  Para Vimeo:
-                  <iframe 
-                    src="https://player.vimeo.com/video/TU_VIDEO_ID?autoplay=1" 
-                    className="w-full h-full" 
-                    allow="autoplay; fullscreen" 
-                    allowFullScreen 
-                  />
-                  
-                  Para MP4:
-                  <video src="/videos/corporate.mp4" controls autoPlay className="w-full h-full" />
-                */}
-                <div className="w-full h-full flex items-center justify-center bg-neutral-900">
-                  <div className="text-center text-white/60">
-                    <div className="w-20 h-20 rounded-full border-2 border-white/30 flex items-center justify-center mx-auto mb-6">
-                      <Play className="w-8 h-8 ml-1 opacity-50" fill="currentColor" />
-                    </div>
-                    <p className="text-lg font-serif mb-2">Vídeo corporativo</p>
-                    <p className="text-sm text-white/40">Próximamente</p>
-                  </div>
-                </div>
+                <VideoSlideshow autoPlay onComplete={() => {}} />
               </div>
             </DialogContent>
           </Dialog>
