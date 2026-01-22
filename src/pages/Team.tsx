@@ -84,7 +84,7 @@ const Team = () => {
             Object.entries(groupedMembers || {}).map(([section, sectionMembers]) => (
               <div key={section} className="mb-20 last:mb-0">
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-8">{section}</p>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
                   {sectionMembers.map((member) => (
                     <div key={member.id} className="group cursor-pointer">
                       {/* Photo with zoom effect */}
