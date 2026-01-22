@@ -164,7 +164,7 @@ const PortfolioDetail = () => {
                   {company.metrics.revenue && (
                     <Card className="p-6 text-center bg-muted">
                       <div className="text-sm text-muted-foreground mb-2">Revenue</div>
-                      <div className="text-3xl font-bold text-primary">
+                      <div className="text-3xl font-normal text-primary">
                         {company.metrics.revenue}
                       </div>
                     </Card>
@@ -172,7 +172,7 @@ const PortfolioDetail = () => {
                   {company.metrics.employees && (
                     <Card className="p-6 text-center bg-muted">
                       <div className="text-sm text-muted-foreground mb-2">Employees</div>
-                      <div className="text-3xl font-bold text-primary">
+                      <div className="text-3xl font-normal text-primary">
                         {company.metrics.employees}
                       </div>
                     </Card>
@@ -180,7 +180,7 @@ const PortfolioDetail = () => {
                   {company.metrics.valuation && (
                     <Card className="p-6 text-center bg-muted">
                       <div className="text-sm text-muted-foreground mb-2">Valuation</div>
-                      <div className="text-3xl font-bold text-primary">
+                      <div className="text-3xl font-normal text-primary">
                         {company.metrics.valuation}
                       </div>
                     </Card>
@@ -197,7 +197,7 @@ const PortfolioDetail = () => {
                   {company.timeline.map((item: any, idx: number) => (
                     <div key={idx} className="relative">
                       <div className="absolute -left-[33px] w-3 h-3 rounded-full bg-primary" />
-                      <div className="font-semibold text-primary mb-1">
+                      <div className="font-normal text-primary mb-1">
                         {item.date}
                       </div>
                       <div className="text-muted-foreground">{item.event}</div>

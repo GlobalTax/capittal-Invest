@@ -100,7 +100,7 @@ const KPICard = ({ value, label, icon }: { value: string; label: string; icon: s
       )}
       <AnimatedValue 
         value={value} 
-        className="block text-4xl md:text-5xl font-bold text-foreground mb-2"
+        className="block text-4xl md:text-5xl font-normal text-foreground mb-2"
       />
       <p className="text-muted-foreground text-sm">{label}</p>
     </div>
@@ -123,7 +123,7 @@ const StrategyBlock = ({ title, subtitle, content, icon }: {
           <Icon className="w-7 h-7 text-primary" />
         </div>
         <div>
-          <h3 className="text-xl font-semibold text-foreground mb-2">{title}</h3>
+          <h3 className="text-xl font-normal text-foreground mb-2">{title}</h3>
           <p className="text-muted-foreground mb-3">{subtitle}</p>
           {content && <p className="text-sm text-muted-foreground/80">{content}</p>}
         </div>
@@ -148,9 +148,9 @@ const ValueMetric = ({ value, label, description, icon }: {
       </div>
       <AnimatedValue 
         value={value} 
-        className="block text-3xl md:text-4xl font-bold text-foreground mb-2"
+        className="block text-3xl md:text-4xl font-normal text-foreground mb-2"
       />
-      <p className="font-medium text-foreground mb-1">{label}</p>
+      <p className="font-normal text-foreground mb-1">{label}</p>
       {description && <p className="text-sm text-muted-foreground">{description}</p>}
     </div>
   );
@@ -205,7 +205,7 @@ const About = () => {
       <section className="pt-32 pb-20 bg-gradient-to-b from-muted/50 to-background">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-normal text-foreground mb-6 leading-tight">
               {hero?.title || 'Creando valor a través de asociaciones estratégicas'}
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -238,7 +238,7 @@ const About = () => {
         <section className="py-20 bg-muted/30">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              <h2 className="text-3xl md:text-4xl font-normal text-foreground mb-4">
                 Nuestra Estrategia de Inversión
               </h2>
               <p className="text-muted-foreground text-lg">
@@ -265,7 +265,7 @@ const About = () => {
         <section className="py-20 bg-foreground text-background">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <h2 className="text-3xl md:text-4xl font-normal mb-4">
                 Nuestro Impacto
               </h2>
               <p className="text-background/70 text-lg">
@@ -277,9 +277,9 @@ const About = () => {
                 <div key={metric.id} className="text-center">
                   <AnimatedValue 
                     value={metric.value || '0'} 
-                    className="block text-4xl md:text-5xl font-bold text-background mb-2"
+                    className="block text-4xl md:text-5xl font-normal text-background mb-2"
                   />
-                  <p className="font-medium text-background mb-1">{metric.label}</p>
+                  <p className="font-normal text-background mb-1">{metric.label}</p>
                   {metric.content && (
                     <p className="text-sm text-background/60">{metric.content}</p>
                   )}
@@ -300,7 +300,7 @@ const About = () => {
                   <Leaf className="w-10 h-10 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-foreground mb-4">{esg.title}</h2>
+                  <h2 className="text-3xl font-normal text-foreground mb-4">{esg.title}</h2>
                   <p className="text-lg text-muted-foreground mb-4">{esg.subtitle}</p>
                   <p className="text-muted-foreground">{esg.content}</p>
                 </div>
@@ -314,7 +314,7 @@ const About = () => {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-foreground mb-4">
+            <h2 className="text-3xl font-normal text-foreground mb-4">
               Conoce a Nuestro Equipo
             </h2>
             <p className="text-muted-foreground mb-8">

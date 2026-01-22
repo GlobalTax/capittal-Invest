@@ -42,7 +42,7 @@ export default function News() {
       <section className="relative overflow-hidden bg-background py-24">
         <div className="container relative z-10">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight mb-6">
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight mb-6">
               Latest News
             </h1>
             <p className="text-lg text-body leading-relaxed">
@@ -129,7 +129,7 @@ export default function News() {
                             />
                           )}
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium truncate">
+                            <p className="text-sm font-normal truncate">
                               {article.author_name}
                             </p>
                             <p className="text-xs text-subtle">
