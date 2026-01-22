@@ -2472,6 +2472,71 @@ export type Database = {
           },
         ]
       }
+      campaign_cost_history: {
+        Row: {
+          amount: number | null
+          campaign_cost_id: string
+          campaign_name: string | null
+          change_type: string | null
+          changed_by: string | null
+          channel: string | null
+          cost_per_result: number | null
+          daily_budget: number | null
+          delivery_status: string | null
+          id: string
+          internal_status: string | null
+          monthly_budget: number | null
+          notes: string | null
+          recorded_at: string
+          results: number | null
+          target_cpl: number | null
+        }
+        Insert: {
+          amount?: number | null
+          campaign_cost_id: string
+          campaign_name?: string | null
+          change_type?: string | null
+          changed_by?: string | null
+          channel?: string | null
+          cost_per_result?: number | null
+          daily_budget?: number | null
+          delivery_status?: string | null
+          id?: string
+          internal_status?: string | null
+          monthly_budget?: number | null
+          notes?: string | null
+          recorded_at?: string
+          results?: number | null
+          target_cpl?: number | null
+        }
+        Update: {
+          amount?: number | null
+          campaign_cost_id?: string
+          campaign_name?: string | null
+          change_type?: string | null
+          changed_by?: string | null
+          channel?: string | null
+          cost_per_result?: number | null
+          daily_budget?: number | null
+          delivery_status?: string | null
+          id?: string
+          internal_status?: string | null
+          monthly_budget?: number | null
+          notes?: string | null
+          recorded_at?: string
+          results?: number | null
+          target_cpl?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_cost_history_campaign_cost_id_fkey"
+            columns: ["campaign_cost_id"]
+            isOneToOne: false
+            referencedRelation: "campaign_costs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaign_costs: {
         Row: {
           amount: number
@@ -7053,6 +7118,48 @@ export type Database = {
           text_color?: string | null
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      home_content: {
+        Row: {
+          created_at: string | null
+          display_order: number | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          label: string | null
+          section: string
+          subtitle: string | null
+          title: string | null
+          updated_at: string | null
+          value: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          label?: string | null
+          section: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+          value?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          label?: string | null
+          section?: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+          value?: string | null
         }
         Relationships: []
       }
