@@ -9,12 +9,12 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
-  const { user, isLoading, isAdminLoading, adminUser } = useAuth();
+  const { user, isLoading, isAdminLoading, adminChecked } = useAuth();
   const { isAdmin, hasRole } = useAdminAuth();
 
   // Show loading while auth state is being determined
-  // Also show loading if we have a user but adminUser hasn't loaded yet (race condition fix)
-  if (isLoading || isAdminLoading || (user && adminUser === null && !isLoading)) {
+  // Use adminChecked flag to know when verification is complete (prevents infinite loop)
+  if (isLoading || isAdminLoading || (user && !adminChecked)) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
