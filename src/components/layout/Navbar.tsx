@@ -5,76 +5,105 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  { name: "Strategy", href: "/strategy" },
-  { name: "Sectors", href: "/sectors" },
+  { name: "La Firma", href: "/team" },
+  { name: "Estrategias", href: "/strategy" },
   { name: "Portfolio", href: "/portfolio" },
-  { name: "Team", href: "/team" },
-  { name: "News", href: "/news" },
-  { name: "Insights", href: "/insights" },
+  { name: "Sostenibilidad", href: "/sectors" },
+  { name: "Noticias", href: "/news" },
 ];
 
 export const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isHeroSection, setIsHeroSection] = useState(true);
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
+  const isHomePage = location.pathname === "/";
 
-  // Detect scroll for blur effect
+  // Detect scroll for blur effect and hero section
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const scrollY = window.scrollY;
+      setScrolled(scrollY > 20);
+      // Check if we're past the hero section (viewport height)
+      setIsHeroSection(scrollY < window.innerHeight - 100);
     };
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Reset hero section state on route change
+  useEffect(() => {
+    setIsHeroSection(isHomePage);
+  }, [location.pathname, isHomePage]);
+
+  const shouldBeTransparent = isHomePage && isHeroSection && !scrolled;
+
   return (
     <nav className={cn(
-      "sticky top-0 z-50 w-full border-b border-border bg-background transition-smooth",
-      scrolled && "backdrop-blur-sm bg-background/95"
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+      shouldBeTransparent 
+        ? "bg-transparent border-transparent" 
+        : "bg-background/95 backdrop-blur-md border-b border-border"
     )}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo (serif) */}
+        <div className="flex h-20 items-center justify-between">
+          {/* Logo */}
           <Link to="/" className="flex items-center">
-            <span className="text-xl font-serif font-medium tracking-tight">
+            <span className={cn(
+              "text-xl font-serif font-medium tracking-tight transition-colors duration-300",
+              shouldBeTransparent ? "text-white" : "text-foreground"
+            )}>
               Capittal Invest
             </span>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex md:items-center md:gap-8">
+          <div className="hidden md:flex md:items-center md:gap-10">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
                 className={cn(
-                  "text-sm font-medium transition-smooth relative",
-                  isActive(item.href)
-                    ? "text-primary after:absolute after:bottom-[-20px] after:left-0 after:right-0 after:h-[2px] after:bg-accent"
-                    : "text-body hover:text-primary"
+                  "text-sm font-medium transition-all duration-300 relative py-2",
+                  shouldBeTransparent
+                    ? "text-white/80 hover:text-white"
+                    : isActive(item.href)
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {item.name}
               </Link>
             ))}
-            <Button asChild size="sm">
-              <Link to="/contact">Contact</Link>
+            <Button 
+              asChild 
+              variant={shouldBeTransparent ? "outline" : "default"}
+              size="sm"
+              className={cn(
+                "rounded-none transition-all duration-300",
+                shouldBeTransparent 
+                  ? "border-white/50 text-white hover:bg-white hover:text-foreground bg-transparent" 
+                  : ""
+              )}
+            >
+              <Link to="/contact">Contacto</Link>
             </Button>
           </div>
 
           {/* Mobile toggle */}
           <button
             type="button"
-            className="md:hidden"
+            className="md:hidden p-2"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
+              <X className={cn("h-6 w-6", shouldBeTransparent ? "text-white" : "text-foreground")} />
             ) : (
-              <Menu className="h-6 w-6" />
+              <Menu className={cn("h-6 w-6", shouldBeTransparent ? "text-white" : "text-foreground")} />
             )}
           </button>
         </div>
@@ -82,27 +111,27 @@ export const Navbar = () => {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-border bg-background">
-          <div className="space-y-1 px-4 pb-4 pt-2">
+        <div className="md:hidden bg-background border-t border-border">
+          <div className="space-y-1 px-4 pb-6 pt-4">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={cn(
-                  "block px-4 py-3 text-base font-medium rounded transition-smooth",
+                  "block px-4 py-3 text-base font-medium transition-smooth",
                   isActive(item.href)
-                    ? "text-primary bg-neutral-100"
-                    : "text-body hover:bg-neutral-100"
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {item.name}
               </Link>
             ))}
-            <div className="px-4 pt-2">
-              <Button asChild size="sm" className="w-full">
+            <div className="px-4 pt-4">
+              <Button asChild className="w-full rounded-none">
                 <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>
-                  Contact
+                  Contacto
                 </Link>
               </Button>
             </div>
