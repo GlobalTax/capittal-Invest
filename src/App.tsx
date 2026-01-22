@@ -13,6 +13,7 @@ import { AdminUsers } from "@/pages/admin/AdminUsers";
 import { AdminPortfolio } from "@/pages/admin/AdminPortfolio";
 import { AdminNews } from "@/pages/admin/AdminNews";
 import { AdminTeam } from "@/pages/admin/AdminTeam";
+import { AdminVideoSlides } from "@/pages/admin/AdminVideoSlides";
 import Home from "./pages/Home";
 import Strategy from "./pages/Strategy";
 import Sectors from "./pages/Sectors";
@@ -58,9 +59,10 @@ const App = () => (
               }
             >
               <Route index element={<AdminDashboard />} />
-            <Route path="portfolio" element={<AdminPortfolio />} />
-            <Route path="news" element={<AdminNews />} />
-            <Route path="team" element={<AdminTeam />} />
+              <Route path="portfolio" element={<AdminPortfolio />} />
+              <Route path="video" element={<AdminVideoSlides />} />
+              <Route path="news" element={<AdminNews />} />
+              <Route path="team" element={<AdminTeam />} />
             <Route
               path="users" 
               element={

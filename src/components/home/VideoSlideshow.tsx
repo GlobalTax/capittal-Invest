@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
-import { Pause, Play, RotateCcw } from "lucide-react";
+import { Pause, Play, RotateCcw, Loader2 } from "lucide-react";
 
-// Import slideshow images
+// Fallback images for when database is empty or loading
 import slide01 from "@/assets/slideshow/slide-01-legacy.jpg";
 import slide02 from "@/assets/slideshow/slide-02-transition.jpg";
 import slide03 from "@/assets/slideshow/slide-03-newbeginning.jpg";
@@ -15,32 +17,16 @@ interface Slide {
   subtitle?: string;
 }
 
-const slides: Slide[] = [
-  {
-    image: slide01,
-    title: "Décadas construyendo un legado...",
-  },
-  {
-    image: slide02,
-    title: "Llega el momento de decidir su futuro",
-  },
-  {
-    image: slide03,
-    title: "Una nueva historia comienza",
-  },
-  {
-    image: slide04,
-    title: "Con el socio adecuado a tu lado",
-  },
-  {
-    image: slide05,
-    title: "Ethos Capital",
-    subtitle: "Inversión con propósito",
-  },
+const fallbackSlides: Slide[] = [
+  { image: slide01, title: "Décadas construyendo un legado..." },
+  { image: slide02, title: "Llega el momento de decidir su futuro" },
+  { image: slide03, title: "Una nueva historia comienza" },
+  { image: slide04, title: "Con el socio adecuado a tu lado" },
+  { image: slide05, title: "Ethos Capital", subtitle: "Inversión con propósito" },
 ];
 
-const SLIDE_DURATION = 5000; // 5 seconds per slide
-const TRANSITION_DURATION = 1000; // 1 second fade transition
+const SLIDE_DURATION = 5000;
+const TRANSITION_DURATION = 1000;
 
 interface VideoSlideshowProps {
   autoPlay?: boolean;
@@ -49,8 +35,38 @@ interface VideoSlideshowProps {
 
 export function VideoSlideshow({ autoPlay = true, onComplete }: VideoSlideshowProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(autoPlay);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  // Fetch slides from database
+  const { data: dbSlides, isLoading } = useQuery({
+    queryKey: ['video-slides'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('video_slides')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order');
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Transform DB slides to component format
+  const slides: Slide[] = dbSlides && dbSlides.length > 0
+    ? dbSlides.map(s => ({
+        image: s.image_url,
+        title: s.title,
+        subtitle: s.subtitle || undefined,
+      }))
+    : fallbackSlides;
+
+  // Start playing when loaded
+  useEffect(() => {
+    if (!isLoading && autoPlay) {
+      setIsPlaying(true);
+    }
+  }, [isLoading, autoPlay]);
 
   const nextSlide = useCallback(() => {
     if (currentSlide < slides.length - 1) {
@@ -60,7 +76,7 @@ export function VideoSlideshow({ autoPlay = true, onComplete }: VideoSlideshowPr
       setIsPlaying(false);
       onComplete?.();
     }
-  }, [currentSlide, onComplete]);
+  }, [currentSlide, slides.length, onComplete]);
 
   const restart = useCallback(() => {
     setCurrentSlide(0);
@@ -93,8 +109,16 @@ export function VideoSlideshow({ autoPlay = true, onComplete }: VideoSlideshowPr
   const isLastSlide = currentSlide === slides.length - 1;
   const isComplete = isLastSlide && !isPlaying && progress === 0;
 
+  if (isLoading) {
+    return (
+      <div className="relative w-full h-full bg-black flex items-center justify-center min-h-[400px]">
+        <Loader2 className="w-8 h-8 text-white animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div className="relative w-full h-full bg-black overflow-hidden">
+    <div className="relative w-full h-full bg-black overflow-hidden min-h-[400px]">
       {/* Slides */}
       {slides.map((slide, index) => (
         <div
