@@ -104,17 +104,17 @@ const Team = () => {
                         )}
                       </div>
                       
-                      {/* Info - minimal style */}
-                      <div>
+                      {/* Info - minimal style with fixed height for alignment */}
+                      <div className="min-h-[72px]">
                         <h3 className="text-base font-medium text-foreground group-hover:text-primary transition-colors">
                           {member.name}
                         </h3>
-                        <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mt-1">
+                        <p className="text-xs uppercase tracking-[0.15em] text-muted-foreground mt-1 line-clamp-2">
                           {member.position}
                         </p>
                         
-                        {/* Icons - appear on hover */}
-                        <div className="flex items-center gap-3 mt-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        {/* Icons - appear on hover with fixed height */}
+                        <div className="h-8 flex items-center gap-3 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           {member.email && (
                             <a
                               href={`mailto:${member.email}`}
