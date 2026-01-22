@@ -113,7 +113,7 @@ All colors MUST be HSL.
     --chart-4: 142 76% 36%;
     --chart-5: 328 96% 61%;
     --sidebar: 0 0% 98%;
-    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'General Sans', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'General Sans', system-ui, sans-serif;
     --font-mono: 'Roboto Mono', ui-monospace, monospace;
     --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);

@@ -20,7 +20,7 @@ export default {
 				'sans-serif'
 			],
 			sans: [
-				'Plus Jakarta Sans',
+				'General Sans',
 				'system-ui',
 				'sans-serif'
 			],
