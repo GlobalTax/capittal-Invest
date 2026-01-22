@@ -16,6 +16,7 @@ interface AdminUser {
 interface AuthContextType {
   user: User | null;
   adminUser: AdminUser | null;
+  adminChecked: boolean;
   isAdmin: boolean;
   isLoading: boolean;
   isAdminLoading: boolean;
@@ -28,6 +29,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
+  const [adminChecked, setAdminChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdminLoading, setIsAdminLoading] = useState(false);
 
@@ -42,9 +44,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (!error && data) {
       const adminUserData = data as AdminUser;
       setAdminUser(adminUserData);
+      setAdminChecked(true);
       return adminUserData;
     } else {
       setAdminUser(null);
+      setAdminChecked(true);
       return null;
     }
   };
@@ -55,6 +59,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchAdminUser(session.user.id);
+      } else {
+        setAdminChecked(true);
       }
       setIsLoading(false);
     });
@@ -68,6 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         fetchAdminUser(session.user.id);
       } else {
         setAdminUser(null);
+        setAdminChecked(true);
       }
     });
 
@@ -94,6 +101,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           // Update state synchronously before returning
           setUser(data.session.user);
           setAdminUser(data.adminUser);
+          setAdminChecked(true);
           
           return { user: data.session.user, adminUser: data.adminUser };
         }
@@ -158,6 +166,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Update state synchronously before returning
       setUser(authData.user);
       setAdminUser(adminData);
+      setAdminChecked(true);
       
       return { user: authData.user, adminUser: adminData };
     } catch (error) {
@@ -171,6 +180,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     setAdminUser(null);
+    setAdminChecked(false);
   };
 
   return (
@@ -178,6 +188,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         user,
         adminUser,
+        adminChecked,
         isAdmin: !!adminUser,
         isLoading,
         isAdminLoading,
