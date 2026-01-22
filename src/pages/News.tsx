@@ -42,7 +42,7 @@ export default function News() {
       <section className="relative overflow-hidden bg-background py-24">
         <div className="container relative z-10">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight mb-6">
+            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight mb-6">
               Latest News
             </h1>
             <p className="text-lg text-body leading-relaxed">
@@ -110,7 +110,7 @@ export default function News() {
                           </span>
                         </div>
                         
-                        <h3 className="font-serif text-xl mb-3 group-hover:text-primary transition-colors">
+                        <h3 className="font-display text-xl mb-3 group-hover:text-primary transition-colors">
                           {article.title}
                         </h3>
                         

@@ -83,7 +83,7 @@ const Team = () => {
           <div className="max-w-4xl">
             <Overline className="mb-4">Equipo</Overline>
             <h1 className="mb-6">
-              Juntos <em className="font-serif not-italic">sumamos</em>
+              Juntos <em className="font-display not-italic">sumamos</em>
             </h1>
             <p className="text-lead">
               Un equipo multidisciplinar de profesionales con amplia experiencia en M&A,
@@ -158,7 +158,7 @@ const Team = () => {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-secondary">
-                            <span className="text-5xl font-serif text-muted-foreground">
+                            <span className="text-5xl font-display text-muted-foreground">
                               {member.name.charAt(0)}
                             </span>
                           </div>
@@ -215,7 +215,7 @@ const Team = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-secondary">
-                      <span className="text-6xl font-serif text-muted-foreground">
+                      <span className="text-6xl font-display text-muted-foreground">
                         {selectedMember.name.charAt(0)}
                       </span>
                     </div>

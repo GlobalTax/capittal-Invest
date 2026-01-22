@@ -92,7 +92,7 @@ const Strategy = () => {
             {levers.map((lever) => (
               <Card key={lever.title} className="p-8">
                 <lever.icon className="h-10 w-10 text-accent mb-6" strokeWidth={1.5} />
-                <h3 className="text-xl font-serif mb-3">{lever.title}</h3>
+                <h3 className="text-xl font-display mb-3">{lever.title}</h3>
                 <p className="text-body leading-relaxed">{lever.description}</p>
               </Card>
             ))}
