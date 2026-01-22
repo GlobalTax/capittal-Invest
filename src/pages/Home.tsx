@@ -84,7 +84,7 @@ const Home = () => {
 
           {/* Content */}
           <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-normal text-white mb-8 tracking-tight leading-none">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-normal text-white mb-8 tracking-tight leading-none">
               {hero?.title || 'Partners by nature'}
             </h1>
             <button
@@ -125,7 +125,7 @@ const Home = () => {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <p className="text-overline-miura mb-4">La Firma</p>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-normal text-foreground mb-8 leading-tight">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-normal text-foreground mb-8 leading-tight">
                 Inversiones con propósito para desarrollar compañías perdurables
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-12 max-w-3xl">
@@ -138,7 +138,7 @@ const Home = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
                 {kpis.map((kpi) => (
                   <div key={kpi.label} className="text-center md:text-left">
-                    <div className="text-4xl md:text-5xl lg:text-6xl font-serif font-normal text-foreground mb-2">
+                    <div className="text-4xl md:text-5xl lg:text-6xl font-display font-normal text-foreground mb-2">
                       {kpi.value}
                     </div>
                     <div className="text-sm text-muted-foreground uppercase tracking-wider">
@@ -169,7 +169,7 @@ const Home = () => {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mb-16">
               <p className="text-overline-miura mb-4">Estrategias</p>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-normal text-foreground mb-8 leading-tight">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-normal text-foreground mb-8 leading-tight">
                 Estrategia de inversión múltiple para apoyar compañías referentes
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed max-w-3xl">
@@ -193,7 +193,7 @@ const Home = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="text-xl md:text-2xl font-serif text-white">
+                    <h3 className="text-xl md:text-2xl font-display text-white">
                       {strategy.title}
                     </h3>
                   </div>
@@ -222,7 +222,7 @@ const Home = () => {
             <div className="flex items-center bg-background p-8 md:p-16 lg:p-24">
               <div>
                 <p className="text-overline-miura mb-4">Sostenibilidad</p>
-                <h2 className="text-3xl md:text-4xl font-serif font-normal text-foreground mb-6 leading-tight">
+                <h2 className="text-3xl md:text-4xl font-display font-normal text-foreground mb-6 leading-tight">
                   Inversión responsable para generar impacto a largo plazo
                 </h2>
                 <p className="text-lg text-muted-foreground leading-relaxed mb-8">
@@ -270,7 +270,7 @@ const Home = () => {
             <div className="flex items-center bg-neutral-100 p-8 md:p-16 lg:p-24 order-1 md:order-2">
               <div>
                 <p className="text-overline-miura mb-4">Equipo</p>
-                <h2 className="text-3xl md:text-4xl font-serif font-normal text-foreground mb-6 leading-tight">
+                <h2 className="text-3xl md:text-4xl font-display font-normal text-foreground mb-6 leading-tight">
                   Personas comprometidas con Personas
                 </h2>
                 <p className="text-lg text-muted-foreground leading-relaxed mb-8">
@@ -298,7 +298,7 @@ const Home = () => {
         <section className="py-24 md:py-32 bg-background">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-12">
-              <h2 className="text-3xl md:text-4xl font-serif font-normal text-foreground">
+              <h2 className="text-3xl md:text-4xl font-display font-normal text-foreground">
                 Últimas noticias
               </h2>
               <Button
@@ -326,7 +326,7 @@ const Home = () => {
                       <p className="text-sm text-muted-foreground mb-2">
                         {new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}
                       </p>
-                      <h3 className="text-xl font-serif text-foreground group-hover:text-muted-foreground transition-smooth">
+                      <h3 className="text-xl font-display text-foreground group-hover:text-muted-foreground transition-smooth">
                         Nueva inversión estratégica en el sector tecnológico
                       </h3>
                     </div>

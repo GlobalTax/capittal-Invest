@@ -183,7 +183,7 @@ export function VideoSlideshow({ autoPlay = true, onComplete }: VideoSlideshowPr
                 transitionDelay: index === currentSlide ? "300ms" : "0ms",
               }}
             >
-              <h2 className="text-3xl md:text-5xl lg:text-6xl font-serif text-white mb-4 leading-tight">
+              <h2 className="text-3xl md:text-5xl lg:text-6xl font-display text-white mb-4 leading-tight">
                 {slide.title}
               </h2>
               {slide.subtitle && (
