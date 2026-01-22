@@ -14,9 +14,8 @@ export default {
   	},
   	extend: {
 		fontFamily: {
-			serif: [
-				'General Sans"',
-				'Plus Jakarta Sans',
+			display: [
+				'General Sans',
 				'system-ui',
 				'sans-serif'
 			],
@@ -24,6 +23,11 @@ export default {
 				'Plus Jakarta Sans',
 				'system-ui',
 				'sans-serif'
+			],
+			mono: [
+				'Roboto Mono',
+				'ui-monospace',
+				'monospace'
 			]
 		},
   		colors: {
