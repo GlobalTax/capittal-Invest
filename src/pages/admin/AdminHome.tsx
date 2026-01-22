@@ -29,6 +29,7 @@ interface HeroFormData {
   subtitle: string;
   image_url: string;
   video_url: string;
+  poster_image_url: string;
 }
 
 interface KpiFormData {
@@ -45,10 +46,12 @@ export function AdminHome() {
     subtitle: '',
     image_url: '',
     video_url: '',
+    poster_image_url: '',
   });
   const [kpis, setKpis] = useState<KpiFormData[]>([]);
   const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
   const [heroVideoFile, setHeroVideoFile] = useState<File | null>(null);
+  const [heroPosterFile, setHeroPosterFile] = useState<File | null>(null);
   const [heroMediaType, setHeroMediaType] = useState<'image' | 'video'>('image');
 
   // Fetch home content
@@ -75,6 +78,7 @@ export function AdminHome() {
           subtitle: hero.subtitle || '',
           image_url: hero.image_url || '',
           video_url: hero.video_url || '',
+          poster_image_url: (hero as any).poster_image_url || '',
         });
         // Set initial tab based on existing content
         if (hero.video_url) {
@@ -138,6 +142,7 @@ export function AdminHome() {
     mutationFn: async () => {
       let imageUrl = heroForm.image_url;
       let videoUrl = heroForm.video_url;
+      let posterUrl = heroForm.poster_image_url;
 
       // Upload new image if selected
       if (heroImageFile) {
@@ -149,11 +154,17 @@ export function AdminHome() {
         videoUrl = await uploadVideo(heroVideoFile);
       }
 
+      // Upload new poster if selected
+      if (heroPosterFile) {
+        posterUrl = await uploadImage(heroPosterFile);
+      }
+
       // Clear the other media type if switching
       if (heroMediaType === 'video') {
         imageUrl = heroForm.image_url; // Keep image as fallback
       } else {
         videoUrl = ''; // Clear video when using image
+        posterUrl = ''; // Clear poster when using image
       }
 
       const { error } = await supabase
@@ -163,6 +174,7 @@ export function AdminHome() {
           subtitle: heroForm.subtitle,
           image_url: imageUrl,
           video_url: heroMediaType === 'video' ? videoUrl : null,
+          poster_image_url: heroMediaType === 'video' ? posterUrl : null,
           updated_at: new Date().toISOString(),
         })
         .eq('section', 'hero');
@@ -174,6 +186,7 @@ export function AdminHome() {
       queryClient.invalidateQueries({ queryKey: ['home-content'] });
       setHeroImageFile(null);
       setHeroVideoFile(null);
+      setHeroPosterFile(null);
       toast.success('Hero actualizado correctamente');
     },
     onError: (error) => {
@@ -241,9 +254,11 @@ export function AdminHome() {
         subtitle: hero.subtitle || '',
         image_url: hero.image_url || '',
         video_url: hero.video_url || '',
+        poster_image_url: (hero as any).poster_image_url || '',
       });
       setHeroImageFile(null);
       setHeroVideoFile(null);
+      setHeroPosterFile(null);
       setHeroMediaType(hero.video_url ? 'video' : 'image');
     }
   };
@@ -339,14 +354,36 @@ export function AdminHome() {
                     onChange={handleImageChange}
                   />
                 </TabsContent>
-                <TabsContent value="video" className="mt-4">
+                <TabsContent value="video" className="mt-4 space-y-4">
                   <VideoUpload
                     value={heroForm.video_url}
                     onChange={handleVideoChange}
                   />
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="text-xs text-muted-foreground">
                     El video se reproducirá automáticamente en bucle, sin sonido.
                   </p>
+                  
+                  <div className="pt-4 border-t">
+                    <Label className="text-sm font-medium mb-2 block">Imagen Poster (fallback mientras carga)</Label>
+                    <ImageUpload
+                      value={heroForm.poster_image_url}
+                      onChange={(url, file) => {
+                        if (file) {
+                          setHeroPosterFile(file);
+                          const previewUrl = URL.createObjectURL(file);
+                          setHeroForm(prev => ({ ...prev, poster_image_url: previewUrl }));
+                        } else if (url) {
+                          setHeroForm(prev => ({ ...prev, poster_image_url: url }));
+                        } else {
+                          setHeroPosterFile(null);
+                          setHeroForm(prev => ({ ...prev, poster_image_url: '' }));
+                        }
+                      }}
+                    />
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Esta imagen se muestra mientras el video carga. Si no se especifica, se usa la imagen del hero.
+                    </p>
+                  </div>
                 </TabsContent>
               </Tabs>
             </div>
