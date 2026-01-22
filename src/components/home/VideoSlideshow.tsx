@@ -152,6 +152,21 @@ export function VideoSlideshow({ autoPlay = true, onComplete }: VideoSlideshowPr
             }}
           />
 
+          {/* Animated clouds layer - only for mountain slide (index 2) */}
+          {index === 2 && (
+            <div
+              className="absolute inset-0 animate-clouds pointer-events-none"
+              style={{
+                backgroundImage: `url(/clouds-overlay.png)`,
+                backgroundSize: '150% 100%',
+                backgroundPosition: 'left center',
+                backgroundRepeat: 'repeat-x',
+                opacity: 0.4,
+                mixBlendMode: 'screen',
+              }}
+            />
+          )}
+
           {/* Dark overlay for text legibility */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/20" />
 
