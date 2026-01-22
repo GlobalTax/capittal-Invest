@@ -8,6 +8,7 @@ import {
   UserCog,
   Home,
   Film,
+  Info,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +17,7 @@ import { Separator } from '@/components/ui/separator';
 const navItems = [
   { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
   { path: '/admin/home', icon: Home, label: 'Página de Inicio' },
+  { path: '/admin/about', icon: Info, label: 'Sobre Nosotros' },
   { path: '/admin/portfolio', icon: Briefcase, label: 'Portfolio Companies' },
   { path: '/admin/video', icon: Film, label: 'Video Slideshow' },
   { path: '/admin/news', icon: Newspaper, label: 'News Articles' },

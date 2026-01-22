@@ -15,6 +15,8 @@ import { AdminNews } from "@/pages/admin/AdminNews";
 import { AdminTeam } from "@/pages/admin/AdminTeam";
 import { AdminVideoSlides } from "@/pages/admin/AdminVideoSlides";
 import { AdminHome } from "@/pages/admin/AdminHome";
+import { AdminAbout } from "@/pages/admin/AdminAbout";
+import About from "./pages/About";
 import Home from "./pages/Home";
 import Strategy from "./pages/Strategy";
 import Sectors from "./pages/Sectors";
@@ -40,6 +42,7 @@ const App = () => (
             {/* Public routes */}
             <Route path="/" element={<Layout><Home /></Layout>} />
             <Route path="/strategy" element={<Layout><Strategy /></Layout>} />
+            <Route path="/about" element={<Layout><About /></Layout>} />
             <Route path="/sectors" element={<Layout><Sectors /></Layout>} />
             <Route path="/portfolio" element={<Layout><Portfolio /></Layout>} />
             <Route path="/portfolio/:id" element={<Layout><PortfolioDetail /></Layout>} />
@@ -61,6 +64,7 @@ const App = () => (
             >
               <Route index element={<AdminDashboard />} />
               <Route path="home" element={<AdminHome />} />
+              <Route path="about" element={<AdminAbout />} />
               <Route path="portfolio" element={<AdminPortfolio />} />
               <Route path="video" element={<AdminVideoSlides />} />
               <Route path="news" element={<AdminNews />} />
