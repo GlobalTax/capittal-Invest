@@ -110,7 +110,7 @@ const Home = () => {
               <span className="w-16 h-16 rounded-full border-2 border-white/50 flex items-center justify-center group-hover:border-white group-hover:bg-white/10 transition-smooth">
                 <Play className="w-6 h-6 ml-1" fill="currentColor" />
               </span>
-              <span className="text-sm font-medium uppercase tracking-widest">
+              <span className="text-sm font-normal uppercase tracking-widest">
                 {hero?.subtitle?.split(' ').slice(0, 2).join(' ') || 'Ver el'}<br />{hero?.subtitle?.split(' ').slice(2).join(' ') || 'vídeo completo'}
               </span>
             </button>

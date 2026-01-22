@@ -96,25 +96,25 @@ const Portfolio = () => {
           {!isLoading && companies.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 max-w-3xl mx-auto">
               <div className="text-center">
-                <div className="text-4xl font-bold text-primary mb-2">
+                <div className="text-4xl font-normal text-primary mb-2">
                   {companies.length}+
                 </div>
                 <div className="text-sm text-muted-foreground">Portfolio Companies</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-primary mb-2">
+                <div className="text-4xl font-normal text-primary mb-2">
                   {sectors.length}
                 </div>
                 <div className="text-sm text-muted-foreground">Sectors</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-primary mb-2">
+                <div className="text-4xl font-normal text-primary mb-2">
                   {countries.length}
                 </div>
                 <div className="text-sm text-muted-foreground">Countries</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl font-bold text-primary mb-2">
+                <div className="text-4xl font-normal text-primary mb-2">
                   {stages.length}
                 </div>
                 <div className="text-sm text-muted-foreground">Stages</div>
@@ -144,7 +144,7 @@ const Portfolio = () => {
                 <PopoverContent className="w-80" align="start">
                   <div className="space-y-4">
                     <div>
-                      <h4 className="font-semibold mb-3">Sector</h4>
+                      <h4 className="font-normal mb-3">Sector</h4>
                       <div className="flex flex-wrap gap-2">
                         {sectors.map((sector) => (
                           <BadgeFilter
@@ -161,7 +161,7 @@ const Portfolio = () => {
                     </div>
 
                     <div>
-                      <h4 className="font-semibold mb-3">Stage</h4>
+                      <h4 className="font-normal mb-3">Stage</h4>
                       <div className="flex flex-wrap gap-2">
                         {stages.map((stage) => (
                           <BadgeFilter
@@ -178,7 +178,7 @@ const Portfolio = () => {
                     </div>
 
                     <div>
-                      <h4 className="font-semibold mb-3">Country</h4>
+                      <h4 className="font-normal mb-3">Country</h4>
                       <div className="flex flex-wrap gap-2">
                         {countries.map((country) => (
                           <BadgeFilter

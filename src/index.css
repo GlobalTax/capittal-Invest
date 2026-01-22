@@ -264,14 +264,14 @@ All colors MUST be HSL.
 
   /* Overlines/labels (uppercase con tracking) */
   .text-overline {
-    @apply text-xs uppercase tracking-wider font-medium;
+    @apply text-xs uppercase tracking-wider font-normal;
     color: hsl(var(--accent));
     letter-spacing: 0.1em;
   }
 
   /* Overline estilo Miura - elegante y sutil */
   .text-overline-miura {
-    @apply text-sm font-medium uppercase tracking-widest;
+    @apply text-sm font-normal uppercase tracking-widest;
     color: hsl(var(--muted-foreground));
     letter-spacing: 0.15em;
   }
@@ -350,14 +350,14 @@ All colors MUST be HSL.
 
   /* Badge para hero en fondos oscuros */
   .badge-hero {
-    @apply text-xs uppercase tracking-widest font-medium;
+    @apply text-xs uppercase tracking-widest font-normal;
     color: rgba(255, 255, 255, 0.8);
     letter-spacing: 0.2em;
   }
 
   /* Badge para hero en fondos claros */
   .badge-hero-light {
-    @apply text-xs uppercase tracking-widest font-medium;
+    @apply text-xs uppercase tracking-widest font-normal;
     color: hsl(var(--primary));
     letter-spacing: 0.2em;
   }
@@ -365,7 +365,7 @@ All colors MUST be HSL.
   /* Números estadísticos grandes */
   .stat-number {
     font-family: 'General Sans', sans-serif;
-    font-weight: 600;
+    font-weight: 400;
     font-size: 72px;
     line-height: 1;
     letter-spacing: -0.02em;

@@ -187,7 +187,7 @@ export function VideoSlideshow({ autoPlay = true, onComplete }: VideoSlideshowPr
                 {slide.title}
               </h2>
               {slide.subtitle && (
-                <p className="text-lg md:text-xl text-white/70 font-light tracking-wider">
+                <p className="text-lg md:text-xl text-white/70 font-normal tracking-wider">
                   {slide.subtitle}
                 </p>
               )}
