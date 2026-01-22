@@ -19,7 +19,12 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { email, password } = await req.json();
-    const ipAddress = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    
+    // Fix: Handle multiple IPs from x-forwarded-for (take only the first one)
+    const forwardedFor = req.headers.get('x-forwarded-for');
+    const ipAddress = forwardedFor 
+      ? forwardedFor.split(',')[0].trim() 
+      : (req.headers.get('x-real-ip') || 'unknown');
     const userAgent = req.headers.get('user-agent') || 'unknown';
 
     console.log('Admin auth attempt:', { email, ipAddress });
