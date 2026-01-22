@@ -7,21 +7,22 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } fro
 
 export const PortfolioDashboard = () => {
   const { data: stats, isLoading } = useQuery({
-    queryKey: ['portfolio-stats'],
+    queryKey: ['portfolio-stats-home'],
     queryFn: async () => {
-      const [companies, featured, sectors] = await Promise.all([
-        supabase.from('portfolio_companies').select('id', { count: 'exact', head: true }),
-        supabase.from('portfolio_companies').select('id', { count: 'exact', head: true }).eq('is_featured', true),
-        supabase.from('portfolio_companies').select('sector').eq('is_active', true),
+      const [companiesResult, sectorsResult, countriesResult] = await Promise.all([
+        supabase.from('cr_portfolio').select('id', { count: 'exact', head: true }),
+        supabase.from('cr_portfolio').select('sector'),
+        supabase.from('cr_portfolio').select('country'),
       ]);
 
-      // Get unique sectors
-      const uniqueSectors = new Set(sectors.data?.map(c => c.sector));
+      // Get unique sectors and countries
+      const uniqueSectors = new Set(sectorsResult.data?.map(c => c.sector).filter(Boolean));
+      const uniqueCountries = new Set(countriesResult.data?.map(c => c.country).filter(Boolean));
 
       return {
-        total: companies.count || 0,
-        featured: featured.count || 0,
+        total: companiesResult.count || 0,
         sectors: uniqueSectors.size,
+        countries: uniqueCountries.size,
       };
     },
   });
@@ -63,14 +64,14 @@ export const PortfolioDashboard = () => {
       title: 'Active Sectors',
       value: stats?.sectors || 0,
       icon: Building2,
-      trend: 'Tech-first',
+      trend: 'Diversified',
       bgColor: 'bg-card',
     },
     {
-      title: 'Featured Investments',
-      value: stats?.featured || 0,
+      title: 'Countries',
+      value: stats?.countries || 0,
       icon: Target,
-      trend: 'Top performers',
+      trend: 'Global reach',
       bgColor: 'bg-accent/10',
     },
   ];
