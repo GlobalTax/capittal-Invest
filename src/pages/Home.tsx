@@ -15,32 +15,32 @@ import { VideoSlideshow } from "@/components/home/VideoSlideshow";
 const Home = () => {
   const { trackCTAClick } = useAnalytics();
   const [isVideoOpen, setIsVideoOpen] = useState(false);
-  // Fetch real stats from database
-  const { data: stats } = useQuery({
-    queryKey: ['home-stats'],
+
+  // Fetch home content from database
+  const { data: homeContent } = useQuery({
+    queryKey: ['home-content'],
     queryFn: async () => {
-      const [companiesResult, sectorsResult, countriesResult] = await Promise.all([
-        supabase.from('cr_portfolio').select('id', { count: 'exact', head: true }),
-        supabase.from('cr_portfolio').select('sector'),
-        supabase.from('cr_portfolio').select('country'),
-      ]);
-
-      const uniqueSectors = new Set(sectorsResult.data?.map(c => c.sector).filter(Boolean));
-      const uniqueCountries = new Set(countriesResult.data?.map(c => c.country).filter(Boolean));
-
-      return {
-        companies: companiesResult.count || 0,
-        sectors: uniqueSectors.size,
-        countries: uniqueCountries.size,
-      };
+      const { data, error } = await supabase
+        .from('home_content')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order');
+      
+      if (error) throw error;
+      return data;
     },
   });
 
-  const kpis = [
-    { label: "Activos bajo Gestión", value: "€2.5bn" },
-    { label: "Inversiones desde 2008", value: `>${stats?.companies || 200}` },
-    { label: "Profesionales", value: "35" },
-  ];
+  // Extract hero and KPIs from content
+  const hero = homeContent?.find(c => c.section === 'hero');
+  const kpis = homeContent
+    ?.filter(c => c.section.startsWith('kpi_'))
+    ?.sort((a, b) => a.display_order - b.display_order)
+    ?.map(k => ({ value: k.value || '', label: k.label || '' })) || [
+      { label: "Activos bajo Gestión", value: "€2.5bn" },
+      { label: "Inversiones desde 2008", value: ">200" },
+      { label: "Profesionales", value: "35" },
+    ];
 
   const strategies = [
     {
@@ -75,7 +75,7 @@ const Home = () => {
           {/* Background Image */}
           <div className="absolute inset-0">
             <img
-              src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop"
+              src={hero?.image_url || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop"}
               alt="Nature background"
               className="w-full h-full object-cover"
             />
@@ -85,7 +85,7 @@ const Home = () => {
           {/* Content */}
           <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-normal text-white mb-8 tracking-tight leading-none">
-              Partners by nature
+              {hero?.title || 'Partners by nature'}
             </h1>
             <button
               className="inline-flex items-center gap-3 text-white/90 hover:text-white transition-smooth group"
@@ -98,7 +98,7 @@ const Home = () => {
                 <Play className="w-6 h-6 ml-1" fill="currentColor" />
               </span>
               <span className="text-sm font-medium uppercase tracking-widest">
-                Ver el<br />vídeo completo
+                {hero?.subtitle?.split(' ').slice(0, 2).join(' ') || 'Ver el'}<br />{hero?.subtitle?.split(' ').slice(2).join(' ') || 'vídeo completo'}
               </span>
             </button>
           </div>
