@@ -18,7 +18,8 @@ interface AuthContextType {
   adminUser: AdminUser | null;
   isAdmin: boolean;
   isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
+  isAdminLoading: boolean;
+  signIn: (email: string, password: string) => Promise<{ user: User; adminUser: AdminUser }>;
   signOut: () => Promise<void>;
 }
 
@@ -28,6 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdminLoading, setIsAdminLoading] = useState(false);
 
   const fetchAdminUser = async (userId: string): Promise<AdminUser | null> => {
     const { data, error } = await supabase
@@ -72,7 +74,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string): Promise<{ user: User; adminUser: AdminUser }> => {
+    setIsAdminLoading(true);
     try {
       // Intentar con edge function primero usando supabase.functions.invoke
       try {
@@ -87,8 +90,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           });
 
           if (sessionError) throw sessionError;
+          
+          // Update state synchronously before returning
+          setUser(data.session.user);
           setAdminUser(data.adminUser);
-          return;
+          
+          return { user: data.session.user, adminUser: data.adminUser };
         }
       } catch (functionError) {
         console.log('Edge Function not available, using fallback authentication');
@@ -148,9 +155,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.warn('Security event logging failed (fallback mode):', logError);
       }
 
+      // Update state synchronously before returning
+      setUser(authData.user);
       setAdminUser(adminData);
+      
+      return { user: authData.user, adminUser: adminData };
     } catch (error) {
       throw error;
+    } finally {
+      setIsAdminLoading(false);
     }
   };
 
@@ -167,6 +180,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         adminUser,
         isAdmin: !!adminUser,
         isLoading,
+        isAdminLoading,
         signIn,
         signOut,
       }}
