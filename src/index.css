@@ -243,6 +243,13 @@ All colors MUST be HSL.
     color: hsl(var(--accent));
     letter-spacing: 0.1em;
   }
+
+  /* Overline estilo Miura - elegante y sutil */
+  .text-overline-miura {
+    @apply text-sm font-medium uppercase tracking-widest;
+    color: hsl(var(--muted-foreground));
+    letter-spacing: 0.15em;
+  }
   
   /* Lead text (intro paragraphs) */
   .text-lead {
@@ -278,6 +285,11 @@ All colors MUST be HSL.
   .hover-lift:hover {
     transform: translateY(-4px);
     box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+
+  /* Miura-style section spacing */
+  .section-miura {
+    @apply py-24 md:py-32;
   }
 
   /* Hero title - Estilo especial para el H1 principal */
