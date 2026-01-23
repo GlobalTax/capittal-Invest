@@ -26,6 +26,7 @@ interface InvestorAuthContextType {
 const InvestorAuthContext = createContext<InvestorAuthContextType | undefined>(undefined);
 
 export const InvestorAuthProvider = ({ children }: { children: ReactNode }) => {
+  console.log('[InvestorAuthProvider] Mounting provider');
   const [user, setUser] = useState<User | null>(null);
   const [investorUser, setInvestorUser] = useState<InvestorUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
