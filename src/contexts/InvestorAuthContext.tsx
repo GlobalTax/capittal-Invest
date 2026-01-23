@@ -59,17 +59,22 @@ export const InvestorAuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    const isInvestorRoute = () => window.location.pathname.startsWith('/investor');
+
     const initAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
           setUser(session.user);
-          const investor = await fetchInvestorUser(session.user.id);
-          setInvestorUser(investor);
+          // Only fetch investor data if on investor route
+          if (isInvestorRoute()) {
+            const investor = await fetchInvestorUser(session.user.id);
+            setInvestorUser(investor);
+          }
         }
       } catch (error) {
-        console.error('Error initializing auth:', error);
+        console.error('Error initializing investor auth:', error);
       } finally {
         setIsLoading(false);
       }
@@ -80,15 +85,19 @@ export const InvestorAuthProvider = ({ children }: { children: ReactNode }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
         setUser(session.user);
-        const investor = await fetchInvestorUser(session.user.id);
-        setInvestorUser(investor);
-        
-        // Update last login
-        if (investor) {
-          await supabase
-            .from('investor_users')
-            .update({ last_login_at: new Date().toISOString() })
-            .eq('id', investor.id);
+        // Only process investor-specific logic if on investor routes
+        // This prevents interference with admin login flow
+        if (isInvestorRoute()) {
+          const investor = await fetchInvestorUser(session.user.id);
+          setInvestorUser(investor);
+          
+          // Update last login only for investors
+          if (investor) {
+            await supabase
+              .from('investor_users')
+              .update({ last_login_at: new Date().toISOString() })
+              .eq('id', investor.id);
+          }
         }
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
