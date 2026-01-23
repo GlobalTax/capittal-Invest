@@ -19,12 +19,32 @@ export const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
   const [remainingAttempts, setRemainingAttempts] = useState<number | null>(null);
   const [lockoutUntil, setLockoutUntil] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-  const { signIn } = useAuth();
+  
+  const { signIn, user, adminChecked, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Reactive navigation: wait for state to be fully updated before navigating
+  useEffect(() => {
+    if (loginSuccess && user && adminChecked && isAdmin) {
+      toast({
+        title: 'Acceso exitoso',
+        description: 'Bienvenido al panel de administración',
+      });
+      navigate('/admin', { replace: true });
+    }
+  }, [loginSuccess, user, adminChecked, isAdmin, navigate, toast]);
+
+  // Auto-redirect if already authenticated as admin
+  useEffect(() => {
+    if (user && adminChecked && isAdmin) {
+      navigate('/admin', { replace: true });
+    }
+  }, [user, adminChecked, isAdmin, navigate]);
 
   // Check if locked out
   useEffect(() => {
@@ -71,11 +91,8 @@ export const AdminLogin = () => {
 
     try {
       await signIn(email, password);
-      toast({
-        title: 'Acceso exitoso',
-        description: 'Bienvenido al panel de administración',
-      });
-      navigate('/admin');
+      // Don't navigate here - mark success and let useEffect handle navigation
+      setLoginSuccess(true);
     } catch (error: any) {
       console.error('Login error:', error);
       
