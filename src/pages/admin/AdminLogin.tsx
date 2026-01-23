@@ -20,15 +20,16 @@ export const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
+  const [hasCheckedExistingSession, setHasCheckedExistingSession] = useState(false);
   const [remainingAttempts, setRemainingAttempts] = useState<number | null>(null);
   const [lockoutUntil, setLockoutUntil] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   
-  const { signIn, user, adminChecked, isAdmin } = useAuth();
+  const { signIn, user, adminChecked, isAdmin, isAdminLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Reactive navigation: wait for state to be fully updated before navigating
+  // Reactive navigation: wait for state to be fully updated after explicit login
   useEffect(() => {
     if (loginSuccess && user && adminChecked && isAdmin) {
       toast({
@@ -39,12 +40,16 @@ export const AdminLogin = () => {
     }
   }, [loginSuccess, user, adminChecked, isAdmin, navigate, toast]);
 
-  // Auto-redirect if already authenticated as admin
+  // Auto-redirect if already authenticated as admin (only check once on mount)
   useEffect(() => {
-    if (user && adminChecked && isAdmin) {
-      navigate('/admin', { replace: true });
+    // Wait until admin check is complete and we haven't checked yet
+    if (!isAdminLoading && adminChecked && !hasCheckedExistingSession) {
+      setHasCheckedExistingSession(true);
+      if (user && isAdmin) {
+        navigate('/admin', { replace: true });
+      }
     }
-  }, [user, adminChecked, isAdmin, navigate]);
+  }, [user, adminChecked, isAdmin, isAdminLoading, hasCheckedExistingSession, navigate]);
 
   // Check if locked out
   useEffect(() => {
