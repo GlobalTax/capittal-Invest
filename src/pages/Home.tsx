@@ -95,26 +95,28 @@ const Home = () => {
             <div className="absolute inset-0 bg-neutral-900/40" />
           </div>
 
-          {/* Content */}
+          {/* Content - Title centered */}
           <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-normal text-white mb-8 tracking-tight leading-none">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-normal text-white tracking-tight leading-none">
               {hero?.title || 'Partners by nature'}
             </h1>
-            <button
-              className="inline-flex items-center gap-3 text-white/90 hover:text-white transition-smooth group"
-              onClick={() => {
-                setIsVideoOpen(true);
-                trackCTAClick("Watch Video", "Hero");
-              }}
-            >
-              <span className="w-16 h-16 rounded-full border-2 border-white/50 flex items-center justify-center group-hover:border-white group-hover:bg-white/10 transition-smooth">
-                <Play className="w-6 h-6 ml-1" fill="currentColor" />
-              </span>
-              <span className="text-sm font-normal uppercase tracking-widest">
-                {hero?.subtitle?.split(' ').slice(0, 2).join(' ') || 'Ver el'}<br />{hero?.subtitle?.split(' ').slice(2).join(' ') || 'vídeo completo'}
-              </span>
-            </button>
           </div>
+
+          {/* Video button - Bottom left */}
+          <button
+            className="absolute bottom-12 left-8 md:left-12 lg:left-16 z-10 inline-flex items-center gap-3 text-white/90 hover:text-white transition-smooth group"
+            onClick={() => {
+              setIsVideoOpen(true);
+              trackCTAClick("Watch Video", "Hero");
+            }}
+          >
+            <span className="w-14 h-14 md:w-16 md:h-16 rounded-full border-2 border-white/50 flex items-center justify-center group-hover:border-white group-hover:bg-white/10 transition-smooth">
+              <Play className="w-5 h-5 md:w-6 md:h-6 ml-1" fill="currentColor" />
+            </span>
+            <span className="text-xs md:text-sm font-normal uppercase tracking-widest text-left">
+              {hero?.subtitle?.split(' ').slice(0, 2).join(' ') || 'Ver el'}<br />{hero?.subtitle?.split(' ').slice(2).join(' ') || 'vídeo completo'}
+            </span>
+          </button>
 
           {/* Video Modal */}
           <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
