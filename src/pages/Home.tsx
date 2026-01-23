@@ -128,10 +128,13 @@ const Home = () => {
           </Dialog>
 
           {/* Scroll indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-            <div className="w-6 h-10 rounded-full border-2 border-white/50 flex items-start justify-center p-2">
-              <div className="w-1 h-2 bg-white/70 rounded-full" />
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 animate-scroll-fade">
+            <div className="w-6 h-10 rounded-full border border-white/40 flex items-start justify-center pt-2 backdrop-blur-sm">
+              <div className="w-1 h-2 bg-white/80 rounded-full animate-scroll-wheel" />
             </div>
+            <span className="text-xs uppercase tracking-[0.25em] text-white/60 font-light">
+              Scroll
+            </span>
           </div>
         </section>
 

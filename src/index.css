@@ -442,3 +442,36 @@ All colors MUST be HSL.
 .animate-clouds {
   animation: cloud-drift 30s linear infinite;
 }
+
+/* Scroll indicator animations */
+@keyframes scroll-wheel {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes scroll-fade {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-scroll-wheel {
+  animation: scroll-wheel 1.5s ease-in-out infinite;
+}
+
+.animate-scroll-fade {
+  animation: scroll-fade 2s ease-in-out infinite;
+}
