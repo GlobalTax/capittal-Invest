@@ -6,8 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UnifiedAuthProvider } from "@/contexts/UnifiedAuthContext";
 import { Layout } from "@/components/layout/Layout";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
-import { ProtectedInvestorRoute } from "@/components/investor/ProtectedInvestorRoute";
-import { InvestorLayout } from "@/components/investor/InvestorLayout";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminLogin } from "@/pages/admin/AdminLogin";
 import { AdminDashboard } from "@/pages/admin/AdminDashboard";
@@ -18,8 +16,6 @@ import { AdminTeam } from "@/pages/admin/AdminTeam";
 import { AdminVideoSlides } from "@/pages/admin/AdminVideoSlides";
 import { AdminHome } from "@/pages/admin/AdminHome";
 import { AdminAbout } from "@/pages/admin/AdminAbout";
-import AdminInvestors from "@/pages/admin/AdminInvestors";
-import AdminInvestorDocuments from "@/pages/admin/AdminInvestorDocuments";
 import About from "./pages/About";
 import Home from "./pages/Home";
 import Strategy from "./pages/Strategy";
@@ -32,13 +28,6 @@ import InsightDetail from "./pages/InsightDetail";
 import News from "./pages/News";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
-import InvestorLogin from "./pages/investor/InvestorLogin";
-import InvestorDashboard from "./pages/investor/InvestorDashboard";
-import InvestorFunds from "./pages/investor/InvestorFunds";
-import InvestorDocuments from "./pages/investor/InvestorDocuments";
-import InvestorProfile from "./pages/investor/InvestorProfile";
-import InvestorNotifications from "./pages/investor/InvestorNotifications";
-import InvestorAcceptInvitation from "./pages/investor/InvestorAcceptInvitation";
 
 const queryClient = new QueryClient();
 
@@ -63,15 +52,6 @@ const App = () => (
               <Route path="/news" element={<Layout><News /></Layout>} />
               <Route path="/contact" element={<Layout><Contact /></Layout>} />
 
-              {/* Investor Portal routes */}
-              <Route path="/investor/login" element={<InvestorLogin />} />
-              <Route path="/investor" element={<ProtectedInvestorRoute><InvestorLayout><InvestorDashboard /></InvestorLayout></ProtectedInvestorRoute>} />
-              <Route path="/investor/funds" element={<ProtectedInvestorRoute><InvestorLayout><InvestorFunds /></InvestorLayout></ProtectedInvestorRoute>} />
-              <Route path="/investor/documents" element={<ProtectedInvestorRoute><InvestorLayout><InvestorDocuments /></InvestorLayout></ProtectedInvestorRoute>} />
-              <Route path="/investor/profile" element={<ProtectedInvestorRoute><InvestorLayout><InvestorProfile /></InvestorLayout></ProtectedInvestorRoute>} />
-              <Route path="/investor/notifications" element={<ProtectedInvestorRoute><InvestorLayout><InvestorNotifications /></InvestorLayout></ProtectedInvestorRoute>} />
-              <Route path="/investor/accept-invitation" element={<InvestorAcceptInvitation />} />
-
               {/* Admin routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route
@@ -89,8 +69,6 @@ const App = () => (
                 <Route path="video" element={<AdminVideoSlides />} />
                 <Route path="news" element={<AdminNews />} />
                 <Route path="team" element={<AdminTeam />} />
-                <Route path="investors" element={<AdminInvestors />} />
-                <Route path="investor-documents" element={<AdminInvestorDocuments />} />
                 <Route
                   path="users" 
                   element={
