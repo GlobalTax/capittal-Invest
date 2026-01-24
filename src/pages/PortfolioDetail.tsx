@@ -3,7 +3,6 @@ import { ArrowLeft, ExternalLink, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Overline } from "@/components/ui/typography";
 import { Meta } from "@/components/seo/Meta";
 import { PreviewBanner } from "@/components/ui/preview-banner";
 import { usePreviewContent } from "@/hooks/usePreviewContent";
@@ -61,14 +60,14 @@ const PortfolioDetail = () => {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-2xl mx-auto text-center">
-          <h1 className="text-2xl font-bold mb-4">Preview Not Available</h1>
+          <h1 className="text-2xl font-bold mb-4">Vista Previa No Disponible</h1>
           <p className="text-muted-foreground mb-8">
-            The preview token is invalid or has expired.
+            El token de vista previa es inválido o ha expirado.
           </p>
           <Button asChild>
             <Link to="/portfolio">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Portfolio
+              Volver al Portfolio
             </Link>
           </Button>
         </div>
@@ -80,9 +79,9 @@ const PortfolioDetail = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="mb-4">Company not found</h1>
+          <h1 className="mb-4">Empresa no encontrada</h1>
           <Button asChild>
-            <Link to="/portfolio">Back to Portfolio</Link>
+            <Link to="/portfolio">Volver al Portfolio</Link>
           </Button>
         </div>
       </div>
@@ -108,7 +107,7 @@ const PortfolioDetail = () => {
           <Button variant="ghost" asChild className="mb-8">
             <Link to="/portfolio">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Portfolio
+              Volver al Portfolio
             </Link>
           </Button>
 
@@ -142,7 +141,7 @@ const PortfolioDetail = () => {
                       rel="noopener noreferrer"
                     >
                       <Button variant="outline">
-                        Visit Website <ExternalLink className="ml-2 h-4 w-4" />
+                        Visitar Web <ExternalLink className="ml-2 h-4 w-4" />
                       </Button>
                     </a>
                   )}
@@ -152,18 +151,18 @@ const PortfolioDetail = () => {
 
             {/* Investment Thesis */}
             <Card className="p-8 mb-8">
-              <h2 className="text-2xl mb-4">Investment Thesis</h2>
+              <h2 className="text-2xl mb-4">Tesis de Inversión</h2>
               <p className="text-body">{company.investment_thesis || company.description}</p>
             </Card>
 
             {/* Key Metrics */}
             {company.metrics && Object.values(company.metrics).some(v => v) && (
               <Card className="p-8 mb-8">
-                <h2 className="text-2xl mb-6">Key Metrics</h2>
+                <h2 className="text-2xl mb-6">Métricas Clave</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {company.metrics.revenue && (
                     <Card className="p-6 text-center bg-muted">
-                      <div className="text-sm text-muted-foreground mb-2">Revenue</div>
+                      <div className="text-sm text-muted-foreground mb-2">Ingresos</div>
                       <div className="text-3xl font-normal text-primary">
                         {company.metrics.revenue}
                       </div>
@@ -171,7 +170,7 @@ const PortfolioDetail = () => {
                   )}
                   {company.metrics.employees && (
                     <Card className="p-6 text-center bg-muted">
-                      <div className="text-sm text-muted-foreground mb-2">Employees</div>
+                      <div className="text-sm text-muted-foreground mb-2">Empleados</div>
                       <div className="text-3xl font-normal text-primary">
                         {company.metrics.employees}
                       </div>
@@ -179,7 +178,7 @@ const PortfolioDetail = () => {
                   )}
                   {company.metrics.valuation && (
                     <Card className="p-6 text-center bg-muted">
-                      <div className="text-sm text-muted-foreground mb-2">Valuation</div>
+                      <div className="text-sm text-muted-foreground mb-2">Valoración</div>
                       <div className="text-3xl font-normal text-primary">
                         {company.metrics.valuation}
                       </div>
@@ -192,7 +191,7 @@ const PortfolioDetail = () => {
             {/* Timeline */}
             {company.timeline && Array.isArray(company.timeline) && company.timeline.length > 0 && (
               <Card className="p-8">
-                <h2 className="text-2xl mb-6">Timeline</h2>
+                <h2 className="text-2xl mb-6">Cronología</h2>
                 <div className="relative pl-8 border-l-2 border-border space-y-6">
                   {company.timeline.map((item: any, idx: number) => (
                     <div key={idx} className="relative">

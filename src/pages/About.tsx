@@ -28,9 +28,9 @@ interface AboutContent {
   display_order: number;
 }
 
-// Animated counter component
+// Animated counter component - Fixed to handle special characters properly
 const AnimatedValue = ({ value, className }: { value: string; className?: string }) => {
-  const [displayValue, setDisplayValue] = useState('0');
+  const [displayValue, setDisplayValue] = useState(value);
   const ref = useRef<HTMLSpanElement>(null);
   const hasAnimated = useRef(false);
 
@@ -53,27 +53,45 @@ const AnimatedValue = ({ value, className }: { value: string; className?: string
   }, [value]);
 
   const animateValue = () => {
-    // Extract numeric part
-    const numericMatch = value.match(/[\d.]+/);
+    // Extract numeric part - match the first sequence of digits (with optional decimal)
+    const numericMatch = value.match(/(\d+(?:[.,]\d+)?)/);
     if (!numericMatch) {
       setDisplayValue(value);
       return;
     }
 
-    const numericValue = parseFloat(numericMatch[0]);
-    const prefix = value.slice(0, value.indexOf(numericMatch[0]));
-    const suffix = value.slice(value.indexOf(numericMatch[0]) + numericMatch[0].length);
+    const numericStr = numericMatch[0].replace(',', '.');
+    const numericValue = parseFloat(numericStr);
+    const matchIndex = value.indexOf(numericMatch[0]);
+    const prefix = value.slice(0, matchIndex);
+    const suffix = value.slice(matchIndex + numericMatch[0].length);
+    
+    // Check if original had comma for decimal
+    const useComma = numericMatch[0].includes(',');
     
     const duration = 2000;
     const steps = 60;
     const stepDuration = duration / steps;
     let currentStep = 0;
 
+    // Start from 0
+    setDisplayValue(`${prefix}0${suffix}`);
+
     const interval = setInterval(() => {
       currentStep++;
       const progress = currentStep / steps;
       const easeOut = 1 - Math.pow(1 - progress, 3);
-      const currentValue = Math.round(numericValue * easeOut);
+      let currentValue: string;
+      
+      if (Number.isInteger(numericValue)) {
+        currentValue = Math.round(numericValue * easeOut).toString();
+      } else {
+        const current = numericValue * easeOut;
+        currentValue = current.toFixed(1);
+        if (useComma) {
+          currentValue = currentValue.replace('.', ',');
+        }
+      }
       
       setDisplayValue(`${prefix}${currentValue}${suffix}`);
 
@@ -129,30 +147,6 @@ const StrategyBlock = ({ title, subtitle, content, icon }: {
         </div>
       </div>
     </Card>
-  );
-};
-
-// Value Creation Metric component
-const ValueMetric = ({ value, label, description, icon }: {
-  value: string;
-  label: string;
-  description: string | null;
-  icon: string | null;
-}) => {
-  const Icon = icon ? iconMap[icon] : TrendingUp;
-  
-  return (
-    <div className="text-center group">
-      <div className="w-16 h-16 mx-auto mb-4 bg-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-        <Icon className="w-8 h-8 text-primary-foreground" />
-      </div>
-      <AnimatedValue 
-        value={value} 
-        className="block text-3xl md:text-4xl font-normal text-foreground mb-2"
-      />
-      <p className="font-normal text-foreground mb-1">{label}</p>
-      {description && <p className="text-sm text-muted-foreground">{description}</p>}
-    </div>
   );
 };
 

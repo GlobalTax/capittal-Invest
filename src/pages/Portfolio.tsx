@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { BadgeFilter } from "@/components/ui/badge-filter";
 import { CustomPagination } from "@/components/ui/custom-pagination";
@@ -26,6 +25,8 @@ import { CompanyCard } from "@/components/portfolio/CompanyCard";
 import { CompanySkeleton } from "@/components/portfolio/CompanySkeleton";
 import { ViewToggle } from "@/components/portfolio/ViewToggle";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -42,6 +43,34 @@ const Portfolio = () => {
 
   // Fetch filter options from database
   const { data: filterOptions, isLoading: isLoadingOptions } = usePortfolioFilterOptions();
+
+  // Count total companies for pagination
+  const { data: totalCount } = useQuery({
+    queryKey: ['portfolio-count', searchTerm, activeSector, activeStage, activeCountry],
+    queryFn: async () => {
+      let query = supabase
+        .from('portfolio_companies')
+        .select('id', { count: 'exact', head: true })
+        .eq('is_active', true);
+
+      if (searchTerm) {
+        query = query.or(`name.ilike.%${searchTerm}%,sector.ilike.%${searchTerm}%,investment_thesis.ilike.%${searchTerm}%`);
+      }
+      if (activeSector) {
+        query = query.eq('sector', activeSector);
+      }
+      if (activeStage) {
+        query = query.eq('stage', activeStage);
+      }
+      if (activeCountry) {
+        query = query.eq('country', activeCountry);
+      }
+
+      const { count, error } = await query;
+      if (error) throw error;
+      return count || 0;
+    },
+  });
 
   // Fetch portfolio companies with search and filters
   const { data: dbCompanies, isLoading: isLoadingCompanies } = usePortfolioSearch({
@@ -60,7 +89,7 @@ const Portfolio = () => {
   const countries = filterOptions?.countries || [];
 
   const isLoading = isLoadingOptions || isLoadingCompanies;
-  const totalPages = Math.max(1, Math.ceil(companies.length / ITEMS_PER_PAGE));
+  const totalPages = Math.max(1, Math.ceil((totalCount || 0) / ITEMS_PER_PAGE));
 
   const activeFilterCount = [activeSector, activeStage, activeCountry].filter(Boolean).length;
 
@@ -75,7 +104,7 @@ const Portfolio = () => {
     <>
       <Meta
         title="Portfolio"
-        description="Explore our portfolio of exceptional companies across technology, consumer, education, and services sectors"
+        description="Explora nuestro portfolio de empresas excepcionales en tecnología, consumo, educación y servicios"
         canonicalUrl={`${window.location.origin}/portfolio`}
       />
 
@@ -83,41 +112,41 @@ const Portfolio = () => {
         {/* Hero */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="max-w-4xl mb-16 text-center mx-auto">
-            <Overline className="mb-6">Our Portfolio</Overline>
+            <Overline className="mb-6">Nuestro Portfolio</Overline>
             <h1 className="mb-6 text-5xl lg:text-6xl">
-              Building Tomorrow's Digital Leaders
+              Construyendo los Líderes del Mañana
             </h1>
             <p className="text-lead text-xl text-muted-foreground">
-              We partner with visionary entrepreneurs building exceptional companies across our core sectors.
+              Nos asociamos con emprendedores visionarios que están construyendo empresas excepcionales en nuestros sectores clave.
             </p>
           </div>
 
           {/* Stats */}
-          {!isLoading && companies.length > 0 && (
+          {!isLoading && (totalCount || 0) > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 max-w-3xl mx-auto">
               <div className="text-center">
                 <div className="text-4xl font-normal text-primary mb-2">
-                  {companies.length}+
+                  {totalCount}+
                 </div>
-                <div className="text-sm text-muted-foreground">Portfolio Companies</div>
+                <div className="text-sm text-muted-foreground">Empresas del Portfolio</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-normal text-primary mb-2">
                   {sectors.length}
                 </div>
-                <div className="text-sm text-muted-foreground">Sectors</div>
+                <div className="text-sm text-muted-foreground">Sectores</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-normal text-primary mb-2">
                   {countries.length}
                 </div>
-                <div className="text-sm text-muted-foreground">Countries</div>
+                <div className="text-sm text-muted-foreground">Países</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-normal text-primary mb-2">
                   {stages.length}
                 </div>
-                <div className="text-sm text-muted-foreground">Stages</div>
+                <div className="text-sm text-muted-foreground">Etapas</div>
               </div>
             </div>
           )}
@@ -133,7 +162,7 @@ const Portfolio = () => {
                 <PopoverTrigger asChild>
                   <Button variant="outline">
                     <Filter className="h-4 w-4 mr-2" />
-                    Filters
+                    Filtros
                     {activeFilterCount > 0 && (
                       <Badge className="ml-2" variant="secondary">
                         {activeFilterCount}
@@ -161,7 +190,7 @@ const Portfolio = () => {
                     </div>
 
                     <div>
-                      <h4 className="font-normal mb-3">Stage</h4>
+                      <h4 className="font-normal mb-3">Etapa</h4>
                       <div className="flex flex-wrap gap-2">
                         {stages.map((stage) => (
                           <BadgeFilter
@@ -178,7 +207,7 @@ const Portfolio = () => {
                     </div>
 
                     <div>
-                      <h4 className="font-normal mb-3">Country</h4>
+                      <h4 className="font-normal mb-3">País</h4>
                       <div className="flex flex-wrap gap-2">
                         {countries.map((country) => (
                           <BadgeFilter
@@ -196,7 +225,7 @@ const Portfolio = () => {
 
                     {activeFilterCount > 0 && (
                       <Button variant="outline" size="sm" onClick={clearFilters} className="w-full">
-                        Clear All Filters
+                        Limpiar Filtros
                       </Button>
                     )}
                   </div>
@@ -210,14 +239,14 @@ const Portfolio = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder="Search companies..."
+                  placeholder="Buscar empresas..."
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
                   className="pl-10"
-                  aria-label="Search portfolio companies"
+                  aria-label="Buscar empresas del portfolio"
                 />
               </div>
 
@@ -226,17 +255,17 @@ const Portfolio = () => {
                   <Button
                     variant="outline"
                     disabled={isExporting || companies.length === 0}
-                    aria-label="Export portfolio companies"
+                    aria-label="Exportar empresas del portfolio"
                   >
                     {isExporting ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                        Exporting...
+                        Exportando...
                       </>
                     ) : (
                       <>
                         <Download className="h-4 w-4 mr-2" />
-                        Export
+                        Exportar
                       </>
                     )}
                   </Button>
@@ -251,7 +280,7 @@ const Portfolio = () => {
                     }, 'csv')}
                   >
                     <FileText className="h-4 w-4 mr-2" />
-                    Export as CSV
+                    Exportar como CSV
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => exportData({
@@ -262,7 +291,7 @@ const Portfolio = () => {
                     }, 'excel')}
                   >
                     <FileSpreadsheet className="h-4 w-4 mr-2" />
-                    Export as Excel
+                    Exportar como Excel
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -316,8 +345,8 @@ const Portfolio = () => {
             </div>
           ) : companies.length === 0 ? (
             <EmptyState
-              title="No companies found"
-              description="Try adjusting your filters or search term"
+              title="No se encontraron empresas"
+              description="Intenta ajustar los filtros o el término de búsqueda"
             />
           ) : (
             <>

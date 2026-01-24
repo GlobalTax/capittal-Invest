@@ -37,7 +37,7 @@ const Insights = () => {
         excerpt: a.excerpt || "",
         category: a.category,
         author: a.author_name,
-        date: new Date(a.published_at).toLocaleDateString("en-US", {
+        date: new Date(a.published_at).toLocaleDateString("es-ES", {
           year: "numeric",
           month: "long",
           day: "numeric",
@@ -52,8 +52,8 @@ const Insights = () => {
   return (
     <>
       <Meta
-        title="Insights"
-        description="Perspectives on investing, building, and scaling exceptional businesses from the Capittal Invest team"
+        title="Análisis"
+        description="Perspectivas sobre inversión, construcción y escalado de negocios excepcionales del equipo de Capittal Invest"
         canonicalUrl={`${window.location.origin}/insights`}
       />
 
@@ -61,10 +61,10 @@ const Insights = () => {
         {/* Hero */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="max-w-4xl mb-12">
-            <Overline className="mb-4">Insights</Overline>
-            <h1 className="mb-6">Latest Insights</h1>
+            <Overline className="mb-4">Análisis</Overline>
+            <h1 className="mb-6">Últimos Análisis</h1>
             <p className="text-lead">
-              Perspectives on investing, building, and scaling exceptional businesses
+              Perspectivas sobre inversión, construcción y escalado de negocios excepcionales
             </p>
           </div>
 
@@ -75,20 +75,20 @@ const Insights = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-subtle" />
               <Input
                 type="text"
-                placeholder="Search insights..."
+                placeholder="Buscar análisis..."
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
                 className="pl-10"
-                aria-label="Search insights"
+                aria-label="Buscar análisis"
               />
             </div>
 
             {/* Category filters */}
             <div className="flex flex-wrap gap-2 items-center">
-              <span className="text-sm font-medium text-subtle">Category:</span>
+              <span className="text-sm font-medium text-subtle">Categoría:</span>
               {categories.map((category) => (
                 <BadgeFilter
                   key={category}
@@ -112,8 +112,8 @@ const Insights = () => {
             </div>
           ) : articles.length === 0 ? (
             <EmptyState
-              title="No insights found"
-              description="Try adjusting your filters or search term"
+              title="No se encontraron análisis"
+              description="Intenta ajustar los filtros o el término de búsqueda"
             />
           ) : (
             <>
@@ -139,7 +139,7 @@ const Insights = () => {
                         to={`/insights/${insight.slug}`}
                         className="text-sm font-medium text-primary hover:text-accent inline-flex items-center transition-smooth"
                       >
-                        Read article <ArrowRight className="ml-1 h-3 w-3" />
+                        Leer artículo <ArrowRight className="ml-1 h-3 w-3" />
                       </Link>
                     </div>
                   </Card>
