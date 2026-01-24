@@ -22,8 +22,6 @@ const navItems = [
   { path: '/admin/video', icon: Film, label: 'Video Slideshow' },
   { path: '/admin/news', icon: Newspaper, label: 'News Articles' },
   { path: '/admin/team', icon: Users, label: 'Team Members' },
-  { path: '/admin/investors', icon: Users, label: 'Portal Inversores' },
-  { path: '/admin/investor-documents', icon: Briefcase, label: 'Docs Inversores' },
 ];
 
 export const AdminSidebar = () => {

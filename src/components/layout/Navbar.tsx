@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Lock } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -91,18 +91,6 @@ export const Navbar = () => {
             >
               <Link to="/contact">Contacto</Link>
             </Button>
-            <Link 
-              to="/investor/login"
-              className={cn(
-                "text-sm font-medium transition-all duration-300 flex items-center gap-1.5",
-                shouldBeTransparent
-                  ? "text-white/70 hover:text-white"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <Lock className="h-3.5 w-3.5" />
-              Inversores
-            </Link>
           </div>
 
           {/* Mobile toggle */}
@@ -140,20 +128,12 @@ export const Navbar = () => {
                 {item.name}
               </Link>
             ))}
-            <div className="px-4 pt-4 space-y-3">
+            <div className="px-4 pt-4">
               <Button asChild className="w-full rounded-none">
                 <Link to="/contact" onClick={() => setMobileMenuOpen(false)}>
                   Contacto
                 </Link>
               </Button>
-              <Link 
-                to="/investor/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-smooth"
-              >
-                <Lock className="h-3.5 w-3.5" />
-                Portal Inversores
-              </Link>
             </div>
           </div>
         </div>

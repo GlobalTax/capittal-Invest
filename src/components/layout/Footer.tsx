@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Linkedin, Lock } from "lucide-react";
+import { Linkedin } from "lucide-react";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -20,17 +20,14 @@ export const Footer = () => {
       { name: "Noticias", href: "/news" },
       { name: "Contacto", href: "/contact" },
     ],
-    acceso: [
-      { name: "Portal Inversores", href: "/investor/login", icon: true },
-    ],
   };
 
   return (
     <footer className="bg-foreground text-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
           {/* Brand */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-1">
             <Link to="/" className="inline-block mb-6">
               <span className="text-2xl font-serif font-medium">
                 Capittal Invest
@@ -103,26 +100,6 @@ export const Footer = () => {
                     to={link.href} 
                     className="text-background/70 hover:text-background transition-smooth"
                   >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Acceso */}
-          <div>
-            <h3 className="text-sm font-medium uppercase tracking-widest mb-6">
-              Acceso
-            </h3>
-            <ul className="space-y-4">
-              {footerLinks.acceso.map((link) => (
-                <li key={link.name}>
-                  <Link 
-                    to={link.href} 
-                    className="text-background/70 hover:text-background transition-smooth flex items-center gap-2"
-                  >
-                    <Lock className="h-3.5 w-3.5" />
                     {link.name}
                   </Link>
                 </li>

@@ -20,9 +20,9 @@ export const useAuth = () => {
     // Role checks
     isAdmin: ctx.isAdmin,
     
-    // Actions - always target admin portal
+    // Actions
     signIn: async (email: string, password: string) => {
-      const result = await ctx.signIn(email, password, 'admin');
+      const result = await ctx.signIn(email, password);
       if (result.error) {
         throw result.error;
       }
