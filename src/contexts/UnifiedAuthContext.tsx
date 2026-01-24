@@ -242,15 +242,46 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
             body: { email, password }
           });
 
-          if (!edgeError && edgeData?.user) {
-            // Edge function succeeded, refresh session
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.user) {
-              setUser(session.user);
-              await loadProfile(session.user);
-              await updateAdminLastLogin(session.user.id);
-              return { user: session.user, error: null, userType: 'admin' };
+          if (edgeError) {
+            console.error('Edge function error:', edgeError);
+            // Fall through to standard auth
+          } else if (edgeData?.session) {
+            // Set the session locally with tokens from edge function
+            const { error: setSessionError } = await supabase.auth.setSession({
+              access_token: edgeData.session.access_token,
+              refresh_token: edgeData.session.refresh_token
+            });
+
+            if (!setSessionError) {
+              const sessionUser = edgeData.session.user;
+              setUser(sessionUser);
+
+              // Use admin profile data from edge function response
+              const adminProfileData: AdminProfile = {
+                id: edgeData.adminUser.id,
+                user_id: edgeData.adminUser.user_id,
+                email: edgeData.adminUser.email,
+                full_name: edgeData.adminUser.full_name,
+                role: edgeData.adminUser.role,
+                is_active: true
+              };
+
+              setUserType('admin');
+              setAdminProfile(adminProfileData);
+              setInvestorProfile(null);
+              setProfileChecked(true);
+
+              return { user: sessionUser, error: null, userType: 'admin' };
             }
+          } else if (edgeData?.error) {
+            // Handle specific errors from edge function (rate limit, etc.)
+            const error = new Error(edgeData.error) as Error & { 
+              remainingAttempts?: number; 
+              lockoutUntil?: string; 
+            };
+            error.remainingAttempts = edgeData.remaining_attempts;
+            error.lockoutUntil = edgeData.lockout_until;
+            return { user: null, error, userType: null };
           }
         } catch (edgeFnError) {
           console.log('Edge function not available, falling back to direct auth');
