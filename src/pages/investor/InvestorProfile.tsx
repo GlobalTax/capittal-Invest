@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useInvestorAuth } from '@/contexts/InvestorAuthContext';
+import { useInvestorAuth } from '@/hooks/useInvestorAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

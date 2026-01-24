@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useInvestorAuth } from '@/contexts/InvestorAuthContext';
+import { useInvestorAuth } from '@/hooks/useInvestorAuth';
 import {
   LayoutDashboard,
   Briefcase,

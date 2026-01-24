@@ -1,8 +1,43 @@
 import { useUnifiedAuth, AdminRole } from '@/contexts/UnifiedAuthContext';
 
 /**
+ * Compatibility wrapper for the old AuthContext API.
+ * Used by admin components that expect the previous interface.
+ */
+export const useAuth = () => {
+  const ctx = useUnifiedAuth();
+
+  return {
+    // User state
+    user: ctx.user,
+    adminUser: ctx.adminProfile,
+    
+    // Loading states
+    isLoading: ctx.isLoading,
+    isAdminLoading: ctx.isProfileLoading,
+    adminChecked: ctx.profileChecked,
+    
+    // Role checks
+    isAdmin: ctx.isAdmin,
+    
+    // Actions - always target admin portal
+    signIn: async (email: string, password: string) => {
+      const result = await ctx.signIn(email, password, 'admin');
+      if (result.error) {
+        throw result.error;
+      }
+      return { 
+        user: result.user!, 
+        adminUser: ctx.adminProfile! 
+      };
+    },
+    signOut: ctx.signOut,
+  };
+};
+
+/**
  * Hook for admin-specific permission checks.
- * Re-exports from useAuth.ts for backwards compatibility with existing imports.
+ * Maintains compatibility with existing useAdminAuth patterns.
  */
 export const useAdminAuth = () => {
   const ctx = useUnifiedAuth();
