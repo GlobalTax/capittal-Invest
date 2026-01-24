@@ -31,7 +31,7 @@ const PortfolioDetail = () => {
       const response = await supabase
         .from('portfolio_companies')
         .select('id, name, slug, description, logo_url, website_url, sector, stage, country, founded_year, investment_date, investment_thesis, metrics, timeline, is_featured, created_at')
-        .eq('id', id)
+        .eq('slug', id)
         .eq('is_active', true)
         .single();
       
