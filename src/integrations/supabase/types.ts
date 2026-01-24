@@ -1237,6 +1237,42 @@ export type Database = {
         }
         Relationships: []
       }
+      api_usage_log: {
+        Row: {
+          cost_usd: number | null
+          created_at: string | null
+          credits_used: number | null
+          function_name: string | null
+          id: string
+          metadata: Json | null
+          operation: string
+          service: string
+          tokens_used: number | null
+        }
+        Insert: {
+          cost_usd?: number | null
+          created_at?: string | null
+          credits_used?: number | null
+          function_name?: string | null
+          id?: string
+          metadata?: Json | null
+          operation: string
+          service: string
+          tokens_used?: number | null
+        }
+        Update: {
+          cost_usd?: number | null
+          created_at?: string | null
+          credits_used?: number | null
+          function_name?: string | null
+          id?: string
+          metadata?: Json | null
+          operation?: string
+          service?: string
+          tokens_used?: number | null
+        }
+        Relationships: []
+      }
       apollo_sector_mapping: {
         Row: {
           apollo_industries: string[] | null
@@ -4896,11 +4932,16 @@ export type Database = {
           id: string
           investment_stage: string[] | null
           is_deleted: boolean | null
+          last_diff_scan_at: string | null
           last_news_scan_at: string | null
+          last_portfolio_diff_at: string | null
           last_portfolio_scraped_at: string | null
           last_scraped_at: string | null
+          last_web_etag: string | null
+          last_web_modified: string | null
           name: string
           notes_internal: string | null
+          portfolio_diff_enabled: boolean | null
           portfolio_url: string | null
           revenue_max: number | null
           revenue_min: number | null
@@ -4934,11 +4975,16 @@ export type Database = {
           id?: string
           investment_stage?: string[] | null
           is_deleted?: boolean | null
+          last_diff_scan_at?: string | null
           last_news_scan_at?: string | null
+          last_portfolio_diff_at?: string | null
           last_portfolio_scraped_at?: string | null
           last_scraped_at?: string | null
+          last_web_etag?: string | null
+          last_web_modified?: string | null
           name: string
           notes_internal?: string | null
+          portfolio_diff_enabled?: boolean | null
           portfolio_url?: string | null
           revenue_max?: number | null
           revenue_min?: number | null
@@ -4972,11 +5018,16 @@ export type Database = {
           id?: string
           investment_stage?: string[] | null
           is_deleted?: boolean | null
+          last_diff_scan_at?: string | null
           last_news_scan_at?: string | null
+          last_portfolio_diff_at?: string | null
           last_portfolio_scraped_at?: string | null
           last_scraped_at?: string | null
+          last_web_etag?: string | null
+          last_web_modified?: string | null
           name?: string
           notes_internal?: string | null
+          portfolio_diff_enabled?: boolean | null
           portfolio_url?: string | null
           revenue_max?: number | null
           revenue_min?: number | null
@@ -5181,9 +5232,14 @@ export type Database = {
           investment_type: string | null
           investment_year: number | null
           is_deleted: boolean | null
+          last_news_scan_at: string | null
+          last_web_check_at: string | null
+          news_alert_count: number | null
           notes: string | null
           ownership_type: string | null
+          scan_priority: string | null
           sector: string | null
+          skip_news_scan: boolean | null
           source_url: string | null
           status: string | null
           updated_at: string
@@ -5203,9 +5259,14 @@ export type Database = {
           investment_type?: string | null
           investment_year?: number | null
           is_deleted?: boolean | null
+          last_news_scan_at?: string | null
+          last_web_check_at?: string | null
+          news_alert_count?: number | null
           notes?: string | null
           ownership_type?: string | null
+          scan_priority?: string | null
           sector?: string | null
+          skip_news_scan?: boolean | null
           source_url?: string | null
           status?: string | null
           updated_at?: string
@@ -5225,9 +5286,14 @@ export type Database = {
           investment_type?: string | null
           investment_year?: number | null
           is_deleted?: boolean | null
+          last_news_scan_at?: string | null
+          last_web_check_at?: string | null
+          news_alert_count?: number | null
           notes?: string | null
           ownership_type?: string | null
+          scan_priority?: string | null
           sector?: string | null
+          skip_news_scan?: boolean | null
           source_url?: string | null
           status?: string | null
           updated_at?: string
@@ -12471,6 +12537,81 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_changes: {
+        Row: {
+          change_type: string
+          company_name: string
+          company_name_normalized: string | null
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string | null
+          detected_at: string | null
+          detected_data: Json | null
+          dismiss_reason: string | null
+          dismissed_at: string | null
+          dismissed_by: string | null
+          existing_portfolio_id: string | null
+          fund_id: string
+          id: string
+          is_confirmed: boolean | null
+          is_dismissed: boolean | null
+          metadata: Json | null
+        }
+        Insert: {
+          change_type: string
+          company_name: string
+          company_name_normalized?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string | null
+          detected_at?: string | null
+          detected_data?: Json | null
+          dismiss_reason?: string | null
+          dismissed_at?: string | null
+          dismissed_by?: string | null
+          existing_portfolio_id?: string | null
+          fund_id: string
+          id?: string
+          is_confirmed?: boolean | null
+          is_dismissed?: boolean | null
+          metadata?: Json | null
+        }
+        Update: {
+          change_type?: string
+          company_name?: string
+          company_name_normalized?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string | null
+          detected_at?: string | null
+          detected_data?: Json | null
+          dismiss_reason?: string | null
+          dismissed_at?: string | null
+          dismissed_by?: string | null
+          existing_portfolio_id?: string | null
+          fund_id?: string
+          id?: string
+          is_confirmed?: boolean | null
+          is_dismissed?: boolean | null
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_changes_existing_portfolio_id_fkey"
+            columns: ["existing_portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "cr_portfolio"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portfolio_changes_fund_id_fkey"
+            columns: ["fund_id"]
+            isOneToOne: false
+            referencedRelation: "cr_funds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       portfolio_companies: {
         Row: {
           country: string
@@ -12539,6 +12680,84 @@ export type Database = {
           website_url?: string | null
         }
         Relationships: []
+      }
+      portfolio_news: {
+        Row: {
+          ai_summary: string | null
+          company_name: string
+          content_preview: string | null
+          created_at: string | null
+          fund_id: string
+          id: string
+          is_acquisition_signal: boolean | null
+          is_exit_signal: boolean | null
+          is_processed: boolean | null
+          metadata: Json | null
+          news_date: string | null
+          news_type: string | null
+          portfolio_id: string | null
+          relevance_score: number | null
+          source_name: string | null
+          title: string
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          ai_summary?: string | null
+          company_name: string
+          content_preview?: string | null
+          created_at?: string | null
+          fund_id: string
+          id?: string
+          is_acquisition_signal?: boolean | null
+          is_exit_signal?: boolean | null
+          is_processed?: boolean | null
+          metadata?: Json | null
+          news_date?: string | null
+          news_type?: string | null
+          portfolio_id?: string | null
+          relevance_score?: number | null
+          source_name?: string | null
+          title: string
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          ai_summary?: string | null
+          company_name?: string
+          content_preview?: string | null
+          created_at?: string | null
+          fund_id?: string
+          id?: string
+          is_acquisition_signal?: boolean | null
+          is_exit_signal?: boolean | null
+          is_processed?: boolean | null
+          metadata?: Json | null
+          news_date?: string | null
+          news_type?: string | null
+          portfolio_id?: string | null
+          relevance_score?: number | null
+          source_name?: string | null
+          title?: string
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_news_fund_id_fkey"
+            columns: ["fund_id"]
+            isOneToOne: false
+            referencedRelation: "cr_funds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portfolio_news_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "cr_portfolio"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       presentation_assets: {
         Row: {
@@ -12974,6 +13193,57 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "presentation_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      processed_urls: {
+        Row: {
+          created_at: string | null
+          fund_id: string | null
+          id: string
+          portfolio_company_id: string | null
+          processed_at: string | null
+          result_type: string | null
+          source: string
+          url: string
+          url_hash: string
+        }
+        Insert: {
+          created_at?: string | null
+          fund_id?: string | null
+          id?: string
+          portfolio_company_id?: string | null
+          processed_at?: string | null
+          result_type?: string | null
+          source: string
+          url: string
+          url_hash: string
+        }
+        Update: {
+          created_at?: string | null
+          fund_id?: string | null
+          id?: string
+          portfolio_company_id?: string | null
+          processed_at?: string | null
+          result_type?: string | null
+          source?: string
+          url?: string
+          url_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "processed_urls_fund_id_fkey"
+            columns: ["fund_id"]
+            isOneToOne: false
+            referencedRelation: "cr_funds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "processed_urls_portfolio_company_id_fkey"
+            columns: ["portfolio_company_id"]
+            isOneToOne: false
+            referencedRelation: "cr_portfolio"
             referencedColumns: ["id"]
           },
         ]
@@ -16796,6 +17066,18 @@ export type Database = {
           last_login?: string | null
           role?: Database["public"]["Enums"]["admin_role"] | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      v_api_usage_monthly: {
+        Row: {
+          call_count: number | null
+          month: string | null
+          operation: string | null
+          service: string | null
+          total_cost: number | null
+          total_credits: number | null
+          total_tokens: number | null
         }
         Relationships: []
       }
