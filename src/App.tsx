@@ -3,8 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { InvestorAuthProvider } from "@/contexts/InvestorAuthContext";
+import { UnifiedAuthProvider } from "@/contexts/UnifiedAuthContext";
 import { Layout } from "@/components/layout/Layout";
 import { ProtectedRoute } from "@/components/admin/ProtectedRoute";
 import { ProtectedInvestorRoute } from "@/components/investor/ProtectedInvestorRoute";
@@ -45,12 +44,11 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <InvestorAuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+    <UnifiedAuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<Layout><Home /></Layout>} />
@@ -107,8 +105,7 @@ const App = () => (
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
-      </InvestorAuthProvider>
-    </AuthProvider>
+    </UnifiedAuthProvider>
   </QueryClientProvider>
 );
 

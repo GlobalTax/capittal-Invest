@@ -1,15 +1,15 @@
 import { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useInvestorAuth } from '@/contexts/InvestorAuthContext';
+import { useUnifiedAuth } from '@/contexts/UnifiedAuthContext';
 
 interface ProtectedInvestorRouteProps {
   children: ReactNode;
 }
 
 export const ProtectedInvestorRoute = ({ children }: ProtectedInvestorRouteProps) => {
-  const { user, investorUser, isLoading, isInvestor } = useInvestorAuth();
+  const { user, investorProfile, isLoading, isProfileLoading, profileChecked, isInvestor } = useUnifiedAuth();
 
-  if (isLoading) {
+  if (isLoading || isProfileLoading || (user && !profileChecked)) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="flex flex-col items-center gap-4">
@@ -29,9 +29,9 @@ export const ProtectedInvestorRoute = ({ children }: ProtectedInvestorRouteProps
       <div className="flex flex-col items-center justify-center min-h-screen gap-4 bg-background">
         <h1 className="text-2xl text-destructive">Acceso Denegado</h1>
         <p className="text-muted-foreground">
-          {investorUser?.status === 'pending' 
+          {investorProfile?.status === 'pending' 
             ? 'Tu cuenta está pendiente de activación.'
-            : investorUser?.status === 'suspended'
+            : investorProfile?.status === 'suspended'
             ? 'Tu cuenta ha sido suspendida.'
             : 'No tienes acceso al portal de inversores.'}
         </p>
