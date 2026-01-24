@@ -64,8 +64,8 @@ export const AdminPortfolio = () => {
       if (error) throw error;
 
       toast({
-        title: 'Status updated',
-        description: `Company ${!currentStatus ? 'activated' : 'deactivated'} successfully`,
+        title: 'Estado actualizado',
+        description: `Empresa ${!currentStatus ? 'activada' : 'desactivada'} correctamente`,
       });
       
       refetch();
@@ -88,8 +88,8 @@ export const AdminPortfolio = () => {
       if (error) throw error;
 
       toast({
-        title: 'Featured status updated',
-        description: `Company ${!currentStatus ? 'featured' : 'unfeatured'} successfully`,
+        title: 'Estado destacado actualizado',
+        description: `Empresa ${!currentStatus ? 'destacada' : 'sin destacar'} correctamente`,
       });
       
       refetch();
@@ -114,8 +114,8 @@ export const AdminPortfolio = () => {
       if (error) throw error;
 
       toast({
-        title: 'Company deleted',
-        description: 'The company has been deleted successfully',
+        title: 'Empresa eliminada',
+        description: 'La empresa ha sido eliminada correctamente',
       });
 
       refetch();
@@ -157,14 +157,14 @@ export const AdminPortfolio = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Portfolio Companies</h1>
+          <h1 className="text-3xl font-bold">Empresas del Portfolio</h1>
           <p className="text-muted-foreground mt-1">
-            Manage your portfolio companies and their public visibility
+            Gestiona las empresas del portfolio y su visibilidad pública
           </p>
         </div>
         <Button onClick={handleAddNew}>
           <Plus className="h-4 w-4 mr-2" />
-          Add Company
+          Añadir Empresa
         </Button>
       </div>
 
@@ -173,7 +173,7 @@ export const AdminPortfolio = () => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name or sector..."
+              placeholder="Buscar por nombre o sector..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -185,20 +185,20 @@ export const AdminPortfolio = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="w-16">Logo</TableHead>
-              <TableHead>Company</TableHead>
+              <TableHead>Empresa</TableHead>
               <TableHead>Sector</TableHead>
-              <TableHead>Country</TableHead>
-              <TableHead>Stage</TableHead>
-              <TableHead>Featured</TableHead>
-              <TableHead>Active</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>País</TableHead>
+              <TableHead>Etapa</TableHead>
+              <TableHead>Destacada</TableHead>
+              <TableHead>Activa</TableHead>
+              <TableHead className="text-right">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {companies?.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={8} className="text-center py-12 text-muted-foreground">
-                  No companies found. Click "Add Company" to create one.
+                  No se encontraron empresas. Haz clic en "Añadir Empresa" para crear una.
                 </TableCell>
               </TableRow>
             ) : (
@@ -245,6 +245,7 @@ export const AdminPortfolio = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleEdit(company)}
+                        title="Editar"
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
@@ -252,6 +253,7 @@ export const AdminPortfolio = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handlePreview(company)}
+                        title="Vista previa"
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
@@ -259,6 +261,7 @@ export const AdminPortfolio = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => setCompanyToDelete(company.id)}
+                        title="Eliminar"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -292,15 +295,15 @@ export const AdminPortfolio = () => {
       <AlertDialog open={!!companyToDelete} onOpenChange={() => setCompanyToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the company
-              from your portfolio.
+              Esta acción no se puede deshacer. Se eliminará permanentemente la empresa
+              de tu portfolio.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Eliminar</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
