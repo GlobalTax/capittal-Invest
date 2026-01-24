@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Linkedin } from "lucide-react";
+import { Linkedin, Lock } from "lucide-react";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -19,6 +19,9 @@ export const Footer = () => {
       { name: "Compañías participadas", href: "/portfolio" },
       { name: "Noticias", href: "/news" },
       { name: "Contacto", href: "/contact" },
+    ],
+    acceso: [
+      { name: "Portal Inversores", href: "/investor/login", icon: true },
     ],
   };
 
@@ -100,6 +103,26 @@ export const Footer = () => {
                     to={link.href} 
                     className="text-background/70 hover:text-background transition-smooth"
                   >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Acceso */}
+          <div>
+            <h3 className="text-sm font-medium uppercase tracking-widest mb-6">
+              Acceso
+            </h3>
+            <ul className="space-y-4">
+              {footerLinks.acceso.map((link) => (
+                <li key={link.name}>
+                  <Link 
+                    to={link.href} 
+                    className="text-background/70 hover:text-background transition-smooth flex items-center gap-2"
+                  >
+                    <Lock className="h-3.5 w-3.5" />
                     {link.name}
                   </Link>
                 </li>
