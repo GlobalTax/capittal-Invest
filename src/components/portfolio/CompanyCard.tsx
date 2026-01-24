@@ -4,7 +4,6 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { PortfolioCompany } from '@/types/portfolio';
-import { cn } from '@/lib/utils';
 
 interface CompanyCardProps {
   company: PortfolioCompany;
@@ -43,7 +42,7 @@ export const CompanyCard = ({ company, variant = 'grid' }: CompanyCardProps) => 
               <div className="flex gap-2 ml-4">
                 <Link to={`/portfolio/${company.slug}`}>
                   <Button variant="outline" size="sm">
-                    Details
+                    Detalles
                   </Button>
                 </Link>
                 {company.website_url && (
@@ -108,7 +107,7 @@ export const CompanyCard = ({ company, variant = 'grid' }: CompanyCardProps) => 
             to={`/portfolio/${company.slug}`}
             className="text-sm font-medium text-primary hover:text-primary/80 transition-smooth"
           >
-            Learn more →
+            Ver más →
           </Link>
           {company.website_url && (
             <a

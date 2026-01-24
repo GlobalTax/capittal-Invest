@@ -31,6 +31,22 @@ const Home = () => {
     },
   });
 
+  // Fetch recent news from database
+  const { data: recentNews } = useQuery({
+    queryKey: ['recent-news-home'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('news_articles')
+        .select('id, title, slug, published_at')
+        .eq('is_published', true)
+        .order('published_at', { ascending: false })
+        .limit(3);
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
   // Extract hero and KPIs from content
   const hero = homeContent?.find(c => c.section === 'hero');
   const kpis = homeContent
@@ -59,6 +75,15 @@ const Home = () => {
       href: "/strategy",
     },
   ];
+
+  // Fallback news if none from database
+  const displayNews = recentNews && recentNews.length > 0 
+    ? recentNews 
+    : [
+        { id: '1', title: 'Nueva inversión estratégica en el sector tecnológico', slug: '', published_at: new Date().toISOString() },
+        { id: '2', title: 'Expansión internacional de nuestra cartera de participadas', slug: '', published_at: new Date().toISOString() },
+        { id: '3', title: 'Resultados récord en el primer trimestre del año', slug: '', published_at: new Date().toISOString() },
+      ];
 
   return (
     <>
@@ -331,21 +356,21 @@ const Home = () => {
               </Button>
             </div>
 
-            {/* News placeholder - simple list style like Miura */}
+            {/* News list from database */}
             <div className="border-t border-border">
-              {[1, 2, 3].map((i) => (
+              {displayNews.map((news) => (
                 <Link
-                  key={i}
-                  to="/news"
+                  key={news.id}
+                  to={news.slug ? `/insights/${news.slug}` : "/news"}
                   className="block py-8 border-b border-border group hover:bg-neutral-100/50 transition-smooth -mx-4 px-4"
                 >
                   <div className="flex items-start justify-between gap-8">
                     <div>
                       <p className="text-sm text-muted-foreground mb-2">
-                        {new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}
+                        {new Date(news.published_at).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' })}
                       </p>
                       <h3 className="text-xl font-display text-foreground group-hover:text-muted-foreground transition-smooth">
-                        Nueva inversión estratégica en el sector tecnológico
+                        {news.title}
                       </h3>
                     </div>
                     <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-smooth flex-shrink-0 mt-2" />

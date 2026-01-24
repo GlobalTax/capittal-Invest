@@ -7,35 +7,35 @@ const Strategy = () => {
   const levers = [
     {
       icon: Target,
-      title: "Buy-and-Build",
+      title: "Comprar y Construir",
       description:
-        "Strategic acquisitions to build market-leading platforms through consolidation",
+        "Adquisiciones estratégicas para construir plataformas líderes en el mercado a través de la consolidación",
     },
     {
       icon: TrendingUp,
-      title: "Growth Acceleration",
+      title: "Aceleración del Crecimiento",
       description:
-        "Scaling proven business models through capital and operational expertise",
+        "Escalando modelos de negocio probados a través de capital y experiencia operativa",
     },
     {
       icon: Users,
-      title: "Talent & Leadership",
+      title: "Talento y Liderazgo",
       description:
-        "Building world-class teams and strengthening management capabilities",
+        "Construyendo equipos de primer nivel y fortaleciendo las capacidades directivas",
     },
     {
       icon: Zap,
-      title: "Operational Playbooks",
+      title: "Excelencia Operativa",
       description:
-        "Implementing best practices across sales, marketing, product, and operations",
+        "Implementando mejores prácticas en ventas, marketing, producto y operaciones",
     },
   ];
 
   return (
     <>
       <Meta
-        title="Strategy"
-        description="Our investment strategy focuses on growth equity in technology, consumer, education, and services sectors"
+        title="Estrategia"
+        description="Nuestra estrategia de inversión se centra en growth equity en tecnología, consumo, educación y servicios"
         canonicalUrl={`${window.location.origin}/strategy`}
       />
 
@@ -43,11 +43,11 @@ const Strategy = () => {
         {/* Hero */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
           <div className="max-w-4xl">
-            <Overline className="mb-4">Our Approach</Overline>
-            <h1 className="mb-6">Investment Strategy</h1>
+            <Overline className="mb-4">Nuestro Enfoque</Overline>
+            <h1 className="mb-6">Estrategia de Inversión</h1>
             <p className="text-lead">
-              We invest in exceptional companies at inflection points, partnering with
-              management teams to accelerate growth and build enduring value.
+              Invertimos en empresas excepcionales en puntos de inflexión, asociándonos con
+              equipos directivos para acelerar el crecimiento y construir valor duradero.
             </p>
           </div>
         </section>
@@ -56,24 +56,24 @@ const Strategy = () => {
         <section className="border-y border-border bg-neutral-100 py-24">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl">
-              <h2 className="mb-8">Our Investment Thesis</h2>
+              <h2 className="mb-8">Nuestra Tesis de Inversión</h2>
               <div className="space-y-6 text-body leading-relaxed">
                 <p>
-                  We focus on growth-stage companies with proven business models,
-                  strong unit economics, and significant market opportunities. Our
-                  typical investment size ranges from $25M to $100M in equity value
-                  from $50M to $500M.
+                  Nos enfocamos en empresas en fase de crecimiento con modelos de negocio probados,
+                  sólida economía unitaria y oportunidades de mercado significativas. Nuestro
+                  tamaño de inversión típico oscila entre 25M€ y 100M€ en empresas con
+                  valoraciones de 50M€ a 500M€.
                 </p>
                 <p>
-                  We seek businesses with defensible competitive positions, attractive
-                  margins, and clear paths to market leadership. Our approach combines
-                  patient capital with active partnership to create sustainable
-                  competitive advantages.
+                  Buscamos negocios con posiciones competitivas defendibles, márgenes atractivos
+                  y caminos claros hacia el liderazgo del mercado. Nuestro enfoque combina
+                  capital paciente con asociación activa para crear ventajas competitivas
+                  sostenibles.
                 </p>
                 <p>
-                  We believe exceptional returns come from backing exceptional teams,
-                  applying operational expertise, and maintaining a long-term
-                  perspective through market cycles.
+                  Creemos que los rendimientos excepcionales provienen de respaldar equipos
+                  excepcionales, aplicar experiencia operativa y mantener una perspectiva
+                  a largo plazo a través de los ciclos del mercado.
                 </p>
               </div>
             </div>
@@ -83,9 +83,9 @@ const Strategy = () => {
         {/* Value Creation Levers */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <SectionHeader
-            overline="Value Creation"
-            title="Our Approach to Value Creation"
-            description="Four key areas that drive sustainable growth and value"
+            overline="Creación de Valor"
+            title="Nuestro Enfoque para la Creación de Valor"
+            description="Cuatro áreas clave que impulsan el crecimiento sostenible y el valor"
           />
 
           <div className="grid md:grid-cols-2 gap-6 max-w-5xl">
