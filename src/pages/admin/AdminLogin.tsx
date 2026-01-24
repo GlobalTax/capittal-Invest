@@ -30,10 +30,20 @@ export const AdminLogin = () => {
 
   // Auto-redirect if already authenticated as admin (only check once on mount)
   useEffect(() => {
+    console.log('[LOGIN DEBUG] useEffect check:', {
+      isAdminLoading,
+      adminChecked,
+      hasCheckedExistingSession,
+      user: !!user,
+      userEmail: user?.email,
+      isAdmin
+    });
+    
     // Wait until admin check is complete and we haven't checked yet
     if (!isAdminLoading && adminChecked && !hasCheckedExistingSession) {
       setHasCheckedExistingSession(true);
       if (user && isAdmin) {
+        console.log('[LOGIN DEBUG] useEffect - Auto-redirecting to /admin');
         navigate('/admin', { replace: true });
       }
     }
@@ -81,9 +91,15 @@ export const AdminLogin = () => {
     }
 
     setIsLoading(true);
+    console.log('[LOGIN DEBUG] handleSubmit - Starting login for:', email);
 
     try {
       const result = await signIn(email, password);
+      console.log('[LOGIN DEBUG] handleSubmit - signIn result:', {
+        user: !!result.user,
+        adminUser: !!result.adminUser,
+        adminEmail: result.adminUser?.email
+      });
       
       // Verify admin access from result
       if (result.user && result.adminUser) {
@@ -92,11 +108,14 @@ export const AdminLogin = () => {
           description: 'Bienvenido al panel de administración',
         });
         
+        console.log('[LOGIN DEBUG] handleSubmit - About to delay before navigation');
         // Small delay to allow React to propagate context state changes
         await new Promise(resolve => setTimeout(resolve, 100));
         
+        console.log('[LOGIN DEBUG] handleSubmit - Delay completed, navigating to /admin');
         navigate('/admin', { replace: true });
       } else {
+        console.log('[LOGIN DEBUG] handleSubmit - Access denied, throwing error');
         throw new Error('Access denied: Not an admin user');
       }
     } catch (error: any) {
