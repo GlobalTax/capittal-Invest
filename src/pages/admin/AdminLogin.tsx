@@ -19,7 +19,6 @@ export const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [loginSuccess, setLoginSuccess] = useState(false);
   const [hasCheckedExistingSession, setHasCheckedExistingSession] = useState(false);
   const [remainingAttempts, setRemainingAttempts] = useState<number | null>(null);
   const [lockoutUntil, setLockoutUntil] = useState<string | null>(null);
@@ -28,17 +27,6 @@ export const AdminLogin = () => {
   const { signIn, user, adminChecked, isAdmin, isAdminLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  // Reactive navigation: wait for state to be fully updated after explicit login
-  useEffect(() => {
-    if (loginSuccess && user && adminChecked && isAdmin) {
-      toast({
-        title: 'Acceso exitoso',
-        description: 'Bienvenido al panel de administración',
-      });
-      navigate('/admin', { replace: true });
-    }
-  }, [loginSuccess, user, adminChecked, isAdmin, navigate, toast]);
 
   // Auto-redirect if already authenticated as admin (only check once on mount)
   useEffect(() => {
@@ -96,8 +84,13 @@ export const AdminLogin = () => {
 
     try {
       await signIn(email, password);
-      // Don't navigate here - mark success and let useEffect handle navigation
-      setLoginSuccess(true);
+      
+      // Navigate directly after successful signIn
+      toast({
+        title: 'Acceso exitoso',
+        description: 'Bienvenido al panel de administración',
+      });
+      navigate('/admin', { replace: true });
     } catch (error: any) {
       console.error('Login error:', error);
       
