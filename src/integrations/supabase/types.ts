@@ -10339,11 +10339,14 @@ export type Database = {
           approved_by: string | null
           contacto_id: string | null
           created_at: string | null
+          deleted_at: string | null
+          deleted_by: string | null
           description: string
           duration_minutes: number | null
           end_time: string | null
           id: string
           is_billable: boolean | null
+          is_deleted: boolean | null
           mandate_lead_id: string | null
           mandato_id: string | null
           notes: string | null
@@ -10364,11 +10367,14 @@ export type Database = {
           approved_by?: string | null
           contacto_id?: string | null
           created_at?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           description: string
           duration_minutes?: number | null
           end_time?: string | null
           id?: string
           is_billable?: boolean | null
+          is_deleted?: boolean | null
           mandate_lead_id?: string | null
           mandato_id?: string | null
           notes?: string | null
@@ -10389,11 +10395,14 @@ export type Database = {
           approved_by?: string | null
           contacto_id?: string | null
           created_at?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
           description?: string
           duration_minutes?: number | null
           end_time?: string | null
           id?: string
           is_billable?: boolean | null
+          is_deleted?: boolean | null
           mandate_lead_id?: string | null
           mandato_id?: string | null
           notes?: string | null
@@ -15715,6 +15724,105 @@ export type Database = {
           result_accuracy?: number
           user_agent?: string | null
           user_email?: string | null
+        }
+        Relationships: []
+      }
+      topbar_config: {
+        Row: {
+          created_at: string
+          id: string
+          phone_link: string
+          phone_number: string
+          show_language_selector: boolean
+          show_search: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          phone_link?: string
+          phone_number?: string
+          show_language_selector?: boolean
+          show_search?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          phone_link?: string
+          phone_number?: string
+          show_language_selector?: boolean
+          show_search?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      topbar_group_companies: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          is_current: boolean
+          logo_url: string | null
+          name: string
+          position: number
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_current?: boolean
+          logo_url?: string | null
+          name: string
+          position?: number
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_current?: boolean
+          logo_url?: string | null
+          name?: string
+          position?: number
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      topbar_links: {
+        Row: {
+          created_at: string
+          href: string
+          id: string
+          is_active: boolean
+          is_external: boolean
+          label: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          href: string
+          id?: string
+          is_active?: boolean
+          is_external?: boolean
+          label: string
+          position?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          href?: string
+          id?: string
+          is_active?: boolean
+          is_external?: boolean
+          label?: string
+          position?: number
+          updated_at?: string
         }
         Relationships: []
       }

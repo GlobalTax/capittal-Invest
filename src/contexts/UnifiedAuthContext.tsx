@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -79,6 +79,9 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [profileChecked, setProfileChecked] = useState(false);
+  
+  // Ref to prevent onAuthStateChange from overwriting state during signIn
+  const signInInProgressRef = useRef(false);
 
   // Detect user type and fetch appropriate profile
   const detectUserType = useCallback(async (userId: string): Promise<{
@@ -213,6 +216,11 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
         const currentUser = session?.user ?? null;
         setUser(currentUser);
 
+        // Skip profile loading if signIn() already handled it
+        if (signInInProgressRef.current) {
+          return;
+        }
+
         if (event === 'SIGNED_IN' && currentUser) {
           await loadProfile(currentUser);
         } else if (event === 'SIGNED_OUT') {
@@ -236,6 +244,9 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
     password: string, 
     targetPortal?: 'admin' | 'investor'
   ): Promise<SignInResult> => {
+    // Set flag to prevent onAuthStateChange from overwriting our state
+    signInInProgressRef.current = true;
+    
     try {
       // For admin login, try the edge function first
       if (targetPortal === 'admin') {
@@ -340,6 +351,11 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
       return { user: null, error: new Error('Error desconocido'), userType: null, adminProfile: null, investorProfile: null };
     } catch (error) {
       return { user: null, error: error as Error, userType: null, adminProfile: null, investorProfile: null };
+    } finally {
+      // Reset flag after a small delay to ensure onAuthStateChange has processed
+      setTimeout(() => {
+        signInInProgressRef.current = false;
+      }, 100);
     }
   };
 
