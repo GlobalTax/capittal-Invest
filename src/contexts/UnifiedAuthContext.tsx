@@ -30,6 +30,8 @@ interface SignInResult {
   user: User | null;
   error: Error | null;
   userType: UserType;
+  adminProfile?: AdminProfile | null;
+  investorProfile?: InvestorProfile | null;
 }
 
 interface UnifiedAuthContextType {
@@ -271,7 +273,7 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
               setInvestorProfile(null);
               setProfileChecked(true);
 
-              return { user: sessionUser, error: null, userType: 'admin' };
+              return { user: sessionUser, error: null, userType: 'admin', adminProfile: adminProfileData };
             }
           } else if (edgeData?.error) {
             // Handle specific errors from edge function (rate limit, etc.)
@@ -281,7 +283,7 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
             };
             error.remainingAttempts = edgeData.remaining_attempts;
             error.lockoutUntil = edgeData.lockout_until;
-            return { user: null, error, userType: null };
+            return { user: null, error, userType: null, adminProfile: null, investorProfile: null };
           }
         } catch (edgeFnError) {
           console.log('Edge function not available, falling back to direct auth');
@@ -295,7 +297,7 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (error) {
-        return { user: null, error, userType: null };
+        return { user: null, error, userType: null, adminProfile: null, investorProfile: null };
       }
 
       if (data.user) {
@@ -332,12 +334,12 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
           };
         }
 
-        return { user: data.user, error: null, userType: result.type };
+        return { user: data.user, error: null, userType: result.type, adminProfile: result.admin, investorProfile: result.investor };
       }
 
-      return { user: null, error: new Error('Error desconocido'), userType: null };
+      return { user: null, error: new Error('Error desconocido'), userType: null, adminProfile: null, investorProfile: null };
     } catch (error) {
-      return { user: null, error: error as Error, userType: null };
+      return { user: null, error: error as Error, userType: null, adminProfile: null, investorProfile: null };
     }
   };
 
