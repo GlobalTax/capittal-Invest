@@ -5,15 +5,15 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-normal transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-normal transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:scale-[0.98] select-none",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary-600",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-primary bg-transparent text-primary hover:bg-neutral-100",
-        secondary: "bg-neutral-100 text-foreground hover:bg-neutral-300",
-        ghost: "text-primary hover:bg-neutral-100",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 active:bg-destructive/80",
+        outline: "border border-primary bg-transparent text-primary hover:bg-primary/5 active:bg-primary/10",
+        secondary: "bg-muted text-foreground hover:bg-muted/80 active:bg-muted/70",
+        ghost: "text-primary hover:bg-muted active:bg-muted/80",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {

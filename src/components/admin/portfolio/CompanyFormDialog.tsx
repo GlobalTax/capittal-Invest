@@ -66,8 +66,8 @@ export const CompanyFormDialog = ({
         if (error) throw error;
 
         toast({
-          title: 'Company updated',
-          description: 'The company has been updated successfully.',
+          title: 'Empresa actualizada',
+          description: 'La empresa ha sido actualizada correctamente.',
         });
       } else {
         // Create new company
@@ -78,8 +78,8 @@ export const CompanyFormDialog = ({
         if (error) throw error;
 
         toast({
-          title: 'Company created',
-          description: 'The company has been created successfully.',
+          title: 'Empresa creada',
+          description: 'La empresa ha sido creada correctamente.',
         });
       }
 
@@ -101,7 +101,7 @@ export const CompanyFormDialog = ({
       <DialogContent className="max-w-3xl max-h-[90vh]">
         <DialogHeader>
           <DialogTitle>
-            {company ? 'Edit Company' : 'Add New Company'}
+            {company ? 'Editar Empresa' : 'Nueva Empresa'}
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[calc(90vh-100px)] pr-4">
