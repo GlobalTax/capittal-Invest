@@ -18,6 +18,8 @@ import { AdminHome } from "@/pages/admin/AdminHome";
 import { AdminAbout } from "@/pages/admin/AdminAbout";
 import About from "./pages/About";
 import Home from "./pages/Home";
+import Privacy from "./pages/Privacy";
+import Legal from "./pages/Legal";
 import Strategy from "./pages/Strategy";
 import Sectors from "./pages/Sectors";
 import Portfolio from "./pages/Portfolio";
@@ -51,6 +53,8 @@ const App = () => (
               <Route path="/insights/:slug" element={<Layout><InsightDetail /></Layout>} />
               <Route path="/news" element={<Layout><News /></Layout>} />
               <Route path="/contact" element={<Layout><Contact /></Layout>} />
+              <Route path="/privacy" element={<Layout><Privacy /></Layout>} />
+              <Route path="/legal" element={<Layout><Legal /></Layout>} />
 
               {/* Admin routes */}
               <Route path="/admin/login" element={<AdminLogin />} />
