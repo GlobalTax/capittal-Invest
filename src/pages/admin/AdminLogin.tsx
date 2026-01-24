@@ -83,14 +83,22 @@ export const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      await signIn(email, password);
+      const result = await signIn(email, password);
       
-      // Navigate directly after successful signIn
-      toast({
-        title: 'Acceso exitoso',
-        description: 'Bienvenido al panel de administración',
-      });
-      navigate('/admin', { replace: true });
+      // Verify admin access from result
+      if (result.user && result.adminUser) {
+        toast({
+          title: 'Acceso exitoso',
+          description: 'Bienvenido al panel de administración',
+        });
+        
+        // Small delay to allow React to propagate context state changes
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        navigate('/admin', { replace: true });
+      } else {
+        throw new Error('Access denied: Not an admin user');
+      }
     } catch (error: any) {
       console.error('Login error:', error);
       
