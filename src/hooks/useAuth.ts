@@ -28,7 +28,7 @@ export const useAuth = () => {
       }
       return { 
         user: result.user!, 
-        adminUser: ctx.adminProfile! 
+        adminUser: result.adminProfile! 
       };
     },
     signOut: ctx.signOut,
