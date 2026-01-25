@@ -353,18 +353,22 @@ const Portfolio = () => {
             />
           ) : (
             <>
-              <div className={cn(
-                "mb-8 transition-opacity duration-200",
-                viewMode === 'grid'
-                  ? "grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                  : "space-y-4",
-                isFiltering && "opacity-60"
-              )}>
-                {companies.map((company) => (
+              <div 
+                key={`${searchTerm}-${activeSector}-${activeStage}-${activeCountry}-${currentPage}`}
+                className={cn(
+                  "mb-8 transition-opacity duration-200",
+                  viewMode === 'grid'
+                    ? "grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                    : "space-y-4",
+                  isFiltering && "opacity-60"
+                )}
+              >
+                {companies.map((company, index) => (
                   <CompanyCard
                     key={company.id}
                     company={company}
                     variant={viewMode}
+                    index={index}
                   />
                 ))}
               </div>
