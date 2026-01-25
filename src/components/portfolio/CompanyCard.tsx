@@ -8,12 +8,18 @@ import { PortfolioCompany } from '@/types/portfolio';
 interface CompanyCardProps {
   company: PortfolioCompany;
   variant?: 'grid' | 'list';
+  index?: number;
 }
 
-export const CompanyCard = ({ company, variant = 'grid' }: CompanyCardProps) => {
+export const CompanyCard = ({ company, variant = 'grid', index = 0 }: CompanyCardProps) => {
+  const animationDelay = `${Math.min(index, 7) * 75}ms`;
+
   if (variant === 'list') {
     return (
-      <Card className="p-6 hover:shadow-lg transition-smooth">
+      <Card 
+        className="p-6 hover:shadow-lg transition-smooth opacity-0 animate-fade-up"
+        style={{ animationDelay }}
+      >
         <div className="flex items-start gap-6">
           <div className="w-20 h-20 bg-muted rounded flex items-center justify-center flex-shrink-0">
             {company.logo_url ? (
@@ -68,7 +74,10 @@ export const CompanyCard = ({ company, variant = 'grid' }: CompanyCardProps) => 
   }
 
   return (
-    <Card className="group relative overflow-hidden hover-lift hover:shadow-2xl transition-all duration-300">
+    <Card 
+      className="group relative overflow-hidden hover-lift hover:shadow-2xl transition-all duration-300 opacity-0 animate-fade-up"
+      style={{ animationDelay }}
+    >
       <div className="aspect-square bg-muted flex items-center justify-center p-8">
         {company.logo_url ? (
           <img
