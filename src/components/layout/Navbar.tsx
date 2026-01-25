@@ -53,10 +53,10 @@ export const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <span className={cn(
-              "text-xl font-serif font-medium tracking-tight transition-colors duration-300",
+              "text-xl font-display font-normal tracking-tight transition-colors duration-300",
               shouldBeTransparent ? "text-white" : "text-foreground"
             )}>
-              Capittal Invest
+              Capittal <span className="opacity-50">|</span> Invest
             </span>
           </Link>
 

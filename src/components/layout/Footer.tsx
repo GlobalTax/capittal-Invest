@@ -29,8 +29,8 @@ export const Footer = () => {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link to="/" className="inline-block mb-6">
-              <span className="text-2xl font-serif font-medium">
-                Capittal Invest
+              <span className="text-2xl font-display font-normal">
+                Capittal <span className="opacity-50">|</span> Invest
               </span>
             </Link>
             <p className="text-background/70 max-w-sm leading-relaxed mb-8">
@@ -111,7 +111,7 @@ export const Footer = () => {
         {/* Legal */}
         <div className="mt-16 pt-8 border-t border-background/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-background/50">
-            © {currentYear} Capittal Invest. Todos los derechos reservados.
+            © {currentYear} Capittal | Invest. Todos los derechos reservados.
           </p>
           <div className="flex gap-6">
             <Link to="/privacy" className="text-sm text-background/50 hover:text-background transition-smooth">
