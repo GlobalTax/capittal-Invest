@@ -33,7 +33,7 @@ const PortfolioDetail = () => {
         .select('id, name, slug, description, logo_url, website_url, sector, stage, country, founded_year, investment_date, investment_thesis, metrics, timeline, is_featured, created_at')
         .eq('slug', id)
         .eq('is_active', true)
-        .single();
+        .maybeSingle();
       
       if (response.error) throw response.error;
       return response.data;
@@ -99,7 +99,7 @@ const PortfolioDetail = () => {
       <Meta 
         title={company.name}
         description={company.description || company.investment_thesis || ''}
-        canonicalUrl={`${window.location.origin}/portfolio/${company.id}`}
+        canonicalUrl={`${window.location.origin}/portfolio/${company.slug || id}`}
       />
 
       <div className="min-h-screen">
