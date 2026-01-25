@@ -559,6 +559,13 @@ export type Database = {
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
           },
+          {
+            foreignKeyName: "admin_leads_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
+          },
         ]
       }
       admin_notifications: {
@@ -1225,6 +1232,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
+          },
+          {
+            foreignKeyName: "ai_imports_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -4073,6 +4087,13 @@ export type Database = {
             referencedColumns: ["matched_empresa_id"]
           },
           {
+            foreignKeyName: "company_valuations_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "company_valuations_lead_form_fkey"
             columns: ["lead_form"]
             isOneToOne: false
@@ -4342,6 +4363,13 @@ export type Database = {
             referencedColumns: ["matched_empresa_id"]
           },
           {
+            foreignKeyName: "contact_leads_crm_empresa_id_fkey"
+            columns: ["crm_empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "contact_leads_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
@@ -4354,6 +4382,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
+          },
+          {
+            foreignKeyName: "contact_leads_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "contact_leads_lead_form_fkey"
@@ -4611,6 +4646,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
+          },
+          {
+            foreignKeyName: "contactos_empresa_principal_id_fkey"
+            columns: ["empresa_principal_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "contactos_import_log_id_fkey"
@@ -4889,6 +4931,13 @@ export type Database = {
             columns: ["portfolio_id"]
             isOneToOne: false
             referencedRelation: "cr_portfolio"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cr_deals_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "v_cr_portfolio_con_actividad"
             referencedColumns: ["id"]
           },
         ]
@@ -5374,6 +5423,7 @@ export type Database = {
           revenue_estimate: string | null
           scan_priority: string | null
           sector: string | null
+          sector_pe: string | null
           skip_news_scan: boolean | null
           social_links: Json | null
           source_url: string | null
@@ -5409,6 +5459,7 @@ export type Database = {
           revenue_estimate?: string | null
           scan_priority?: string | null
           sector?: string | null
+          sector_pe?: string | null
           skip_news_scan?: boolean | null
           social_links?: Json | null
           source_url?: string | null
@@ -5444,6 +5495,7 @@ export type Database = {
           revenue_estimate?: string | null
           scan_priority?: string | null
           sector?: string | null
+          sector_pe?: string | null
           skip_news_scan?: boolean | null
           social_links?: Json | null
           source_url?: string | null
@@ -5458,6 +5510,66 @@ export type Database = {
             columns: ["fund_id"]
             isOneToOne: false
             referencedRelation: "cr_funds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cr_portfolio_interactions: {
+        Row: {
+          body: string | null
+          contact_email: string | null
+          contact_name: string | null
+          created_at: string | null
+          created_by: string | null
+          id: string
+          interaction_type: string
+          metadata: Json | null
+          portfolio_id: string
+          sent_at: string | null
+          subject: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          body?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          interaction_type: string
+          metadata?: Json | null
+          portfolio_id: string
+          sent_at?: string | null
+          subject?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          body?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          interaction_type?: string
+          metadata?: Json | null
+          portfolio_id?: string
+          sent_at?: string | null
+          subject?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cr_portfolio_interactions_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "cr_portfolio"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cr_portfolio_interactions_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "v_cr_portfolio_con_actividad"
             referencedColumns: ["id"]
           },
         ]
@@ -5582,6 +5694,48 @@ export type Database = {
           widget_config?: Json
           widget_name?: string
           widget_type?: string
+        }
+        Relationships: []
+      }
+      dashboard_highlights: {
+        Row: {
+          color: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          icon: string
+          id: string
+          is_active: boolean
+          position: number
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          icon?: string
+          id?: string
+          is_active?: boolean
+          position?: number
+          title: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          icon?: string
+          id?: string
+          is_active?: boolean
+          position?: number
+          title?: string
+          updated_at?: string
+          url?: string
         }
         Relationships: []
       }
@@ -5849,6 +6003,8 @@ export type Database = {
       }
       documentos: {
         Row: {
+          approved_at: string | null
+          approved_by: string | null
           created_at: string | null
           descripcion: string | null
           file_name: string
@@ -5860,6 +6016,8 @@ export type Database = {
           mandato_id: string | null
           mime_type: string
           parent_document_id: string | null
+          published_at: string | null
+          status: string | null
           storage_path: string
           tags: string[] | null
           tipo: string | null
@@ -5868,6 +6026,8 @@ export type Database = {
           version: number | null
         }
         Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string | null
           descripcion?: string | null
           file_name: string
@@ -5879,6 +6039,8 @@ export type Database = {
           mandato_id?: string | null
           mime_type: string
           parent_document_id?: string | null
+          published_at?: string | null
+          status?: string | null
           storage_path: string
           tags?: string[] | null
           tipo?: string | null
@@ -5887,6 +6049,8 @@ export type Database = {
           version?: number | null
         }
         Update: {
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string | null
           descripcion?: string | null
           file_name?: string
@@ -5898,6 +6062,8 @@ export type Database = {
           mandato_id?: string | null
           mime_type?: string
           parent_document_id?: string | null
+          published_at?: string | null
+          status?: string | null
           storage_path?: string
           tags?: string[] | null
           tipo?: string | null
@@ -6295,6 +6461,54 @@ export type Database = {
         }
         Relationships: []
       }
+      email_templates: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          html_content: string
+          id: string
+          idioma: string
+          is_active: boolean | null
+          is_default: boolean | null
+          nombre: string
+          subject_template: string
+          text_content: string | null
+          tipo: string | null
+          updated_at: string | null
+          variables: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          html_content: string
+          id?: string
+          idioma: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          nombre: string
+          subject_template: string
+          text_content?: string | null
+          tipo?: string | null
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          html_content?: string
+          id?: string
+          idioma?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          nombre?: string
+          subject_template?: string
+          text_content?: string | null
+          tipo?: string | null
+          updated_at?: string | null
+          variables?: Json | null
+        }
+        Relationships: []
+      }
       empresa_documentos: {
         Row: {
           compartido_por: string | null
@@ -6352,6 +6566,13 @@ export type Database = {
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
           },
+          {
+            foreignKeyName: "empresa_documentos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
+          },
         ]
       }
       empresa_favorites: {
@@ -6390,6 +6611,13 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
+          },
+          {
+            foreignKeyName: "empresa_favorites_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: true
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -6573,6 +6801,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
+          },
+          {
+            foreignKeyName: "empresa_financial_statements_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -7564,6 +7799,13 @@ export type Database = {
             referencedColumns: ["matched_empresa_id"]
           },
           {
+            foreignKeyName: "general_contact_leads_crm_empresa_id_fkey"
+            columns: ["crm_empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "general_contact_leads_lead_form_fkey"
             columns: ["lead_form"]
             isOneToOne: false
@@ -7816,6 +8058,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
+          },
+          {
+            foreignKeyName: "interacciones_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "interacciones_mandato_id_fkey"
@@ -9936,6 +10185,13 @@ export type Database = {
             referencedColumns: ["matched_empresa_id"]
           },
           {
+            foreignKeyName: "mandate_leads_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "mandate_leads_mandato_id_fkey"
             columns: ["mandato_id"]
             isOneToOne: false
@@ -10554,40 +10810,64 @@ export type Database = {
       }
       mandato_empresas: {
         Row: {
+          buyer_type: string | null
+          conflicto_descripcion: string | null
           created_at: string | null
           empresa_id: string
           funnel_stage: string | null
+          geografia: string | null
           id: string
           mandato_id: string
           match_score: number | null
+          no_contactar: boolean | null
+          no_contactar_motivo: string | null
           notas: string | null
+          notas_internas: string | null
           pipeline_stage_changed_at: string | null
           pipeline_stage_target: string | null
           rol: string
+          tags: string[] | null
+          tiene_conflicto: boolean | null
         }
         Insert: {
+          buyer_type?: string | null
+          conflicto_descripcion?: string | null
           created_at?: string | null
           empresa_id: string
           funnel_stage?: string | null
+          geografia?: string | null
           id?: string
           mandato_id: string
           match_score?: number | null
+          no_contactar?: boolean | null
+          no_contactar_motivo?: string | null
           notas?: string | null
+          notas_internas?: string | null
           pipeline_stage_changed_at?: string | null
           pipeline_stage_target?: string | null
           rol: string
+          tags?: string[] | null
+          tiene_conflicto?: boolean | null
         }
         Update: {
+          buyer_type?: string | null
+          conflicto_descripcion?: string | null
           created_at?: string | null
           empresa_id?: string
           funnel_stage?: string | null
+          geografia?: string | null
           id?: string
           mandato_id?: string
           match_score?: number | null
+          no_contactar?: boolean | null
+          no_contactar_motivo?: string | null
           notas?: string | null
+          notas_internas?: string | null
           pipeline_stage_changed_at?: string | null
           pipeline_stage_target?: string | null
           rol?: string
+          tags?: string[] | null
+          tiene_conflicto?: boolean | null
         }
         Relationships: [
           {
@@ -10603,6 +10883,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
+          },
+          {
+            foreignKeyName: "mandato_empresas_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "mandato_empresas_mandato_id_fkey"
@@ -11129,6 +11416,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
+          },
+          {
+            foreignKeyName: "mandatos_empresa_principal_id_fkey"
+            columns: ["empresa_principal_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "mandatos_import_log_id_fkey"
@@ -12880,6 +13174,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "portfolio_changes_existing_portfolio_id_fkey"
+            columns: ["existing_portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "v_cr_portfolio_con_actividad"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "portfolio_changes_fund_id_fkey"
             columns: ["fund_id"]
             isOneToOne: false
@@ -13031,6 +13332,13 @@ export type Database = {
             columns: ["portfolio_id"]
             isOneToOne: false
             referencedRelation: "cr_portfolio"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portfolio_news_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "v_cr_portfolio_con_actividad"
             referencedColumns: ["id"]
           },
         ]
@@ -13260,6 +13568,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
+          },
+          {
+            foreignKeyName: "presentation_projects_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -13520,6 +13835,13 @@ export type Database = {
             columns: ["portfolio_company_id"]
             isOneToOne: false
             referencedRelation: "cr_portfolio"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "processed_urls_portfolio_company_id_fkey"
+            columns: ["portfolio_company_id"]
+            isOneToOne: false
+            referencedRelation: "v_cr_portfolio_con_actividad"
             referencedColumns: ["id"]
           },
         ]
@@ -13922,6 +14244,13 @@ export type Database = {
             referencedColumns: ["matched_empresa_id"]
           },
           {
+            foreignKeyName: "propuestas_honorarios_empresa_cliente_id_fkey"
+            columns: ["empresa_cliente_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "propuestas_honorarios_empresa_target_id_fkey"
             columns: ["empresa_target_id"]
             isOneToOne: false
@@ -13934,6 +14263,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
+          },
+          {
+            foreignKeyName: "propuestas_honorarios_empresa_target_id_fkey"
+            columns: ["empresa_target_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "propuestas_honorarios_mandato_id_fkey"
@@ -16321,6 +16657,406 @@ export type Database = {
         }
         Relationships: []
       }
+      teaser_campaigns: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          created_by: string | null
+          custom_message: string | null
+          from_email: string | null
+          from_name: string | null
+          id: string
+          idioma: string
+          mandato_id: string
+          nombre: string
+          started_at: string | null
+          status: string | null
+          subject: string
+          teaser_document_id: string | null
+          template_id: string | null
+          total_bounced: number | null
+          total_clicked: number | null
+          total_delivered: number | null
+          total_opened: number | null
+          total_recipients: number | null
+          total_sent: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          custom_message?: string | null
+          from_email?: string | null
+          from_name?: string | null
+          id?: string
+          idioma: string
+          mandato_id: string
+          nombre: string
+          started_at?: string | null
+          status?: string | null
+          subject: string
+          teaser_document_id?: string | null
+          template_id?: string | null
+          total_bounced?: number | null
+          total_clicked?: number | null
+          total_delivered?: number | null
+          total_opened?: number | null
+          total_recipients?: number | null
+          total_sent?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          custom_message?: string | null
+          from_email?: string | null
+          from_name?: string | null
+          id?: string
+          idioma?: string
+          mandato_id?: string
+          nombre?: string
+          started_at?: string | null
+          status?: string | null
+          subject?: string
+          teaser_document_id?: string | null
+          template_id?: string | null
+          total_bounced?: number | null
+          total_clicked?: number | null
+          total_delivered?: number | null
+          total_opened?: number | null
+          total_recipients?: number | null
+          total_sent?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teaser_campaigns_mandato_id_fkey"
+            columns: ["mandato_id"]
+            isOneToOne: false
+            referencedRelation: "mandato_time_summary"
+            referencedColumns: ["mandato_id"]
+          },
+          {
+            foreignKeyName: "teaser_campaigns_mandato_id_fkey"
+            columns: ["mandato_id"]
+            isOneToOne: false
+            referencedRelation: "mandatos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teaser_campaigns_mandato_id_fkey"
+            columns: ["mandato_id"]
+            isOneToOne: false
+            referencedRelation: "v_mandato_costs"
+            referencedColumns: ["mandato_id"]
+          },
+          {
+            foreignKeyName: "teaser_campaigns_mandato_id_fkey"
+            columns: ["mandato_id"]
+            isOneToOne: false
+            referencedRelation: "v_mandatos_stuck"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teaser_campaigns_mandato_id_fkey"
+            columns: ["mandato_id"]
+            isOneToOne: false
+            referencedRelation: "v_mandatos_winloss"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teaser_campaigns_mandato_id_fkey"
+            columns: ["mandato_id"]
+            isOneToOne: false
+            referencedRelation: "vw_mandate_pipeline"
+            referencedColumns: ["mandato_id"]
+          },
+          {
+            foreignKeyName: "teaser_campaigns_teaser_document_id_fkey"
+            columns: ["teaser_document_id"]
+            isOneToOne: false
+            referencedRelation: "documentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teaser_campaigns_teaser_document_id_fkey"
+            columns: ["teaser_document_id"]
+            isOneToOne: false
+            referencedRelation: "v_documentos_con_versiones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teaser_recipients: {
+        Row: {
+          bounce_type: string | null
+          bounced_at: string | null
+          campaign_id: string
+          click_count: number | null
+          clicked_at: string | null
+          contacto_id: string | null
+          created_at: string | null
+          delivered_at: string | null
+          email: string
+          empresa_id: string | null
+          empresa_nombre: string | null
+          error_message: string | null
+          failed_at: string | null
+          id: string
+          mandato_empresa_id: string | null
+          nombre: string | null
+          open_count: number | null
+          opened_at: string | null
+          provider_message_id: string | null
+          provider_status: string | null
+          queued_at: string | null
+          sent_at: string | null
+          skip_reason: string | null
+          status: string | null
+          tracking_id: string | null
+          updated_at: string | null
+          wave_id: string | null
+        }
+        Insert: {
+          bounce_type?: string | null
+          bounced_at?: string | null
+          campaign_id: string
+          click_count?: number | null
+          clicked_at?: string | null
+          contacto_id?: string | null
+          created_at?: string | null
+          delivered_at?: string | null
+          email: string
+          empresa_id?: string | null
+          empresa_nombre?: string | null
+          error_message?: string | null
+          failed_at?: string | null
+          id?: string
+          mandato_empresa_id?: string | null
+          nombre?: string | null
+          open_count?: number | null
+          opened_at?: string | null
+          provider_message_id?: string | null
+          provider_status?: string | null
+          queued_at?: string | null
+          sent_at?: string | null
+          skip_reason?: string | null
+          status?: string | null
+          tracking_id?: string | null
+          updated_at?: string | null
+          wave_id?: string | null
+        }
+        Update: {
+          bounce_type?: string | null
+          bounced_at?: string | null
+          campaign_id?: string
+          click_count?: number | null
+          clicked_at?: string | null
+          contacto_id?: string | null
+          created_at?: string | null
+          delivered_at?: string | null
+          email?: string
+          empresa_id?: string | null
+          empresa_nombre?: string | null
+          error_message?: string | null
+          failed_at?: string | null
+          id?: string
+          mandato_empresa_id?: string | null
+          nombre?: string | null
+          open_count?: number | null
+          opened_at?: string | null
+          provider_message_id?: string | null
+          provider_status?: string | null
+          queued_at?: string | null
+          sent_at?: string | null
+          skip_reason?: string | null
+          status?: string | null
+          tracking_id?: string | null
+          updated_at?: string | null
+          wave_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teaser_recipients_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "teaser_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teaser_recipients_contacto_id_fkey"
+            columns: ["contacto_id"]
+            isOneToOne: false
+            referencedRelation: "contactos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teaser_recipients_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teaser_recipients_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresa_valuations"
+            referencedColumns: ["matched_empresa_id"]
+          },
+          {
+            foreignKeyName: "teaser_recipients_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teaser_recipients_mandato_empresa_id_fkey"
+            columns: ["mandato_empresa_id"]
+            isOneToOne: false
+            referencedRelation: "mandato_empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teaser_recipients_wave_id_fkey"
+            columns: ["wave_id"]
+            isOneToOne: false
+            referencedRelation: "teaser_waves"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teaser_tracking_events: {
+        Row: {
+          bounce_type: string | null
+          campaign_id: string
+          clicked_url: string | null
+          event_type: string
+          id: string
+          ip_address: unknown
+          occurred_at: string | null
+          provider_data: Json | null
+          provider_event_id: string | null
+          recipient_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          bounce_type?: string | null
+          campaign_id: string
+          clicked_url?: string | null
+          event_type: string
+          id?: string
+          ip_address?: unknown
+          occurred_at?: string | null
+          provider_data?: Json | null
+          provider_event_id?: string | null
+          recipient_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          bounce_type?: string | null
+          campaign_id?: string
+          clicked_url?: string | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown
+          occurred_at?: string | null
+          provider_data?: Json | null
+          provider_event_id?: string | null
+          recipient_id?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teaser_tracking_events_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "teaser_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teaser_tracking_events_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "teaser_recipients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teaser_waves: {
+        Row: {
+          batch_size: number | null
+          campaign_id: string
+          clicked_count: number | null
+          completed_at: string | null
+          created_at: string | null
+          delay_between_batches_ms: number | null
+          delivered_count: number | null
+          failed_count: number | null
+          id: string
+          nombre: string | null
+          opened_count: number | null
+          scheduled_at: string | null
+          sent_count: number | null
+          started_at: string | null
+          status: string | null
+          total_recipients: number | null
+          updated_at: string | null
+          wave_number: number
+        }
+        Insert: {
+          batch_size?: number | null
+          campaign_id: string
+          clicked_count?: number | null
+          completed_at?: string | null
+          created_at?: string | null
+          delay_between_batches_ms?: number | null
+          delivered_count?: number | null
+          failed_count?: number | null
+          id?: string
+          nombre?: string | null
+          opened_count?: number | null
+          scheduled_at?: string | null
+          sent_count?: number | null
+          started_at?: string | null
+          status?: string | null
+          total_recipients?: number | null
+          updated_at?: string | null
+          wave_number: number
+        }
+        Update: {
+          batch_size?: number | null
+          campaign_id?: string
+          clicked_count?: number | null
+          completed_at?: string | null
+          created_at?: string | null
+          delay_between_batches_ms?: number | null
+          delivered_count?: number | null
+          failed_count?: number | null
+          id?: string
+          nombre?: string | null
+          opened_count?: number | null
+          scheduled_at?: string | null
+          sent_count?: number | null
+          started_at?: string | null
+          status?: string | null
+          total_recipients?: number | null
+          updated_at?: string | null
+          wave_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teaser_waves_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "teaser_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       testimonials: {
         Row: {
           client_company: string
@@ -17517,6 +18253,56 @@ export type Database = {
         }
         Relationships: []
       }
+      v_cr_portfolio_con_actividad: {
+        Row: {
+          company_name: string | null
+          country: string | null
+          created_at: string | null
+          deleted_at: string | null
+          description: string | null
+          employee_count_estimate: number | null
+          enriched_at: string | null
+          enriched_data: Json | null
+          enrichment_source: string | null
+          exit_type: string | null
+          exit_year: number | null
+          fund_display_name: string | null
+          fund_id: string | null
+          fund_type: string | null
+          id: string | null
+          investment_type: string | null
+          investment_year: number | null
+          is_deleted: boolean | null
+          key_people: Json | null
+          last_news_scan_at: string | null
+          last_web_check_at: string | null
+          news_alert_count: number | null
+          notes: string | null
+          ownership_type: string | null
+          revenue_estimate: string | null
+          scan_priority: string | null
+          sector: string | null
+          sector_pe: string | null
+          skip_news_scan: boolean | null
+          social_links: Json | null
+          source_url: string | null
+          status: string | null
+          technologies: string[] | null
+          total_interacciones: number | null
+          ultima_interaccion: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cr_portfolio_fund_id_fkey"
+            columns: ["fund_id"]
+            isOneToOne: false
+            referencedRelation: "cr_funds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       v_documentos_con_versiones: {
         Row: {
           created_at: string | null
@@ -17673,6 +18459,108 @@ export type Database = {
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
           },
+          {
+            foreignKeyName: "company_valuations_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_empresas_con_actividad: {
+        Row: {
+          actividades_destacadas: string[] | null
+          alexa_ranking: number | null
+          año_datos_financieros: number | null
+          apollo_enriched_at: string | null
+          apollo_intent_level: string | null
+          apollo_last_synced_at: string | null
+          apollo_org_id: string | null
+          apollo_raw_data: Json | null
+          apollo_score: number | null
+          apollo_visitor_date: string | null
+          apollo_visitor_source: string | null
+          brevo_id: string | null
+          brevo_last_modified_at: string | null
+          brevo_synced_at: string | null
+          capital_circulante: number | null
+          cif: string | null
+          cnae_codigo: string | null
+          cnae_descripcion: string | null
+          created_at: string | null
+          departmental_headcount: Json | null
+          descripcion: string | null
+          deuda: number | null
+          ebitda: number | null
+          ebitda_margin: number | null
+          empleados: number | null
+          es_target: boolean | null
+          estado_target: string | null
+          facebook_url: string | null
+          facturacion: number | null
+          fecha_enriquecimiento: string | null
+          founded_year: number | null
+          fuente_enriquecimiento: string | null
+          id: string | null
+          import_log_id: string | null
+          keywords: string[] | null
+          linkedin_url: string | null
+          margen_ebitda: number | null
+          nivel_interes: string | null
+          nombre: string | null
+          origen: string | null
+          potencial_search_fund: boolean | null
+          revenue: number | null
+          sector: string | null
+          sector_id: string | null
+          sitio_web: string | null
+          source: string | null
+          source_id: string | null
+          source_pro_valuation_id: string | null
+          source_valuation_id: string | null
+          subsector: string | null
+          technologies: Json | null
+          ubicacion: string | null
+          ultima_actividad: string | null
+          updated_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "empresas_import_log_id_fkey"
+            columns: ["import_log_id"]
+            isOneToOne: false
+            referencedRelation: "import_logs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "empresas_sector_id_fkey"
+            columns: ["sector_id"]
+            isOneToOne: false
+            referencedRelation: "sectors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "empresas_source_pro_valuation_id_fkey"
+            columns: ["source_pro_valuation_id"]
+            isOneToOne: false
+            referencedRelation: "professional_valuations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "empresas_source_valuation_id_fkey"
+            columns: ["source_valuation_id"]
+            isOneToOne: false
+            referencedRelation: "company_valuations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "empresas_source_valuation_id_fkey"
+            columns: ["source_valuation_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresa_valuations"
+            referencedColumns: ["id"]
+          },
         ]
       }
       v_enrichment_stats: {
@@ -17750,6 +18638,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
+          },
+          {
+            foreignKeyName: "mandatos_empresa_principal_id_fkey"
+            columns: ["empresa_principal_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "mandatos_import_log_id_fkey"
@@ -17991,6 +18886,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_empresa_valuations"
             referencedColumns: ["matched_empresa_id"]
+          },
+          {
+            foreignKeyName: "mandate_leads_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "mandate_leads_valuation_id_fkey"
@@ -18442,6 +19344,20 @@ export type Database = {
       }
       monitor_security_violations: { Args: never; Returns: undefined }
       normalize_company_name: { Args: { name: string }; Returns: string }
+      record_tracking_event: {
+        Args: {
+          p_clicked_url?: string
+          p_event_type: string
+          p_ip_address?: unknown
+          p_tracking_id: string
+          p_user_agent?: string
+        }
+        Returns: {
+          campaign_id: string
+          recipient_id: string
+          success: boolean
+        }[]
+      }
       refresh_banner_analytics: { Args: never; Returns: undefined }
       refresh_mandatos_days_in_stage: { Args: never; Returns: undefined }
       reject_user_registration: {
@@ -18560,7 +19476,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      update_campaign_metrics: {
+        Args: { p_campaign_id: string }
+        Returns: undefined
+      }
       update_kanban_order: { Args: { updates: Json }; Returns: undefined }
+      update_wave_metrics: { Args: { p_wave_id: string }; Returns: undefined }
       validate_data_access_security: {
         Args: never
         Returns: {
