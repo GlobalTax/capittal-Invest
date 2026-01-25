@@ -63,6 +63,9 @@ export const usePortfolioSearch = (params: PortfolioSearchParams) => {
       })) as PortfolioCompany[];
     },
     enabled: true,
+    staleTime: 30 * 1000, // 30 seconds cache
+    refetchOnWindowFocus: false,
+    placeholderData: (previousData) => previousData, // Keep previous data while loading
   });
 };
 

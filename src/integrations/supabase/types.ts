@@ -6780,6 +6780,45 @@ export type Database = {
           },
         ]
       }
+      empresas_table_columns: {
+        Row: {
+          column_key: string
+          created_at: string
+          icon: string | null
+          id: string
+          is_sortable: boolean | null
+          is_visible: boolean | null
+          label: string
+          position: number
+          updated_at: string
+          width: string | null
+        }
+        Insert: {
+          column_key: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_sortable?: boolean | null
+          is_visible?: boolean | null
+          label: string
+          position: number
+          updated_at?: string
+          width?: string | null
+        }
+        Update: {
+          column_key?: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_sortable?: boolean | null
+          is_visible?: boolean | null
+          label?: string
+          position?: number
+          updated_at?: string
+          width?: string | null
+        }
+        Relationships: []
+      }
       enrichment_queue: {
         Row: {
           attempts: number | null
@@ -9262,6 +9301,45 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      lead_pipeline_columns: {
+        Row: {
+          color: string
+          created_at: string | null
+          icon: string
+          id: string
+          is_system: boolean | null
+          is_visible: boolean | null
+          label: string
+          position: number
+          stage_key: string
+          updated_at: string | null
+        }
+        Insert: {
+          color?: string
+          created_at?: string | null
+          icon?: string
+          id?: string
+          is_system?: boolean | null
+          is_visible?: boolean | null
+          label: string
+          position: number
+          stage_key: string
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string
+          created_at?: string | null
+          icon?: string
+          id?: string
+          is_system?: boolean | null
+          is_visible?: boolean | null
+          label?: string
+          position?: number
+          stage_key?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -16014,6 +16092,47 @@ export type Database = {
           },
         ]
       }
+      task_ai_feedback: {
+        Row: {
+          created_at: string | null
+          event_id: string
+          feedback_text: string | null
+          id: string
+          is_useful: boolean | null
+          rating: number | null
+          task_id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_id: string
+          feedback_text?: string | null
+          id?: string
+          is_useful?: boolean | null
+          rating?: number | null
+          task_id: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_id?: string
+          feedback_text?: string | null
+          id?: string
+          is_useful?: boolean | null
+          rating?: number | null
+          task_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_ai_feedback_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "task_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_events: {
         Row: {
           created_at: string | null
@@ -18161,7 +18280,7 @@ export type Database = {
         Returns: undefined
       }
       log_critical_security_violation: {
-        Args: { details?: Json; table_name: string; violation_type: string }
+        Args: { details?: Json; target_table: string; violation_type: string }
         Returns: undefined
       }
       log_document_access: {

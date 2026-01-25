@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useDeferredValue } from "react";
 import { Input } from "@/components/ui/input";
 import { BadgeFilter } from "@/components/ui/badge-filter";
 import { CustomPagination } from "@/components/ui/custom-pagination";
@@ -31,7 +31,8 @@ import { supabase } from "@/integrations/supabase/client";
 const ITEMS_PER_PAGE = 12;
 
 const Portfolio = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const searchTerm = useDeferredValue(searchInput);
   const [activeSector, setActiveSector] = useState<string | null>(null);
   const [activeStage, setActiveStage] = useState<string | null>(null);
   const [activeCountry, setActiveCountry] = useState<string | null>(null);
@@ -73,7 +74,7 @@ const Portfolio = () => {
   });
 
   // Fetch portfolio companies with search and filters
-  const { data: dbCompanies, isLoading: isLoadingCompanies } = usePortfolioSearch({
+  const { data: dbCompanies, isLoading: isLoadingCompanies, isFetching } = usePortfolioSearch({
     searchQuery: searchTerm || undefined,
     sector: activeSector || undefined,
     stage: activeStage || undefined,
@@ -81,6 +82,8 @@ const Portfolio = () => {
     limit: ITEMS_PER_PAGE,
     offset: (currentPage - 1) * ITEMS_PER_PAGE,
   });
+
+  const isFiltering = isFetching && !isLoadingCompanies;
 
   const companies = dbCompanies || [];
 
@@ -170,7 +173,7 @@ const Portfolio = () => {
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-80" align="start">
+                <PopoverContent className="w-80 z-[100] shadow-xl border-neutral-200" align="start" sideOffset={8}>
                   <div className="space-y-4">
                     <div>
                       <h4 className="font-normal mb-3">Sector</h4>
@@ -240,9 +243,9 @@ const Portfolio = () => {
                 <Input
                   type="text"
                   placeholder="Buscar empresas..."
-                  value={searchTerm}
+                  value={searchInput}
                   onChange={(e) => {
-                    setSearchTerm(e.target.value);
+                    setSearchInput(e.target.value);
                     setCurrentPage(1);
                   }}
                   className="pl-10"
@@ -351,10 +354,11 @@ const Portfolio = () => {
           ) : (
             <>
               <div className={cn(
-                "mb-8",
+                "mb-8 transition-opacity duration-200",
                 viewMode === 'grid'
                   ? "grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-                  : "space-y-4"
+                  : "space-y-4",
+                isFiltering && "opacity-60"
               )}>
                 {companies.map((company) => (
                   <CompanyCard
@@ -373,6 +377,14 @@ const Portfolio = () => {
                 />
               )}
             </>
+          )}
+
+          {/* Filtering indicator */}
+          {isFiltering && (
+            <div className="fixed bottom-6 right-6 bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-fade-in z-50">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span className="text-sm font-medium">Filtrando...</span>
+            </div>
           )}
         </section>
       </div>
