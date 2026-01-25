@@ -43,7 +43,7 @@ export const Navbar = () => {
 
   return (
     <nav className={cn(
-      "fixed top-0 md:top-10 left-0 right-0 z-40 transition-all duration-500",
+      "fixed top-0 left-0 right-0 z-40 transition-all duration-500",
       shouldBeTransparent 
         ? "bg-transparent border-transparent" 
         : "bg-background/95 backdrop-blur-md border-b border-border"
