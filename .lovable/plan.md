@@ -1,142 +1,127 @@
 
 
-## Plan: Reemplazar Hero con Video por Hero con Carrusel estilo Portobello
+## Plan: Optimizar Tiempos de Carga de Páginas
 
-### Referencia Visual
+### Problema Identificado
 
-El carrusel de Portobello tiene:
-- Slides fullscreen con imágenes de fondo
-- Transicion suave entre slides (fade o slide)
-- Titulo grande con tipografia serif
-- KPIs destacados superpuestos (€3.7bn, +25 años, +60 inversiones)
-- Indicadores de progreso (barras horizontales) en la parte inferior
-- Auto-avance con pausa al hover
+Las páginas muestran skeletons de carga cada vez que navegas porque:
 
-### Recursos Existentes
+1. Las queries de React Query no tienen `staleTime` configurado (excepto en Portfolio)
+2. Cada navegación dispara nuevas peticiones a Supabase
+3. No hay datos en caché que mostrar inmediatamente
 
-El proyecto ya tiene:
-- 5 imagenes de slideshow en `src/assets/slideshow/`
-- Animaciones Ken Burns definidas en `index.css`
-- Componente `VideoSlideshow.tsx` (se puede reutilizar logica)
-- KPIs configurados en la tabla `home_content` (€2.5bn, >200, 35)
-- Embla Carousel instalado como dependencia
+### Solución Propuesta
+
+Optimizar la configuración de React Query para cachear datos y mostrar contenido inmediatamente.
 
 ---
 
 ## Cambios a Implementar
 
-### 1. Crear componente HeroCarousel
+### 1. Configurar QueryClient con defaults globales
 
-**Archivo:** `src/components/home/HeroCarousel.tsx`
+**Archivo:** `src/App.tsx`
 
-Nuevo componente que reemplazara la seccion Hero actual:
+Añadir configuración de caché global al QueryClient:
 
-```text
-+------------------------------------------------------------------+
-|                                                                  |
-|      Construimos                                                 |
-|      empresas líderes                                            |
-|                                                                  |
-|   €2.5bn        >200          35                                 |
-|   Activos      Inversiones   Profesionales                       |
-|   bajo gestión desde 2008                                        |
-|                                                                  |
-|   [===][    ][    ]     <- indicadores de slide                  |
-+------------------------------------------------------------------+
+**Antes:**
+```typescript
+const queryClient = new QueryClient();
 ```
 
-Caracteristicas:
-- Fullscreen (h-screen) con imagen de fondo
-- Efecto Ken Burns en las imagenes
-- Auto-avance cada 5-7 segundos
-- KPIs superpuestos en la parte inferior izquierda
-- Indicadores de progreso estilo barras (como Portobello)
-- Pausa al hacer hover o click
-- Transicion suave entre slides
+**Después:**
+```typescript
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000, // 1 minuto - datos se consideran frescos
+      gcTime: 10 * 60 * 1000, // 10 minutos - tiempo en caché
+      refetchOnWindowFocus: false, // No recargar al volver a la ventana
+      retry: 1, // Solo 1 reintento en caso de error
+    },
+  },
+});
+```
 
-### 2. Configurar slides del carrusel
+### 2. Optimizar página About
 
-Cada slide tendra:
-- Imagen de fondo (reutilizar assets existentes o nuevas)
-- Titulo principal (configurable)
-- Subtitulo opcional
+**Archivo:** `src/pages/About.tsx`
 
-Se puede leer de la tabla `video_slides` existente o de `home_content` con seccion `hero_slide_X`.
-
-### 3. Modificar Home.tsx
-
-Reemplazar la seccion Hero actual (lineas 98-164):
-- Eliminar el video player
-- Eliminar el boton "Ver video completo"
-- Insertar el nuevo componente `HeroCarousel`
-- Mover los KPIs dentro del carrusel
-- Mantener el scroll indicator
-
-### 4. Estilos y animaciones
-
-Reutilizar las animaciones Ken Burns existentes en `index.css`.
-
-Añadir si es necesario:
-- Transicion de slide (fade entre imagenes)
-- Animacion de entrada del texto
-
----
-
-## Estructura del Componente
+Añadir `staleTime` y `placeholderData` a la query:
 
 ```typescript
-// HeroCarousel.tsx
+const { data: content, isLoading } = useQuery({
+  queryKey: ['about-content'],
+  queryFn: async () => { /* ... */ },
+  staleTime: 5 * 60 * 1000, // 5 minutos
+  placeholderData: (previousData) => previousData,
+});
+```
 
-interface HeroSlide {
-  image: string;
-  title: string;
-  subtitle?: string;
-}
+### 3. Optimizar página Home
 
-interface HeroCarouselProps {
-  slides: HeroSlide[];
-  kpis: { value: string; label: string }[];
-  autoplayDelay?: number; // default 6000ms
-}
+**Archivo:** `src/pages/Home.tsx`
 
-// Usa Embla Carousel con autoplay
-// Cada slide:
-//   - Imagen de fondo con Ken Burns
-//   - Overlay oscuro para legibilidad
-//   - Contenido centrado (titulo)
-//   - KPIs en la parte inferior izquierda
-//   - Indicadores de progreso en la parte inferior
+Añadir configuración de caché a ambas queries:
+
+```typescript
+const { data: homeContent } = useQuery({
+  queryKey: ['home-content'],
+  queryFn: async () => { /* ... */ },
+  staleTime: 5 * 60 * 1000,
+  placeholderData: (previousData) => previousData,
+});
+
+const { data: recentNews } = useQuery({
+  queryKey: ['recent-news-home'],
+  queryFn: async () => { /* ... */ },
+  staleTime: 2 * 60 * 1000, // 2 minutos para noticias
+});
+```
+
+### 4. Optimizar hook useNewsSearch
+
+**Archivo:** `src/hooks/useNewsSearch.ts`
+
+Añadir `staleTime` y optimizaciones:
+
+```typescript
+export const useNewsSearch = (params: NewsSearchParams) => {
+  return useQuery({
+    queryKey: ["news-search", params],
+    queryFn: async () => { /* ... */ },
+    staleTime: 60 * 1000, // 1 minuto
+    placeholderData: (previousData) => previousData,
+  });
+};
 ```
 
 ---
 
-## Archivos Afectados
+## Resumen de Cambios
 
-| Archivo | Accion |
+| Archivo | Cambio |
 |---------|--------|
-| `src/components/home/HeroCarousel.tsx` | Crear - Nuevo componente de carrusel |
-| `src/pages/Home.tsx` | Modificar - Reemplazar Hero por HeroCarousel |
-| `src/index.css` | Posible - Añadir animacion de fade si es necesario |
+| `src/App.tsx` | Configurar QueryClient con defaults globales |
+| `src/pages/About.tsx` | Añadir staleTime y placeholderData |
+| `src/pages/Home.tsx` | Añadir staleTime a queries |
+| `src/hooks/useNewsSearch.ts` | Añadir staleTime y placeholderData |
 
 ---
 
-## Datos del Carrusel
+## Resultado Esperado
 
-**Opcion A - Usar slides existentes:**
-Reutilizar la tabla `video_slides` que ya tiene 5 slides configurados.
-
-**Opcion B - Crear nueva tabla:**
-`hero_slides` con campos: image_url, title, subtitle, position, is_active.
-
-**Recomendacion:** Empezar con Opcion A para reutilizar datos existentes.
+- Primera visita: carga normal con skeletons (inevitable)
+- Navegación posterior: contenido aparece inmediatamente desde caché
+- Datos se refrescan en segundo plano sin mostrar loading
+- Reducción significativa de peticiones a Supabase
 
 ---
 
-## Notas Tecnicas
+## Notas Técnicas
 
-- El carrusel usara `embla-carousel-react` (ya instalado)
-- Opcional: plugin `embla-carousel-autoplay` para auto-avance
-- Los KPIs se muestran sobre todos los slides (no cambian entre slides, como en Portobello)
-- El scroll indicator se mantiene en la parte inferior central
-- Responsive: en mobile los KPIs se apilan verticalmente
+- `staleTime`: tiempo que los datos se consideran frescos (no refetch)
+- `gcTime` (antes cacheTime): tiempo que permanecen en memoria
+- `placeholderData`: muestra datos anteriores mientras carga nuevos
+- `refetchOnWindowFocus: false`: evita recargas innecesarias al volver a la pestaña
 
