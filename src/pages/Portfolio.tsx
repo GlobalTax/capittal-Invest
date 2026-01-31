@@ -27,6 +27,8 @@ import { ViewToggle } from "@/components/portfolio/ViewToggle";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { FallbackNotice } from "@/components/ui/fallback-notice";
+import { fallbackPortfolioCompanies, fallbackFilterOptions } from "@/data/fallbackData";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -85,14 +87,23 @@ const Portfolio = () => {
 
   const isFiltering = isFetching && !isLoadingCompanies;
 
-  const companies = dbCompanies || [];
+  // Use fallback if no data
+  const companies = (dbCompanies && dbCompanies.length > 0) ? dbCompanies : fallbackPortfolioCompanies;
+  const isUsingFallback = !dbCompanies || dbCompanies.length === 0;
 
-  const sectors = filterOptions?.sectors || [];
-  const stages = filterOptions?.stages || [];
-  const countries = filterOptions?.countries || [];
+  const sectors = (filterOptions?.sectors && filterOptions.sectors.length > 0) 
+    ? filterOptions.sectors 
+    : fallbackFilterOptions.sectors;
+  const stages = (filterOptions?.stages && filterOptions.stages.length > 0) 
+    ? filterOptions.stages 
+    : fallbackFilterOptions.stages;
+  const countries = (filterOptions?.countries && filterOptions.countries.length > 0) 
+    ? filterOptions.countries 
+    : fallbackFilterOptions.countries;
 
   const isLoading = isLoadingOptions || isLoadingCompanies;
-  const totalPages = Math.max(1, Math.ceil((totalCount || 0) / ITEMS_PER_PAGE));
+  const displayTotalCount = isUsingFallback ? fallbackPortfolioCompanies.length : (totalCount || 0);
+  const totalPages = Math.max(1, Math.ceil(displayTotalCount / ITEMS_PER_PAGE));
 
   const activeFilterCount = [activeSector, activeStage, activeCountry].filter(Boolean).length;
 
@@ -125,14 +136,16 @@ const Portfolio = () => {
           </div>
 
           {/* Stats */}
-          {!isLoading && (totalCount || 0) > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 max-w-3xl mx-auto">
-              <div className="text-center">
-                <div className="text-4xl font-normal text-primary mb-2">
-                  {totalCount}+
+          {!isLoading && displayTotalCount > 0 && (
+            <>
+              {isUsingFallback && <FallbackNotice className="mb-6 rounded-lg" />}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 max-w-3xl mx-auto">
+                <div className="text-center">
+                  <div className="text-4xl font-normal text-primary mb-2">
+                    {displayTotalCount}+
+                  </div>
+                  <div className="text-sm text-muted-foreground">Empresas del Portfolio</div>
                 </div>
-                <div className="text-sm text-muted-foreground">Empresas del Portfolio</div>
-              </div>
               <div className="text-center">
                 <div className="text-4xl font-normal text-primary mb-2">
                   {sectors.length}
@@ -152,6 +165,7 @@ const Portfolio = () => {
                 <div className="text-sm text-muted-foreground">Etapas</div>
               </div>
             </div>
+            </>
           )}
 
           {/* Filters Row */}
