@@ -1,16 +1,28 @@
 import { useState, useEffect, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
-// Import slideshow images
+// Import fallback slideshow images
 import slide01 from "@/assets/slideshow/slide-01-legacy.jpg";
 import slide02 from "@/assets/slideshow/slide-02-transition.jpg";
 import slide03 from "@/assets/slideshow/slide-03-newbeginning.jpg";
 import slide04 from "@/assets/slideshow/slide-04-partnership.jpg";
 import slide05 from "@/assets/slideshow/slide-05-future.jpg";
 
+// Fallback image mapping for local assets
+const fallbackImages: Record<string, string> = {
+  '/assets/slideshow/slide-01-legacy.jpg': slide01,
+  '/assets/slideshow/slide-02-transition.jpg': slide02,
+  '/assets/slideshow/slide-03-newbeginning.jpg': slide03,
+  '/assets/slideshow/slide-04-partnership.jpg': slide04,
+  '/assets/slideshow/slide-05-future.jpg': slide05,
+};
+
 interface HeroSlide {
+  id: string;
   image: string;
   title: string;
   subtitle?: string;
@@ -30,11 +42,11 @@ interface HeroCarouselProps {
 }
 
 const defaultSlides: HeroSlide[] = [
-  { image: slide01, title: "Partners by nature", kenBurnsDirection: "right" },
-  { image: slide02, title: "Partners by nature", kenBurnsDirection: "left" },
-  { image: slide03, title: "Partners by nature", kenBurnsDirection: "up" },
-  { image: slide04, title: "Partners by nature", kenBurnsDirection: "center" },
-  { image: slide05, title: "Partners by nature", kenBurnsDirection: "right" },
+  { id: '1', image: slide01, title: "Partners by nature", kenBurnsDirection: "right" },
+  { id: '2', image: slide02, title: "Partners by nature", kenBurnsDirection: "left" },
+  { id: '3', image: slide03, title: "Partners by nature", kenBurnsDirection: "up" },
+  { id: '4', image: slide04, title: "Partners by nature", kenBurnsDirection: "center" },
+  { id: '5', image: slide05, title: "Partners by nature", kenBurnsDirection: "right" },
 ];
 
 const defaultKpis: KPI[] = [
@@ -44,11 +56,36 @@ const defaultKpis: KPI[] = [
 ];
 
 export const HeroCarousel = ({
-  slides = defaultSlides,
+  slides: propSlides,
   kpis = defaultKpis,
   autoplayDelay = 6000,
   title,
 }: HeroCarouselProps) => {
+  // Fetch slides from database
+  const { data: dbSlides } = useQuery({
+    queryKey: ['hero-carousel-slides'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('video_slides')
+        .select('*')
+        .eq('is_active', true)
+        .order('display_order');
+      
+      if (error) throw error;
+      
+      return data.map((slide) => ({
+        id: slide.id,
+        image: fallbackImages[slide.image_url] || slide.image_url,
+        title: slide.title,
+        subtitle: slide.subtitle || undefined,
+        kenBurnsDirection: (slide.ken_burns_direction as "right" | "left" | "up" | "center") || "right",
+      }));
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Use prop slides, then DB slides, then fallback defaults
+  const slides = propSlides || dbSlides || defaultSlides;
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [progress, setProgress] = useState(0);
 
