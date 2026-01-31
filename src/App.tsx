@@ -31,7 +31,16 @@ import News from "./pages/News";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000, // 1 minuto - datos se consideran frescos
+      gcTime: 10 * 60 * 1000, // 10 minutos - tiempo en caché
+      refetchOnWindowFocus: false, // No recargar al volver a la ventana
+      retry: 1, // Solo 1 reintento en caso de error
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

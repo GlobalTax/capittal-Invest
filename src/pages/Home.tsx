@@ -23,6 +23,8 @@ const Home = () => {
       if (error) throw error;
       return data;
     },
+    staleTime: 5 * 60 * 1000, // 5 minutos
+    placeholderData: (previousData) => previousData,
   });
 
   // Fetch recent news from database
@@ -39,6 +41,7 @@ const Home = () => {
       if (error) throw error;
       return data;
     },
+    staleTime: 2 * 60 * 1000, // 2 minutos para noticias
   });
 
   // Extract hero and KPIs from content
