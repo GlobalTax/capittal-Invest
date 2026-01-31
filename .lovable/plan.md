@@ -1,127 +1,164 @@
 
 
-## Plan: Optimizar Tiempos de Carga de Páginas
+## Plan: Añadir Animaciones de Entrada por Scroll a la Página Sobre Nosotros
 
-### Problema Identificado
+### Objetivo
 
-Las páginas muestran skeletons de carga cada vez que navegas porque:
+Añadir animaciones de entrada elegantes a cada sección de la página About cuando aparecen en el viewport durante el scroll, creando una experiencia visual más dinámica y profesional.
 
-1. Las queries de React Query no tienen `staleTime` configurado (excepto en Portfolio)
-2. Cada navegación dispara nuevas peticiones a Supabase
-3. No hay datos en caché que mostrar inmediatamente
+---
 
-### Solución Propuesta
+## Animaciones a Implementar
 
-Optimizar la configuración de React Query para cachear datos y mostrar contenido inmediatamente.
+### Tipos de Animaciones por Sección
+
+| Seccion | Animacion | Efecto |
+|---------|-----------|--------|
+| Hero | fade-up | Titulo y subtitulo aparecen desde abajo |
+| KPIs | fade-up escalonado | Cada tarjeta aparece con delay incremental |
+| Strategy | slide-in-left/right | Cards entran alternando desde los lados |
+| Value Creation | scale-fade | Numeros aparecen con efecto de escala |
+| ESG | fade-in-left | Icono e información entran desde la izquierda |
+| CTA | fade-up | Seccion aparece desde abajo |
 
 ---
 
 ## Cambios a Implementar
 
-### 1. Configurar QueryClient con defaults globales
+### 1. Crear hook personalizado useScrollAnimation
 
-**Archivo:** `src/App.tsx`
+**Archivo:** `src/hooks/useScrollAnimation.ts` (nuevo)
 
-Añadir configuración de caché global al QueryClient:
+Hook reutilizable que detecta cuando un elemento entra en el viewport:
 
-**Antes:**
 ```typescript
-const queryClient = new QueryClient();
+// Retorna ref y estado isVisible
+// Usa IntersectionObserver con threshold configurable
+// Opcion triggerOnce para animar solo la primera vez
 ```
 
-**Después:**
-```typescript
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60 * 1000, // 1 minuto - datos se consideran frescos
-      gcTime: 10 * 60 * 1000, // 10 minutos - tiempo en caché
-      refetchOnWindowFocus: false, // No recargar al volver a la ventana
-      retry: 1, // Solo 1 reintento en caso de error
-    },
-  },
-});
+### 2. Añadir nuevas animaciones en tailwind.config.ts
+
+**Keyframes nuevos:**
+
+```text
+slide-in-left: translateX(-30px) -> translateX(0) + fade
+slide-in-right: translateX(30px) -> translateX(0) + fade  
+scale-fade: scale(0.9) + opacity(0) -> scale(1) + opacity(1)
+fade-in: opacity(0) -> opacity(1)
 ```
 
-### 2. Optimizar página About
+### 3. Actualizar About.tsx con animaciones
 
-**Archivo:** `src/pages/About.tsx`
+**Modificaciones:**
 
-Añadir `staleTime` y `placeholderData` a la query:
+- Envolver cada seccion en componente animado
+- Hero: fade-up con delay en subtitulo
+- KPIs: fade-up con stagger (75ms por tarjeta)
+- Strategy Cards: slide-in alternando direccion
+- Value Creation: scale-fade con stagger
+- ESG: slide-in-left
+- CTA: fade-up
+
+---
+
+## Implementacion Detallada
+
+### Hook useScrollAnimation
 
 ```typescript
-const { data: content, isLoading } = useQuery({
-  queryKey: ['about-content'],
-  queryFn: async () => { /* ... */ },
-  staleTime: 5 * 60 * 1000, // 5 minutos
-  placeholderData: (previousData) => previousData,
-});
+import { useEffect, useRef, useState } from 'react';
+
+interface Options {
+  threshold?: number;
+  triggerOnce?: boolean;
+  rootMargin?: string;
+}
+
+export const useScrollAnimation = (options: Options = {}) => {
+  const { threshold = 0.1, triggerOnce = true, rootMargin = '0px' } = options;
+  const ref = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          if (triggerOnce && ref.current) {
+            observer.unobserve(ref.current);
+          }
+        } else if (!triggerOnce) {
+          setIsVisible(false);
+        }
+      },
+      { threshold, rootMargin }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [threshold, triggerOnce, rootMargin]);
+
+  return { ref, isVisible };
+};
 ```
 
-### 3. Optimizar página Home
-
-**Archivo:** `src/pages/Home.tsx`
-
-Añadir configuración de caché a ambas queries:
+### Componente AnimatedSection
 
 ```typescript
-const { data: homeContent } = useQuery({
-  queryKey: ['home-content'],
-  queryFn: async () => { /* ... */ },
-  staleTime: 5 * 60 * 1000,
-  placeholderData: (previousData) => previousData,
-});
-
-const { data: recentNews } = useQuery({
-  queryKey: ['recent-news-home'],
-  queryFn: async () => { /* ... */ },
-  staleTime: 2 * 60 * 1000, // 2 minutos para noticias
-});
-```
-
-### 4. Optimizar hook useNewsSearch
-
-**Archivo:** `src/hooks/useNewsSearch.ts`
-
-Añadir `staleTime` y optimizaciones:
-
-```typescript
-export const useNewsSearch = (params: NewsSearchParams) => {
-  return useQuery({
-    queryKey: ["news-search", params],
-    queryFn: async () => { /* ... */ },
-    staleTime: 60 * 1000, // 1 minuto
-    placeholderData: (previousData) => previousData,
-  });
+// Wrapper reutilizable para secciones
+const AnimatedSection = ({ 
+  children, 
+  animation = 'fade-up',
+  delay = 0,
+  className 
+}) => {
+  const { ref, isVisible } = useScrollAnimation();
+  
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "transition-all duration-700",
+        isVisible ? `animate-${animation}` : "opacity-0 translate-y-6",
+        className
+      )}
+      style={{ animationDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
 };
 ```
 
 ---
 
-## Resumen de Cambios
+## Archivos Afectados
 
-| Archivo | Cambio |
+| Archivo | Accion |
 |---------|--------|
-| `src/App.tsx` | Configurar QueryClient con defaults globales |
-| `src/pages/About.tsx` | Añadir staleTime y placeholderData |
-| `src/pages/Home.tsx` | Añadir staleTime a queries |
-| `src/hooks/useNewsSearch.ts` | Añadir staleTime y placeholderData |
+| `src/hooks/useScrollAnimation.ts` | Crear - Hook de scroll animation |
+| `tailwind.config.ts` | Modificar - Añadir keyframes y animaciones |
+| `src/pages/About.tsx` | Modificar - Aplicar animaciones a secciones |
 
 ---
 
-## Resultado Esperado
+## Experiencia Visual Esperada
 
-- Primera visita: carga normal con skeletons (inevitable)
-- Navegación posterior: contenido aparece inmediatamente desde caché
-- Datos se refrescan en segundo plano sin mostrar loading
-- Reducción significativa de peticiones a Supabase
+1. **Al cargar la pagina**: Hero visible inmediatamente con fade-up sutil
+2. **Scroll a KPIs**: Tarjetas aparecen una tras otra (efecto cascada)
+3. **Scroll a Strategy**: Cards entran desde los lados alternando
+4. **Scroll a Value Creation**: Numeros aparecen con escala dinamica
+5. **Scroll a ESG**: Contenido desliza desde la izquierda
+6. **Scroll a CTA**: Boton y texto aparecen desde abajo
 
 ---
 
-## Notas Técnicas
+## Notas Tecnicas
 
-- `staleTime`: tiempo que los datos se consideran frescos (no refetch)
-- `gcTime` (antes cacheTime): tiempo que permanecen en memoria
-- `placeholderData`: muestra datos anteriores mientras carga nuevos
-- `refetchOnWindowFocus: false`: evita recargas innecesarias al volver a la pestaña
+- Usamos `IntersectionObserver` nativo (mejor rendimiento que scroll events)
+- Animaciones CSS con `animation-fill-mode: forwards` para mantener estado final
+- `triggerOnce: true` evita re-animaciones al scrollear arriba/abajo
+- Delays escalonados (stagger) calculados dinamicamente con index * 75ms
+- Transiciones de 500-700ms para sensacion premium sin ser lentas
 
