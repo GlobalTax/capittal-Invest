@@ -1,0 +1,17 @@
+-- Insert 5 realistic portfolio companies for a Spanish PE fund
+INSERT INTO portfolio_companies (name, slug, description, sector, stage, country, founded_year, investment_date, investment_thesis, metrics, timeline, is_active, is_featured, display_order)
+VALUES 
+-- 1. Logística y distribución
+('LogiTrans Iberia', 'logitrans-iberia', 'Operador logístico especializado en última milla y transporte refrigerado para e-commerce y retail alimentario en la Península Ibérica.', 'Logistics', 'Growth', 'Spain', 2015, '2023-04-15', 'Consolidación del sector de última milla aprovechando el crecimiento del e-commerce y la demanda de logística especializada en alimentación.', '{"revenue": "€45M", "employees": "320+", "warehouses": "12", "deliveries_day": "25.000+"}', '[{"date": "2024", "event": "Apertura hub Portugal"}, {"date": "2023", "event": "Inversión estratégica"}, {"date": "2022", "event": "Flota 100% eléctrica"}]', true, true, 4),
+
+-- 2. EdTech
+('AulaDigital', 'auladigital', 'Plataforma de formación online corporativa con IA adaptativa para empresas del IBEX 35 y multinacionales.', 'Education', 'Series B', 'Spain', 2018, '2022-09-01', 'Digitalización de la formación corporativa con tecnología propietaria de aprendizaje adaptativo basado en IA.', '{"revenue": "€12M ARR", "employees": "85", "enterprise_clients": "150+", "users": "500.000+"}', '[{"date": "2024", "event": "Expansión LATAM"}, {"date": "2023", "event": "Lanzamiento módulo IA"}, {"date": "2022", "event": "Serie B - €8M"}]', true, true, 5),
+
+-- 3. Alimentación Premium
+('Grupo Mediterráneo Foods', 'grupo-mediterraneo-foods', 'Holding de marcas premium de alimentación saludable: aceites, conservas y productos ecológicos de origen español.', 'Consumer', 'Buy-and-build', 'Spain', 2010, '2021-06-20', 'Consolidación del mercado de alimentación premium y ecológica mediante buy-and-build, con enfoque en exportación a mercados europeos.', '{"revenue": "€95M", "employees": "450", "brands": "6", "export_countries": "28"}', '[{"date": "2024", "event": "Adquisición marca eco"}, {"date": "2023", "event": "Entrada en Alemania"}, {"date": "2021", "event": "Plataforma inicial"}]', true, false, 6),
+
+-- 4. SaaS B2B Contabilidad
+('CloudBooks Pro', 'cloudbooks-pro', 'Software de gestión contable y fiscal en la nube para PYMEs y asesorías, con integración bancaria y facturación electrónica.', 'Technology', 'Growth', 'Spain', 2017, '2023-01-10', 'Captura de cuota en el mercado de software de gestión para PYMEs, aprovechando la obligatoriedad de factura electrónica en España.', '{"revenue": "€8M ARR", "employees": "65", "smb_clients": "12.000+", "nrr": "125%"}', '[{"date": "2024", "event": "Módulo factura electrónica"}, {"date": "2023", "event": "Inversión growth"}, {"date": "2022", "event": "Integración OpenBanking"}]', true, true, 7),
+
+-- 5. Servicios Industriales IoT
+('Mantec Industrial', 'mantec-industrial', 'Empresa de mantenimiento industrial predictivo con IoT y análisis de datos para plantas de producción y energía renovable.', 'Industrial Services', 'Series A', 'Portugal', 2019, '2024-02-01', 'Transformación digital del mantenimiento industrial mediante sensores IoT y analytics predictivo para reducir tiempos de parada.', '{"revenue": "€6M", "employees": "48", "plants_monitored": "85", "uptime_improvement": "23%"}', '[{"date": "2024", "event": "Serie A - €5M"}, {"date": "2023", "event": "Contrato eólicas"}, {"date": "2022", "event": "Plataforma IoT v2"}]', true, false, 8);
