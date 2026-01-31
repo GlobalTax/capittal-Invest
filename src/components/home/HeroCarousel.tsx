@@ -59,7 +59,7 @@ export const HeroCarousel = ({
   });
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true, duration: 50 },
+    { loop: true, duration: 30 },
     [autoplayPlugin]
   );
 
@@ -114,31 +114,39 @@ export const HeroCarousel = ({
 
   return (
     <section className="relative h-screen w-full overflow-hidden">
-      {/* Carousel Container */}
-      <div className="absolute inset-0" ref={emblaRef}>
-        <div className="flex h-full">
-          {slides.map((slide, index) => (
-            <div
-              key={index}
-              className="relative flex-[0_0_100%] min-w-0 h-full"
-            >
-              {/* Background Image with Ken Burns */}
-              <div className="absolute inset-0 overflow-hidden">
-                <img
-                  src={slide.image}
-                  alt={slide.title}
-                  className={cn(
-                    "w-full h-full object-cover",
-                    getKenBurnsClass(slide.kenBurnsDirection, selectedIndex === index)
-                  )}
-                  style={{
-                    animationDuration: `${autoplayDelay}ms`,
-                  }}
-                />
-              </div>
-              {/* Dark Overlay */}
-              <div className="absolute inset-0 bg-neutral-900/40" />
-            </div>
+      {/* Background slides with fade effect */}
+      {slides.map((slide, index) => (
+        <div
+          key={index}
+          className={cn(
+            "absolute inset-0 transition-opacity duration-1000 ease-in-out",
+            selectedIndex === index ? "opacity-100 z-[1]" : "opacity-0 z-0"
+          )}
+        >
+          {/* Background Image with Ken Burns */}
+          <div className="absolute inset-0 overflow-hidden">
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className={cn(
+                "w-full h-full object-cover transition-transform",
+                getKenBurnsClass(slide.kenBurnsDirection, selectedIndex === index)
+              )}
+              style={{
+                animationDuration: `${autoplayDelay}ms`,
+              }}
+            />
+          </div>
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-neutral-900/40" />
+        </div>
+      ))}
+
+      {/* Hidden Embla container for navigation logic */}
+      <div className="absolute opacity-0 pointer-events-none" ref={emblaRef}>
+        <div className="flex">
+          {slides.map((_, index) => (
+            <div key={index} className="flex-[0_0_100%]" />
           ))}
         </div>
       </div>
