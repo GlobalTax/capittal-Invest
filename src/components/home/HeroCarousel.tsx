@@ -4,6 +4,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { Pause, Play } from "lucide-react";
 
 // Import fallback slideshow images
 import slide01 from "@/assets/slideshow/slide-01-legacy.jpg";
@@ -88,6 +89,8 @@ export const HeroCarousel = ({
   const slides = propSlides || dbSlides || defaultSlides;
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [showPauseIndicator, setShowPauseIndicator] = useState(false);
 
   const autoplayPlugin = Autoplay({
     delay: autoplayDelay,
@@ -149,8 +152,33 @@ export const HeroCarousel = ({
     return base[direction as keyof typeof base] || base.right;
   };
 
+  // Handle pause/play on hover
+  const handleMouseEnter = () => {
+    setIsPaused(true);
+    setShowPauseIndicator(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsPaused(false);
+    setShowPauseIndicator(false);
+  };
+
+  const togglePlayPause = () => {
+    if (isPaused) {
+      autoplayPlugin.play();
+      setIsPaused(false);
+    } else {
+      autoplayPlugin.stop();
+      setIsPaused(true);
+    }
+  };
+
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section 
+      className="relative h-screen w-full overflow-hidden group/carousel"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* Background slides with fade effect */}
       {slides.map((slide, index) => (
         <div
@@ -242,6 +270,25 @@ export const HeroCarousel = ({
           ))}
         </div>
       </div>
+
+      {/* Pause/Play Indicator - Center */}
+      <button
+        onClick={togglePlayPause}
+        className={cn(
+          "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20",
+          "w-20 h-20 rounded-full bg-black/30 backdrop-blur-sm border border-white/20",
+          "flex items-center justify-center cursor-pointer",
+          "transition-all duration-300 hover:bg-black/50 hover:scale-110",
+          showPauseIndicator ? "opacity-100" : "opacity-0 pointer-events-none"
+        )}
+        aria-label={isPaused ? "Play slideshow" : "Pause slideshow"}
+      >
+        {isPaused ? (
+          <Play className="w-8 h-8 text-white ml-1" fill="white" />
+        ) : (
+          <Pause className="w-8 h-8 text-white" fill="white" />
+        )}
+      </button>
 
       {/* Scroll indicator - Bottom center */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 animate-scroll-fade z-10">
