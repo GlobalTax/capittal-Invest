@@ -9,7 +9,9 @@ import {
   Target, TrendingUp, Users, Wallet, Briefcase, GitMerge, Clock, Leaf, ArrowRight,
   LucideIcon
 } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, ReactNode } from 'react';
+import { cn } from '@/lib/utils';
+import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 // Icon mapping
 const iconMap: Record<string, LucideIcon> = {
@@ -27,6 +29,52 @@ interface AboutContent {
   icon: string | null;
   display_order: number;
 }
+
+// Animated Section wrapper component
+interface AnimatedSectionProps {
+  children: ReactNode;
+  animation?: 'fade-up' | 'slide-in-left' | 'slide-in-right' | 'scale-fade' | 'fade-in';
+  delay?: number;
+  className?: string;
+}
+
+const AnimatedSection = ({ 
+  children, 
+  animation = 'fade-up',
+  delay = 0,
+  className 
+}: AnimatedSectionProps) => {
+  const { ref, isVisible } = useScrollAnimation({ threshold: 0.1 });
+  
+  const animationClass = {
+    'fade-up': 'animate-fade-up',
+    'slide-in-left': 'animate-slide-in-left',
+    'slide-in-right': 'animate-slide-in-right',
+    'scale-fade': 'animate-scale-fade',
+    'fade-in': 'animate-fade-in',
+  }[animation];
+
+  const initialClass = {
+    'fade-up': 'opacity-0 translate-y-5',
+    'slide-in-left': 'opacity-0 -translate-x-8',
+    'slide-in-right': 'opacity-0 translate-x-8',
+    'scale-fade': 'opacity-0 scale-95',
+    'fade-in': 'opacity-0',
+  }[animation];
+  
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        isVisible ? animationClass : initialClass,
+        className
+      )}
+      style={{ animationDelay: `${delay}ms`, animationFillMode: 'forwards' }}
+    >
+      {children}
+    </div>
+  );
+};
 
 // Animated counter component - Fixed to handle special characters properly
 const AnimatedValue = ({ value, className }: { value: string; className?: string }) => {
@@ -105,48 +153,84 @@ const AnimatedValue = ({ value, className }: { value: string; className?: string
   return <span ref={ref} className={className}>{displayValue}</span>;
 };
 
-// KPI Card component
-const KPICard = ({ value, label, icon }: { value: string; label: string; icon: string | null }) => {
+// KPI Card component with animation delay support
+const KPICard = ({ value, label, icon, delay = 0 }: { value: string; label: string; icon: string | null; delay?: number }) => {
   const Icon = icon ? iconMap[icon] : null;
   
   return (
-    <div className="text-center p-6 bg-card rounded-xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
-      {Icon && (
-        <div className="w-12 h-12 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-          <Icon className="w-6 h-6 text-primary" />
-        </div>
-      )}
-      <AnimatedValue 
-        value={value} 
-        className="block text-4xl md:text-5xl font-normal text-foreground mb-2"
-      />
-      <p className="text-muted-foreground text-sm">{label}</p>
-    </div>
+    <AnimatedSection animation="fade-up" delay={delay}>
+      <div className="text-center p-6 bg-card rounded-xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-lg h-full">
+        {Icon && (
+          <div className="w-12 h-12 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+            <Icon className="w-6 h-6 text-primary" />
+          </div>
+        )}
+        <AnimatedValue 
+          value={value} 
+          className="block text-4xl md:text-5xl font-normal text-foreground mb-2"
+        />
+        <p className="text-muted-foreground text-sm">{label}</p>
+      </div>
+    </AnimatedSection>
   );
 };
 
-// Strategy Block component
-const StrategyBlock = ({ title, subtitle, content, icon }: { 
+// Strategy Block component with animation support
+const StrategyBlock = ({ 
+  title, 
+  subtitle, 
+  content, 
+  icon,
+  animation = 'slide-in-left',
+  delay = 0
+}: { 
   title: string; 
   subtitle: string; 
   content: string | null;
   icon: string | null;
+  animation?: 'slide-in-left' | 'slide-in-right';
+  delay?: number;
 }) => {
   const Icon = icon ? iconMap[icon] : Target;
   
   return (
-    <Card className="p-8 hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20">
-      <div className="flex items-start gap-4">
-        <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-          <Icon className="w-7 h-7 text-primary" />
+    <AnimatedSection animation={animation} delay={delay}>
+      <Card className="p-8 hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/20 h-full">
+        <div className="flex items-start gap-4">
+          <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+            <Icon className="w-7 h-7 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-xl font-normal text-foreground mb-2">{title}</h3>
+            <p className="text-muted-foreground mb-3">{subtitle}</p>
+            {content && <p className="text-sm text-muted-foreground/80">{content}</p>}
+          </div>
         </div>
-        <div>
-          <h3 className="text-xl font-normal text-foreground mb-2">{title}</h3>
-          <p className="text-muted-foreground mb-3">{subtitle}</p>
-          {content && <p className="text-sm text-muted-foreground/80">{content}</p>}
-        </div>
+      </Card>
+    </AnimatedSection>
+  );
+};
+
+// Value metric component with scale animation
+const ValueMetric = ({ value, label, content, delay = 0 }: { 
+  value: string; 
+  label: string; 
+  content: string | null;
+  delay?: number;
+}) => {
+  return (
+    <AnimatedSection animation="scale-fade" delay={delay}>
+      <div className="text-center">
+        <AnimatedValue 
+          value={value} 
+          className="block text-4xl md:text-5xl font-normal text-background mb-2"
+        />
+        <p className="font-normal text-background mb-1">{label}</p>
+        {content && (
+          <p className="text-sm text-background/60">{content}</p>
+        )}
       </div>
-    </Card>
+    </AnimatedSection>
   );
 };
 
@@ -201,12 +285,16 @@ const About = () => {
       <section className="pt-32 pb-20 bg-gradient-to-b from-muted/50 to-background">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-normal text-foreground mb-6 leading-tight">
-              {hero?.title || 'Creando valor a través de asociaciones estratégicas'}
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              {hero?.subtitle || 'Somos una gestora de capital privado especializada en adquisiciones de empresas medianas con potencial de crecimiento significativo.'}
-            </p>
+            <AnimatedSection animation="fade-up" delay={0}>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-normal text-foreground mb-6 leading-tight">
+                {hero?.title || 'Creando valor a través de asociaciones estratégicas'}
+              </h1>
+            </AnimatedSection>
+            <AnimatedSection animation="fade-up" delay={150}>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                {hero?.subtitle || 'Somos una gestora de capital privado especializada en adquisiciones de empresas medianas con potencial de crecimiento significativo.'}
+              </p>
+            </AnimatedSection>
           </div>
         </div>
       </section>
@@ -216,12 +304,13 @@ const About = () => {
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
-              {kpis.map((kpi) => (
+              {kpis.map((kpi, index) => (
                 <KPICard 
                   key={kpi.id}
                   value={kpi.value || '0'}
                   label={kpi.label || ''}
                   icon={kpi.icon}
+                  delay={index * 100}
                 />
               ))}
             </div>
@@ -233,22 +322,24 @@ const About = () => {
       {strategies.length > 0 && (
         <section className="py-20 bg-muted/30">
           <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto text-center mb-12">
+            <AnimatedSection animation="fade-up" className="max-w-3xl mx-auto text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-normal text-foreground mb-4">
                 Nuestra Estrategia de Inversión
               </h2>
               <p className="text-muted-foreground text-lg">
                 Nos asociamos con empresarios y equipos directivos para acelerar el crecimiento y crear valor sostenible.
               </p>
-            </div>
+            </AnimatedSection>
             <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {strategies.map((strategy) => (
+              {strategies.map((strategy, index) => (
                 <StrategyBlock
                   key={strategy.id}
                   title={strategy.title || ''}
                   subtitle={strategy.subtitle || ''}
                   content={strategy.content}
                   icon={strategy.icon}
+                  animation={index % 2 === 0 ? 'slide-in-left' : 'slide-in-right'}
+                  delay={index * 100}
                 />
               ))}
             </div>
@@ -260,26 +351,23 @@ const About = () => {
       {valueCreation.length > 0 && (
         <section className="py-20 bg-foreground text-background">
           <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto text-center mb-16">
+            <AnimatedSection animation="fade-up" className="max-w-3xl mx-auto text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-normal mb-4">
                 Nuestro Impacto
               </h2>
               <p className="text-background/70 text-lg">
                 Resultados medios en nuestras participadas durante el periodo de inversión.
               </p>
-            </div>
+            </AnimatedSection>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
-              {valueCreation.map((metric) => (
-                <div key={metric.id} className="text-center">
-                  <AnimatedValue 
-                    value={metric.value || '0'} 
-                    className="block text-4xl md:text-5xl font-normal text-background mb-2"
-                  />
-                  <p className="font-normal text-background mb-1">{metric.label}</p>
-                  {metric.content && (
-                    <p className="text-sm text-background/60">{metric.content}</p>
-                  )}
-                </div>
+              {valueCreation.map((metric, index) => (
+                <ValueMetric
+                  key={metric.id}
+                  value={metric.value || '0'}
+                  label={metric.label || ''}
+                  content={metric.content}
+                  delay={index * 100}
+                />
               ))}
             </div>
           </div>
@@ -291,16 +379,18 @@ const About = () => {
         <section className="py-20 bg-background">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <div className="flex flex-col md:flex-row items-start gap-8">
-                <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center flex-shrink-0">
-                  <Leaf className="w-10 h-10 text-green-600 dark:text-green-400" />
+              <AnimatedSection animation="slide-in-left">
+                <div className="flex flex-col md:flex-row items-start gap-8">
+                  <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Leaf className="w-10 h-10 text-green-600 dark:text-green-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-normal text-foreground mb-4">{esg.title}</h2>
+                    <p className="text-lg text-muted-foreground mb-4">{esg.subtitle}</p>
+                    <p className="text-muted-foreground">{esg.content}</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-3xl font-normal text-foreground mb-4">{esg.title}</h2>
-                  <p className="text-lg text-muted-foreground mb-4">{esg.subtitle}</p>
-                  <p className="text-muted-foreground">{esg.content}</p>
-                </div>
-              </div>
+              </AnimatedSection>
             </div>
           </div>
         </section>
@@ -309,7 +399,7 @@ const About = () => {
       {/* CTA Section */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
+          <AnimatedSection animation="fade-up" className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-normal text-foreground mb-4">
               Conoce a Nuestro Equipo
             </h2>
@@ -322,7 +412,7 @@ const About = () => {
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-          </div>
+          </AnimatedSection>
         </div>
       </section>
     </>
