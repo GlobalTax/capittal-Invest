@@ -32,6 +32,7 @@ interface VideoSlide {
   image_url: string;
   display_order: number;
   is_active: boolean;
+  ken_burns_direction: 'left' | 'right' | 'up' | 'center';
   created_at: string;
   updated_at: string;
 }
@@ -41,6 +42,7 @@ interface SlideFormData {
   subtitle: string;
   image_url: string;
   is_active: boolean;
+  ken_burns_direction: 'left' | 'right' | 'up' | 'center';
 }
 
 export function AdminVideoSlides() {
@@ -53,6 +55,7 @@ export function AdminVideoSlides() {
     subtitle: '',
     image_url: '',
     is_active: true,
+    ken_burns_direction: 'right',
   });
 
   const { data: slides = [], isLoading } = useQuery({
@@ -94,6 +97,7 @@ export function AdminVideoSlides() {
           subtitle: data.subtitle || null,
           image_url: data.image_url,
           is_active: data.is_active,
+          ken_burns_direction: data.ken_burns_direction,
           display_order: maxOrder + 1,
         });
       if (error) throw error;
@@ -115,6 +119,7 @@ export function AdminVideoSlides() {
           subtitle: data.subtitle || null,
           image_url: data.image_url,
           is_active: data.is_active,
+          ken_burns_direction: data.ken_burns_direction,
         })
         .eq('id', id);
       if (error) throw error;
@@ -169,7 +174,7 @@ export function AdminVideoSlides() {
   };
 
   const resetForm = () => {
-    setFormData({ title: '', subtitle: '', image_url: '', is_active: true });
+    setFormData({ title: '', subtitle: '', image_url: '', is_active: true, ken_burns_direction: 'right' });
     setEditingSlide(null);
     setIsDialogOpen(false);
   };
@@ -181,6 +186,7 @@ export function AdminVideoSlides() {
       subtitle: slide.subtitle || '',
       image_url: slide.image_url,
       is_active: slide.is_active,
+      ken_burns_direction: slide.ken_burns_direction || 'right',
     });
     setIsDialogOpen(true);
   };
@@ -292,6 +298,29 @@ export function AdminVideoSlides() {
                     onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
                   />
                   <Label htmlFor="is_active">Activo</Label>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Efecto Ken Burns</Label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {(['left', 'right', 'up', 'center'] as const).map((direction) => (
+                      <Button
+                        key={direction}
+                        type="button"
+                        variant={formData.ken_burns_direction === direction ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setFormData(prev => ({ ...prev, ken_burns_direction: direction }))}
+                        className="capitalize"
+                      >
+                        {direction === 'left' ? '← Izq' : 
+                         direction === 'right' ? 'Der →' : 
+                         direction === 'up' ? '↑ Arriba' : '⊕ Centro'}
+                      </Button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Dirección del movimiento de zoom cinematográfico
+                  </p>
                 </div>
                 
                 <div className="flex justify-end gap-2 pt-4">
