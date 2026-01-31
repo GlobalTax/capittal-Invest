@@ -178,6 +178,15 @@ export type Database = {
           acquisition_channel_id: string | null
           acquisition_type: string | null
           additional_details: string | null
+          ai_business_model_tags: string[] | null
+          ai_classification_at: string | null
+          ai_classification_confidence: number | null
+          ai_company_summary: string | null
+          ai_company_summary_at: string | null
+          ai_negative_tags: string[] | null
+          ai_sector_name: string | null
+          ai_sector_pe: string | null
+          ai_tags: string[] | null
           apollo_candidates: Json | null
           apollo_error: string | null
           apollo_last_enriched_at: string | null
@@ -220,6 +229,8 @@ export type Database = {
           last_campaign_name: string | null
           last_email_click_at: string | null
           lead_form: string | null
+          lead_received_at: string | null
+          lead_status_crm: string | null
           phone: string | null
           referrer: string | null
           sectors_of_interest: string | null
@@ -235,6 +246,15 @@ export type Database = {
           acquisition_channel_id?: string | null
           acquisition_type?: string | null
           additional_details?: string | null
+          ai_business_model_tags?: string[] | null
+          ai_classification_at?: string | null
+          ai_classification_confidence?: number | null
+          ai_company_summary?: string | null
+          ai_company_summary_at?: string | null
+          ai_negative_tags?: string[] | null
+          ai_sector_name?: string | null
+          ai_sector_pe?: string | null
+          ai_tags?: string[] | null
           apollo_candidates?: Json | null
           apollo_error?: string | null
           apollo_last_enriched_at?: string | null
@@ -277,6 +297,8 @@ export type Database = {
           last_campaign_name?: string | null
           last_email_click_at?: string | null
           lead_form?: string | null
+          lead_received_at?: string | null
+          lead_status_crm?: string | null
           phone?: string | null
           referrer?: string | null
           sectors_of_interest?: string | null
@@ -292,6 +314,15 @@ export type Database = {
           acquisition_channel_id?: string | null
           acquisition_type?: string | null
           additional_details?: string | null
+          ai_business_model_tags?: string[] | null
+          ai_classification_at?: string | null
+          ai_classification_confidence?: number | null
+          ai_company_summary?: string | null
+          ai_company_summary_at?: string | null
+          ai_negative_tags?: string[] | null
+          ai_sector_name?: string | null
+          ai_sector_pe?: string | null
+          ai_tags?: string[] | null
           apollo_candidates?: Json | null
           apollo_error?: string | null
           apollo_last_enriched_at?: string | null
@@ -334,6 +365,8 @@ export type Database = {
           last_campaign_name?: string | null
           last_email_click_at?: string | null
           lead_form?: string | null
+          lead_received_at?: string | null
+          lead_status_crm?: string | null
           phone?: string | null
           referrer?: string | null
           sectors_of_interest?: string | null
@@ -793,6 +826,78 @@ export type Database = {
           },
         ]
       }
+      ads_costs_history: {
+        Row: {
+          campaign_id: string | null
+          campaign_name: string
+          clicks: number | null
+          conversions: number | null
+          cost_per_result: number | null
+          cpm: number | null
+          created_at: string
+          currency: string
+          date: string
+          frequency: number | null
+          id: string
+          imported_at: string
+          imported_by: string | null
+          impressions: number | null
+          link_clicks: number | null
+          platform: Database["public"]["Enums"]["ads_platform"]
+          raw_row: Json
+          reach: number | null
+          result_type: string | null
+          results: number | null
+          spend: number
+        }
+        Insert: {
+          campaign_id?: string | null
+          campaign_name: string
+          clicks?: number | null
+          conversions?: number | null
+          cost_per_result?: number | null
+          cpm?: number | null
+          created_at?: string
+          currency?: string
+          date: string
+          frequency?: number | null
+          id?: string
+          imported_at?: string
+          imported_by?: string | null
+          impressions?: number | null
+          link_clicks?: number | null
+          platform: Database["public"]["Enums"]["ads_platform"]
+          raw_row: Json
+          reach?: number | null
+          result_type?: string | null
+          results?: number | null
+          spend: number
+        }
+        Update: {
+          campaign_id?: string | null
+          campaign_name?: string
+          clicks?: number | null
+          conversions?: number | null
+          cost_per_result?: number | null
+          cpm?: number | null
+          created_at?: string
+          currency?: string
+          date?: string
+          frequency?: number | null
+          id?: string
+          imported_at?: string
+          imported_by?: string | null
+          impressions?: number | null
+          link_clicks?: number | null
+          platform?: Database["public"]["Enums"]["ads_platform"]
+          raw_row?: Json
+          reach?: number | null
+          result_type?: string | null
+          results?: number | null
+          spend?: number
+        }
+        Relationships: []
+      }
       advisor_ebitda_multiples_by_range: {
         Row: {
           created_at: string | null
@@ -1030,6 +1135,15 @@ export type Database = {
       advisor_valuations: {
         Row: {
           acquisition_channel_id: string | null
+          ai_business_model_tags: string[] | null
+          ai_classification_at: string | null
+          ai_classification_confidence: number | null
+          ai_company_summary: string | null
+          ai_company_summary_at: string | null
+          ai_negative_tags: string[] | null
+          ai_sector_name: string | null
+          ai_sector_pe: string | null
+          ai_tags: string[] | null
           apollo_candidates: Json | null
           apollo_error: string | null
           apollo_last_enriched_at: string | null
@@ -1058,6 +1172,8 @@ export type Database = {
           id: string
           ip_address: string | null
           lead_form: string | null
+          lead_received_at: string | null
+          lead_status_crm: string | null
           pdf_url: string | null
           phone: string | null
           phone_e164: string | null
@@ -1073,6 +1189,15 @@ export type Database = {
         }
         Insert: {
           acquisition_channel_id?: string | null
+          ai_business_model_tags?: string[] | null
+          ai_classification_at?: string | null
+          ai_classification_confidence?: number | null
+          ai_company_summary?: string | null
+          ai_company_summary_at?: string | null
+          ai_negative_tags?: string[] | null
+          ai_sector_name?: string | null
+          ai_sector_pe?: string | null
+          ai_tags?: string[] | null
           apollo_candidates?: Json | null
           apollo_error?: string | null
           apollo_last_enriched_at?: string | null
@@ -1101,6 +1226,8 @@ export type Database = {
           id?: string
           ip_address?: string | null
           lead_form?: string | null
+          lead_received_at?: string | null
+          lead_status_crm?: string | null
           pdf_url?: string | null
           phone?: string | null
           phone_e164?: string | null
@@ -1116,6 +1243,15 @@ export type Database = {
         }
         Update: {
           acquisition_channel_id?: string | null
+          ai_business_model_tags?: string[] | null
+          ai_classification_at?: string | null
+          ai_classification_confidence?: number | null
+          ai_company_summary?: string | null
+          ai_company_summary_at?: string | null
+          ai_negative_tags?: string[] | null
+          ai_sector_name?: string | null
+          ai_sector_pe?: string | null
+          ai_tags?: string[] | null
           apollo_candidates?: Json | null
           apollo_error?: string | null
           apollo_last_enriched_at?: string | null
@@ -1144,6 +1280,8 @@ export type Database = {
           id?: string
           ip_address?: string | null
           lead_form?: string | null
+          lead_received_at?: string | null
+          lead_status_crm?: string | null
           pdf_url?: string | null
           phone?: string | null
           phone_e164?: string | null
@@ -2337,6 +2475,7 @@ export type Database = {
       buyer_contacts: {
         Row: {
           campaign_name: string | null
+          campaign_type: string | null
           company: string | null
           created_at: string | null
           email: string
@@ -2353,6 +2492,7 @@ export type Database = {
           investor_type: string | null
           last_activity_at: string | null
           last_name: string | null
+          lead_received_at: string | null
           origin: string
           phone: string | null
           position: string | null
@@ -2366,6 +2506,7 @@ export type Database = {
         }
         Insert: {
           campaign_name?: string | null
+          campaign_type?: string | null
           company?: string | null
           created_at?: string | null
           email: string
@@ -2382,6 +2523,7 @@ export type Database = {
           investor_type?: string | null
           last_activity_at?: string | null
           last_name?: string | null
+          lead_received_at?: string | null
           origin?: string
           phone?: string | null
           position?: string | null
@@ -2395,6 +2537,7 @@ export type Database = {
         }
         Update: {
           campaign_name?: string | null
+          campaign_type?: string | null
           company?: string | null
           created_at?: string | null
           email?: string
@@ -2411,6 +2554,7 @@ export type Database = {
           investor_type?: string | null
           last_activity_at?: string | null
           last_name?: string | null
+          lead_received_at?: string | null
           origin?: string
           phone?: string | null
           position?: string | null
@@ -2526,6 +2670,90 @@ export type Database = {
           testimonial_text?: string
           time_to_close?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      calculator_error_alerts: {
+        Row: {
+          alert_sent_at: string
+          created_at: string
+          error_count: number
+          error_types: Json | null
+          id: string
+          recipients: string[]
+          sample_errors: Json | null
+          time_window_end: string
+          time_window_start: string
+        }
+        Insert: {
+          alert_sent_at?: string
+          created_at?: string
+          error_count: number
+          error_types?: Json | null
+          id?: string
+          recipients?: string[]
+          sample_errors?: Json | null
+          time_window_end: string
+          time_window_start: string
+        }
+        Update: {
+          alert_sent_at?: string
+          created_at?: string
+          error_count?: number
+          error_types?: Json | null
+          id?: string
+          recipients?: string[]
+          sample_errors?: Json | null
+          time_window_end?: string
+          time_window_start?: string
+        }
+        Relationships: []
+      }
+      calculator_errors: {
+        Row: {
+          action: string
+          company_data: Json | null
+          component: string
+          created_at: string
+          current_step: number | null
+          error_message: string
+          error_stack: string | null
+          error_type: string
+          id: string
+          ip_address: unknown
+          source_project: string | null
+          unique_token: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          company_data?: Json | null
+          component: string
+          created_at?: string
+          current_step?: number | null
+          error_message: string
+          error_stack?: string | null
+          error_type: string
+          id?: string
+          ip_address?: unknown
+          source_project?: string | null
+          unique_token?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          company_data?: Json | null
+          component?: string
+          created_at?: string
+          current_step?: number | null
+          error_message?: string
+          error_stack?: string | null
+          error_type?: string
+          id?: string
+          ip_address?: unknown
+          source_project?: string | null
+          unique_token?: string | null
+          user_agent?: string | null
         }
         Relationships: []
       }
@@ -3122,6 +3350,15 @@ export type Database = {
       collaborator_applications: {
         Row: {
           acquisition_channel_id: string | null
+          ai_business_model_tags: string[] | null
+          ai_classification_at: string | null
+          ai_classification_confidence: number | null
+          ai_company_summary: string | null
+          ai_company_summary_at: string | null
+          ai_negative_tags: string[] | null
+          ai_sector_name: string | null
+          ai_sector_pe: string | null
+          ai_tags: string[] | null
           apollo_candidates: Json | null
           apollo_error: string | null
           apollo_last_enriched_at: string | null
@@ -3164,7 +3401,8 @@ export type Database = {
           last_campaign_name: string | null
           last_email_click_at: string | null
           lead_form: string | null
-          lead_status_crm: Database["public"]["Enums"]["lead_status"] | null
+          lead_received_at: string | null
+          lead_status_crm: string | null
           motivation: string | null
           notes: string | null
           phone: string
@@ -3176,6 +3414,15 @@ export type Database = {
         }
         Insert: {
           acquisition_channel_id?: string | null
+          ai_business_model_tags?: string[] | null
+          ai_classification_at?: string | null
+          ai_classification_confidence?: number | null
+          ai_company_summary?: string | null
+          ai_company_summary_at?: string | null
+          ai_negative_tags?: string[] | null
+          ai_sector_name?: string | null
+          ai_sector_pe?: string | null
+          ai_tags?: string[] | null
           apollo_candidates?: Json | null
           apollo_error?: string | null
           apollo_last_enriched_at?: string | null
@@ -3218,7 +3465,8 @@ export type Database = {
           last_campaign_name?: string | null
           last_email_click_at?: string | null
           lead_form?: string | null
-          lead_status_crm?: Database["public"]["Enums"]["lead_status"] | null
+          lead_received_at?: string | null
+          lead_status_crm?: string | null
           motivation?: string | null
           notes?: string | null
           phone: string
@@ -3230,6 +3478,15 @@ export type Database = {
         }
         Update: {
           acquisition_channel_id?: string | null
+          ai_business_model_tags?: string[] | null
+          ai_classification_at?: string | null
+          ai_classification_confidence?: number | null
+          ai_company_summary?: string | null
+          ai_company_summary_at?: string | null
+          ai_negative_tags?: string[] | null
+          ai_sector_name?: string | null
+          ai_sector_pe?: string | null
+          ai_tags?: string[] | null
           apollo_candidates?: Json | null
           apollo_error?: string | null
           apollo_last_enriched_at?: string | null
@@ -3272,7 +3529,8 @@ export type Database = {
           last_campaign_name?: string | null
           last_email_click_at?: string | null
           lead_form?: string | null
-          lead_status_crm?: Database["public"]["Enums"]["lead_status"] | null
+          lead_received_at?: string | null
+          lead_status_crm?: string | null
           motivation?: string | null
           notes?: string | null
           phone?: string
@@ -3317,6 +3575,15 @@ export type Database = {
         Row: {
           acquisition_channel_id: string | null
           acquisition_type: string | null
+          ai_business_model_tags: string[] | null
+          ai_classification_at: string | null
+          ai_classification_confidence: number | null
+          ai_company_summary: string | null
+          ai_company_summary_at: string | null
+          ai_negative_tags: string[] | null
+          ai_sector_name: string | null
+          ai_sector_pe: string | null
+          ai_tags: string[] | null
           apollo_candidates: Json | null
           apollo_error: string | null
           apollo_last_enriched_at: string | null
@@ -3357,6 +3624,8 @@ export type Database = {
           last_campaign_name: string | null
           last_email_click_at: string | null
           lead_form: string | null
+          lead_received_at: string | null
+          lead_status_crm: string | null
           message: string | null
           notes: string | null
           page_origin: string
@@ -3380,6 +3649,15 @@ export type Database = {
         Insert: {
           acquisition_channel_id?: string | null
           acquisition_type?: string | null
+          ai_business_model_tags?: string[] | null
+          ai_classification_at?: string | null
+          ai_classification_confidence?: number | null
+          ai_company_summary?: string | null
+          ai_company_summary_at?: string | null
+          ai_negative_tags?: string[] | null
+          ai_sector_name?: string | null
+          ai_sector_pe?: string | null
+          ai_tags?: string[] | null
           apollo_candidates?: Json | null
           apollo_error?: string | null
           apollo_last_enriched_at?: string | null
@@ -3420,6 +3698,8 @@ export type Database = {
           last_campaign_name?: string | null
           last_email_click_at?: string | null
           lead_form?: string | null
+          lead_received_at?: string | null
+          lead_status_crm?: string | null
           message?: string | null
           notes?: string | null
           page_origin?: string
@@ -3443,6 +3723,15 @@ export type Database = {
         Update: {
           acquisition_channel_id?: string | null
           acquisition_type?: string | null
+          ai_business_model_tags?: string[] | null
+          ai_classification_at?: string | null
+          ai_classification_confidence?: number | null
+          ai_company_summary?: string | null
+          ai_company_summary_at?: string | null
+          ai_negative_tags?: string[] | null
+          ai_sector_name?: string | null
+          ai_sector_pe?: string | null
+          ai_tags?: string[] | null
           apollo_candidates?: Json | null
           apollo_error?: string | null
           apollo_last_enriched_at?: string | null
@@ -3483,6 +3772,8 @@ export type Database = {
           last_campaign_name?: string | null
           last_email_click_at?: string | null
           lead_form?: string | null
+          lead_received_at?: string | null
+          lead_status_crm?: string | null
           message?: string | null
           notes?: string | null
           page_origin?: string
@@ -3534,6 +3825,105 @@ export type Database = {
           },
         ]
       }
+      company_meeting_documents: {
+        Row: {
+          file_name: string
+          file_size_bytes: number | null
+          id: string
+          meeting_id: string
+          mime_type: string | null
+          storage_path: string
+          uploaded_at: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          file_name: string
+          file_size_bytes?: number | null
+          id?: string
+          meeting_id: string
+          mime_type?: string | null
+          storage_path: string
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          file_name?: string
+          file_size_bytes?: number | null
+          id?: string
+          meeting_id?: string
+          mime_type?: string | null
+          storage_path?: string
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_meeting_documents_meeting_id_fkey"
+            columns: ["meeting_id"]
+            isOneToOne: false
+            referencedRelation: "company_meetings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_meetings: {
+        Row: {
+          company_id: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          meeting_date: string
+          meeting_notes: string | null
+          preparation_notes: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          meeting_date: string
+          meeting_notes?: string | null
+          preparation_notes?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          meeting_date?: string
+          meeting_notes?: string | null
+          preparation_notes?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_meetings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_meetings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresa_valuations"
+            referencedColumns: ["matched_empresa_id"]
+          },
+          {
+            foreignKeyName: "company_meetings_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "v_empresas_con_actividad"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_operations: {
         Row: {
           assigned_at: string | null
@@ -3555,6 +3945,8 @@ export type Database = {
           geographic_location: string | null
           growth_percentage: number | null
           highlights: string[] | null
+          highlights_ca: string[] | null
+          highlights_en: string[] | null
           id: string
           is_active: boolean | null
           is_deleted: boolean | null
@@ -3597,6 +3989,8 @@ export type Database = {
           geographic_location?: string | null
           growth_percentage?: number | null
           highlights?: string[] | null
+          highlights_ca?: string[] | null
+          highlights_en?: string[] | null
           id?: string
           is_active?: boolean | null
           is_deleted?: boolean | null
@@ -3639,6 +4033,8 @@ export type Database = {
           geographic_location?: string | null
           growth_percentage?: number | null
           highlights?: string[] | null
+          highlights_ca?: string[] | null
+          highlights_en?: string[] | null
           id?: string
           is_active?: boolean | null
           is_deleted?: boolean | null
@@ -3704,8 +4100,15 @@ export type Database = {
           acquisition_channel_id: string | null
           activity_description: string | null
           adjustment_amount: number | null
+          ai_business_model_tags: string[] | null
+          ai_classification_at: string | null
+          ai_classification_confidence: number | null
           ai_company_summary: string | null
           ai_company_summary_at: string | null
+          ai_negative_tags: string[] | null
+          ai_sector_name: string | null
+          ai_sector_pe: string | null
+          ai_tags: string[] | null
           apollo_candidates: Json | null
           apollo_error: string | null
           apollo_last_enriched_at: string | null
@@ -3779,7 +4182,10 @@ export type Database = {
           last_modified_field: string | null
           lead_entry_date: string | null
           lead_form: string | null
-          lead_status_crm: Database["public"]["Enums"]["lead_status"] | null
+          lead_received_at: string | null
+          lead_source: string | null
+          lead_source_detail: string | null
+          lead_status_crm: string | null
           location: string | null
           net_profit_margin: number | null
           notes: string | null
@@ -3797,6 +4203,7 @@ export type Database = {
           token_hash: string | null
           token_used_at: string | null
           unique_token: string | null
+          updated_at: string | null
           user_agent: string | null
           user_id: string | null
           utm_campaign: string | null
@@ -3816,8 +4223,15 @@ export type Database = {
           acquisition_channel_id?: string | null
           activity_description?: string | null
           adjustment_amount?: number | null
+          ai_business_model_tags?: string[] | null
+          ai_classification_at?: string | null
+          ai_classification_confidence?: number | null
           ai_company_summary?: string | null
           ai_company_summary_at?: string | null
+          ai_negative_tags?: string[] | null
+          ai_sector_name?: string | null
+          ai_sector_pe?: string | null
+          ai_tags?: string[] | null
           apollo_candidates?: Json | null
           apollo_error?: string | null
           apollo_last_enriched_at?: string | null
@@ -3891,7 +4305,10 @@ export type Database = {
           last_modified_field?: string | null
           lead_entry_date?: string | null
           lead_form?: string | null
-          lead_status_crm?: Database["public"]["Enums"]["lead_status"] | null
+          lead_received_at?: string | null
+          lead_source?: string | null
+          lead_source_detail?: string | null
+          lead_status_crm?: string | null
           location?: string | null
           net_profit_margin?: number | null
           notes?: string | null
@@ -3909,6 +4326,7 @@ export type Database = {
           token_hash?: string | null
           token_used_at?: string | null
           unique_token?: string | null
+          updated_at?: string | null
           user_agent?: string | null
           user_id?: string | null
           utm_campaign?: string | null
@@ -3928,8 +4346,15 @@ export type Database = {
           acquisition_channel_id?: string | null
           activity_description?: string | null
           adjustment_amount?: number | null
+          ai_business_model_tags?: string[] | null
+          ai_classification_at?: string | null
+          ai_classification_confidence?: number | null
           ai_company_summary?: string | null
           ai_company_summary_at?: string | null
+          ai_negative_tags?: string[] | null
+          ai_sector_name?: string | null
+          ai_sector_pe?: string | null
+          ai_tags?: string[] | null
           apollo_candidates?: Json | null
           apollo_error?: string | null
           apollo_last_enriched_at?: string | null
@@ -4003,7 +4428,10 @@ export type Database = {
           last_modified_field?: string | null
           lead_entry_date?: string | null
           lead_form?: string | null
-          lead_status_crm?: Database["public"]["Enums"]["lead_status"] | null
+          lead_received_at?: string | null
+          lead_source?: string | null
+          lead_source_detail?: string | null
+          lead_status_crm?: string | null
           location?: string | null
           net_profit_margin?: number | null
           notes?: string | null
@@ -4021,6 +4449,7 @@ export type Database = {
           token_hash?: string | null
           token_used_at?: string | null
           unique_token?: string | null
+          updated_at?: string | null
           user_agent?: string | null
           user_id?: string | null
           utm_campaign?: string | null
@@ -4105,8 +4534,15 @@ export type Database = {
       contact_leads: {
         Row: {
           acquisition_channel_id: string | null
+          ai_business_model_tags: string[] | null
+          ai_classification_at: string | null
+          ai_classification_confidence: number | null
           ai_company_summary: string | null
           ai_company_summary_at: string | null
+          ai_negative_tags: string[] | null
+          ai_sector_name: string | null
+          ai_sector_pe: string | null
+          ai_tags: string[] | null
           apollo_candidates: Json | null
           apollo_error: string | null
           apollo_last_enriched_at: string | null
@@ -4164,7 +4600,8 @@ export type Database = {
           last_email_click_at: string | null
           lead_entry_date: string | null
           lead_form: string | null
-          lead_status_crm: Database["public"]["Enums"]["lead_status"] | null
+          lead_received_at: string | null
+          lead_status_crm: string | null
           notes: string | null
           phone: string | null
           referral: string | null
@@ -4177,8 +4614,15 @@ export type Database = {
         }
         Insert: {
           acquisition_channel_id?: string | null
+          ai_business_model_tags?: string[] | null
+          ai_classification_at?: string | null
+          ai_classification_confidence?: number | null
           ai_company_summary?: string | null
           ai_company_summary_at?: string | null
+          ai_negative_tags?: string[] | null
+          ai_sector_name?: string | null
+          ai_sector_pe?: string | null
+          ai_tags?: string[] | null
           apollo_candidates?: Json | null
           apollo_error?: string | null
           apollo_last_enriched_at?: string | null
@@ -4236,7 +4680,8 @@ export type Database = {
           last_email_click_at?: string | null
           lead_entry_date?: string | null
           lead_form?: string | null
-          lead_status_crm?: Database["public"]["Enums"]["lead_status"] | null
+          lead_received_at?: string | null
+          lead_status_crm?: string | null
           notes?: string | null
           phone?: string | null
           referral?: string | null
@@ -4249,8 +4694,15 @@ export type Database = {
         }
         Update: {
           acquisition_channel_id?: string | null
+          ai_business_model_tags?: string[] | null
+          ai_classification_at?: string | null
+          ai_classification_confidence?: number | null
           ai_company_summary?: string | null
           ai_company_summary_at?: string | null
+          ai_negative_tags?: string[] | null
+          ai_sector_name?: string | null
+          ai_sector_pe?: string | null
+          ai_tags?: string[] | null
           apollo_candidates?: Json | null
           apollo_error?: string | null
           apollo_last_enriched_at?: string | null
@@ -4308,7 +4760,8 @@ export type Database = {
           last_email_click_at?: string | null
           lead_entry_date?: string | null
           lead_form?: string | null
-          lead_status_crm?: Database["public"]["Enums"]["lead_status"] | null
+          lead_received_at?: string | null
+          lead_status_crm?: string | null
           notes?: string | null
           phone?: string | null
           referral?: string | null
@@ -4471,6 +4924,48 @@ export type Database = {
           is_active?: boolean | null
           name?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      contact_statuses: {
+        Row: {
+          color: string
+          created_at: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          is_prospect_stage: boolean
+          is_system: boolean
+          label: string
+          position: number
+          status_key: string
+          updated_at: string | null
+        }
+        Insert: {
+          color?: string
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_prospect_stage?: boolean
+          is_system?: boolean
+          label: string
+          position?: number
+          status_key: string
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_prospect_stage?: boolean
+          is_system?: boolean
+          label?: string
+          position?: number
+          status_key?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -4684,78 +5179,6 @@ export type Database = {
           },
         ]
       }
-      contactos_backup_20260124: {
-        Row: {
-          apellidos: string | null
-          avatar: string | null
-          brevo_id: string | null
-          brevo_last_modified_at: string | null
-          brevo_synced_at: string | null
-          capittal_synced_at: string | null
-          cargo: string | null
-          created_at: string | null
-          email: string | null
-          empresa_principal_id: string | null
-          external_capittal_id: string | null
-          id: string | null
-          import_log_id: string | null
-          linkedin: string | null
-          merged_into_contacto_id: string | null
-          nombre: string | null
-          notas: string | null
-          source: string | null
-          telefono: string | null
-          updated_at: string | null
-          valuation_id: string | null
-        }
-        Insert: {
-          apellidos?: string | null
-          avatar?: string | null
-          brevo_id?: string | null
-          brevo_last_modified_at?: string | null
-          brevo_synced_at?: string | null
-          capittal_synced_at?: string | null
-          cargo?: string | null
-          created_at?: string | null
-          email?: string | null
-          empresa_principal_id?: string | null
-          external_capittal_id?: string | null
-          id?: string | null
-          import_log_id?: string | null
-          linkedin?: string | null
-          merged_into_contacto_id?: string | null
-          nombre?: string | null
-          notas?: string | null
-          source?: string | null
-          telefono?: string | null
-          updated_at?: string | null
-          valuation_id?: string | null
-        }
-        Update: {
-          apellidos?: string | null
-          avatar?: string | null
-          brevo_id?: string | null
-          brevo_last_modified_at?: string | null
-          brevo_synced_at?: string | null
-          capittal_synced_at?: string | null
-          cargo?: string | null
-          created_at?: string | null
-          email?: string | null
-          empresa_principal_id?: string | null
-          external_capittal_id?: string | null
-          id?: string | null
-          import_log_id?: string | null
-          linkedin?: string | null
-          merged_into_contacto_id?: string | null
-          nombre?: string | null
-          notas?: string | null
-          source?: string | null
-          telefono?: string | null
-          updated_at?: string | null
-          valuation_id?: string | null
-        }
-        Relationships: []
-      }
       content_analytics: {
         Row: {
           avg_time_on_page: number
@@ -4799,6 +5222,254 @@ export type Database = {
             columns: ["blog_post_id"]
             isOneToOne: false
             referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      corporate_buyers: {
+        Row: {
+          buyer_type: string | null
+          cities: string[] | null
+          country_base: string | null
+          created_at: string | null
+          deal_size_max: number | null
+          deal_size_min: number | null
+          description: string | null
+          ebitda_max: number | null
+          ebitda_min: number | null
+          enriched_at: string | null
+          enriched_data: Json | null
+          enrichment_source: string | null
+          geography_focus: string[] | null
+          id: string
+          investment_thesis: string | null
+          is_active: boolean | null
+          is_deleted: boolean | null
+          key_highlights: string[] | null
+          name: string
+          notes_internal: string | null
+          revenue_max: number | null
+          revenue_min: number | null
+          search_keywords: string[] | null
+          sector_exclusions: string[] | null
+          sector_focus: string[] | null
+          source_url: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          buyer_type?: string | null
+          cities?: string[] | null
+          country_base?: string | null
+          created_at?: string | null
+          deal_size_max?: number | null
+          deal_size_min?: number | null
+          description?: string | null
+          ebitda_max?: number | null
+          ebitda_min?: number | null
+          enriched_at?: string | null
+          enriched_data?: Json | null
+          enrichment_source?: string | null
+          geography_focus?: string[] | null
+          id?: string
+          investment_thesis?: string | null
+          is_active?: boolean | null
+          is_deleted?: boolean | null
+          key_highlights?: string[] | null
+          name: string
+          notes_internal?: string | null
+          revenue_max?: number | null
+          revenue_min?: number | null
+          search_keywords?: string[] | null
+          sector_exclusions?: string[] | null
+          sector_focus?: string[] | null
+          source_url?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          buyer_type?: string | null
+          cities?: string[] | null
+          country_base?: string | null
+          created_at?: string | null
+          deal_size_max?: number | null
+          deal_size_min?: number | null
+          description?: string | null
+          ebitda_max?: number | null
+          ebitda_min?: number | null
+          enriched_at?: string | null
+          enriched_data?: Json | null
+          enrichment_source?: string | null
+          geography_focus?: string[] | null
+          id?: string
+          investment_thesis?: string | null
+          is_active?: boolean | null
+          is_deleted?: boolean | null
+          key_highlights?: string[] | null
+          name?: string
+          notes_internal?: string | null
+          revenue_max?: number | null
+          revenue_min?: number | null
+          search_keywords?: string[] | null
+          sector_exclusions?: string[] | null
+          sector_focus?: string[] | null
+          source_url?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      corporate_contacts: {
+        Row: {
+          buyer_id: string
+          created_at: string | null
+          email: string | null
+          full_name: string
+          id: string
+          is_deleted: boolean | null
+          is_primary_contact: boolean | null
+          linkedin_url: string | null
+          notes: string | null
+          phone: string | null
+          role: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string | null
+          email?: string | null
+          full_name: string
+          id?: string
+          is_deleted?: boolean | null
+          is_primary_contact?: boolean | null
+          linkedin_url?: string | null
+          notes?: string | null
+          phone?: string | null
+          role?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string | null
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_deleted?: boolean | null
+          is_primary_contact?: boolean | null
+          linkedin_url?: string | null
+          notes?: string | null
+          phone?: string | null
+          role?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "corporate_contacts_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "corporate_buyers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      corporate_favorites: {
+        Row: {
+          added_by: string | null
+          created_at: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+        }
+        Insert: {
+          added_by?: string | null
+          created_at?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+        }
+        Update: {
+          added_by?: string | null
+          created_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      corporate_outreach: {
+        Row: {
+          buyer_id: string | null
+          channel: string | null
+          contact_id: string | null
+          content: string | null
+          created_at: string | null
+          email_mode: string | null
+          error_message: string | null
+          id: string
+          notes: string | null
+          operation_id: string | null
+          outreach_type: string
+          provider_message_id: string | null
+          sent_at: string | null
+          sent_by: string | null
+          status: string
+          subject: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          buyer_id?: string | null
+          channel?: string | null
+          contact_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          email_mode?: string | null
+          error_message?: string | null
+          id?: string
+          notes?: string | null
+          operation_id?: string | null
+          outreach_type?: string
+          provider_message_id?: string | null
+          sent_at?: string | null
+          sent_by?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          buyer_id?: string | null
+          channel?: string | null
+          contact_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          email_mode?: string | null
+          error_message?: string | null
+          id?: string
+          notes?: string | null
+          operation_id?: string | null
+          outreach_type?: string
+          provider_message_id?: string | null
+          sent_at?: string | null
+          sent_by?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "corporate_outreach_buyer_id_fkey"
+            columns: ["buyer_id"]
+            isOneToOne: false
+            referencedRelation: "corporate_buyers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "corporate_outreach_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "corporate_contacts"
             referencedColumns: ["id"]
           },
         ]
@@ -5697,6 +6368,196 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_plan_items: {
+        Row: {
+          actual_time_entry_id: string | null
+          assigned_by_admin: boolean | null
+          completed: boolean | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          estimated_minutes: number
+          id: string
+          linked_task_id: string | null
+          mandate_lead_id: string | null
+          mandato_id: string | null
+          order_index: number | null
+          plan_id: string
+          priority: string | null
+          title: string
+          work_task_type_id: string | null
+        }
+        Insert: {
+          actual_time_entry_id?: string | null
+          assigned_by_admin?: boolean | null
+          completed?: boolean | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          estimated_minutes?: number
+          id?: string
+          linked_task_id?: string | null
+          mandate_lead_id?: string | null
+          mandato_id?: string | null
+          order_index?: number | null
+          plan_id: string
+          priority?: string | null
+          title: string
+          work_task_type_id?: string | null
+        }
+        Update: {
+          actual_time_entry_id?: string | null
+          assigned_by_admin?: boolean | null
+          completed?: boolean | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          estimated_minutes?: number
+          id?: string
+          linked_task_id?: string | null
+          mandate_lead_id?: string | null
+          mandato_id?: string | null
+          order_index?: number | null
+          plan_id?: string
+          priority?: string | null
+          title?: string
+          work_task_type_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_plan_items_actual_time_entry_id_fkey"
+            columns: ["actual_time_entry_id"]
+            isOneToOne: false
+            referencedRelation: "mandato_time_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_plan_items_linked_task_id_fkey"
+            columns: ["linked_task_id"]
+            isOneToOne: false
+            referencedRelation: "tareas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_plan_items_mandate_lead_id_fkey"
+            columns: ["mandate_lead_id"]
+            isOneToOne: false
+            referencedRelation: "mandate_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_plan_items_mandate_lead_id_fkey"
+            columns: ["mandate_lead_id"]
+            isOneToOne: false
+            referencedRelation: "vw_mandate_pipeline"
+            referencedColumns: ["mandate_lead_id"]
+          },
+          {
+            foreignKeyName: "daily_plan_items_mandato_id_fkey"
+            columns: ["mandato_id"]
+            isOneToOne: false
+            referencedRelation: "mandato_time_summary"
+            referencedColumns: ["mandato_id"]
+          },
+          {
+            foreignKeyName: "daily_plan_items_mandato_id_fkey"
+            columns: ["mandato_id"]
+            isOneToOne: false
+            referencedRelation: "mandatos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_plan_items_mandato_id_fkey"
+            columns: ["mandato_id"]
+            isOneToOne: false
+            referencedRelation: "v_mandato_costs"
+            referencedColumns: ["mandato_id"]
+          },
+          {
+            foreignKeyName: "daily_plan_items_mandato_id_fkey"
+            columns: ["mandato_id"]
+            isOneToOne: false
+            referencedRelation: "v_mandatos_stuck"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_plan_items_mandato_id_fkey"
+            columns: ["mandato_id"]
+            isOneToOne: false
+            referencedRelation: "v_mandatos_winloss"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_plan_items_mandato_id_fkey"
+            columns: ["mandato_id"]
+            isOneToOne: false
+            referencedRelation: "vw_mandate_pipeline"
+            referencedColumns: ["mandato_id"]
+          },
+          {
+            foreignKeyName: "daily_plan_items_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "daily_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "daily_plan_items_work_task_type_id_fkey"
+            columns: ["work_task_type_id"]
+            isOneToOne: false
+            referencedRelation: "work_task_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      daily_plans: {
+        Row: {
+          admin_notes: string | null
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string | null
+          id: string
+          modified_after_submit: boolean | null
+          planned_for_date: string
+          status: string
+          submitted_at: string | null
+          total_estimated_minutes: number | null
+          updated_at: string | null
+          user_id: string
+          user_notes: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          id?: string
+          modified_after_submit?: boolean | null
+          planned_for_date: string
+          status?: string
+          submitted_at?: string | null
+          total_estimated_minutes?: number | null
+          updated_at?: string | null
+          user_id: string
+          user_notes?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string | null
+          id?: string
+          modified_after_submit?: boolean | null
+          planned_for_date?: string
+          status?: string
+          submitted_at?: string | null
+          total_estimated_minutes?: number | null
+          updated_at?: string | null
+          user_id?: string
+          user_notes?: string | null
+        }
+        Relationships: []
+      }
       dashboard_highlights: {
         Row: {
           color: string | null
@@ -6339,6 +7200,117 @@ export type Database = {
           template_id?: string | null
           valuation_id?: string | null
           valuation_type?: string
+        }
+        Relationships: []
+      }
+      email_queue: {
+        Row: {
+          attachments: Json | null
+          attempts: number | null
+          created_at: string | null
+          created_by: string | null
+          error_details: Json | null
+          failed_at: string | null
+          first_attempt_at: string | null
+          from_email: string | null
+          from_name: string | null
+          html_content: string
+          id: string
+          last_attempt_at: string | null
+          last_error: string | null
+          max_attempts: number | null
+          metadata: Json | null
+          next_retry_at: string | null
+          priority: number | null
+          provider: string | null
+          provider_message_id: string | null
+          provider_response: Json | null
+          provider_status: string | null
+          queue_type: string
+          queued_at: string | null
+          reference_id: string | null
+          reference_type: string | null
+          reply_to: string | null
+          scheduled_at: string | null
+          sent_at: string | null
+          status: string | null
+          subject: string
+          text_content: string | null
+          to_email: string
+          to_name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          attachments?: Json | null
+          attempts?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          error_details?: Json | null
+          failed_at?: string | null
+          first_attempt_at?: string | null
+          from_email?: string | null
+          from_name?: string | null
+          html_content: string
+          id?: string
+          last_attempt_at?: string | null
+          last_error?: string | null
+          max_attempts?: number | null
+          metadata?: Json | null
+          next_retry_at?: string | null
+          priority?: number | null
+          provider?: string | null
+          provider_message_id?: string | null
+          provider_response?: Json | null
+          provider_status?: string | null
+          queue_type: string
+          queued_at?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+          reply_to?: string | null
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject: string
+          text_content?: string | null
+          to_email: string
+          to_name?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          attachments?: Json | null
+          attempts?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          error_details?: Json | null
+          failed_at?: string | null
+          first_attempt_at?: string | null
+          from_email?: string | null
+          from_name?: string | null
+          html_content?: string
+          id?: string
+          last_attempt_at?: string | null
+          last_error?: string | null
+          max_attempts?: number | null
+          metadata?: Json | null
+          next_retry_at?: string | null
+          priority?: number | null
+          provider?: string | null
+          provider_message_id?: string | null
+          provider_response?: Json | null
+          provider_status?: string | null
+          queue_type?: string
+          queued_at?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+          reply_to?: string | null
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject?: string
+          text_content?: string | null
+          to_email?: string
+          to_name?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -7621,8 +8593,15 @@ export type Database = {
       general_contact_leads: {
         Row: {
           acquisition_channel_id: string | null
+          ai_business_model_tags: string[] | null
+          ai_classification_at: string | null
+          ai_classification_confidence: number | null
           ai_company_summary: string | null
           ai_company_summary_at: string | null
+          ai_negative_tags: string[] | null
+          ai_sector_name: string | null
+          ai_sector_pe: string | null
+          ai_tags: string[] | null
           annual_revenue: string | null
           apollo_candidates: Json | null
           apollo_error: string | null
@@ -7655,6 +8634,8 @@ export type Database = {
           ip_address: unknown
           is_deleted: boolean | null
           lead_form: string | null
+          lead_received_at: string | null
+          lead_status_crm: string | null
           message: string
           notes: string | null
           page_origin: string
@@ -7671,8 +8652,15 @@ export type Database = {
         }
         Insert: {
           acquisition_channel_id?: string | null
+          ai_business_model_tags?: string[] | null
+          ai_classification_at?: string | null
+          ai_classification_confidence?: number | null
           ai_company_summary?: string | null
           ai_company_summary_at?: string | null
+          ai_negative_tags?: string[] | null
+          ai_sector_name?: string | null
+          ai_sector_pe?: string | null
+          ai_tags?: string[] | null
           annual_revenue?: string | null
           apollo_candidates?: Json | null
           apollo_error?: string | null
@@ -7705,6 +8693,8 @@ export type Database = {
           ip_address?: unknown
           is_deleted?: boolean | null
           lead_form?: string | null
+          lead_received_at?: string | null
+          lead_status_crm?: string | null
           message: string
           notes?: string | null
           page_origin: string
@@ -7721,8 +8711,15 @@ export type Database = {
         }
         Update: {
           acquisition_channel_id?: string | null
+          ai_business_model_tags?: string[] | null
+          ai_classification_at?: string | null
+          ai_classification_confidence?: number | null
           ai_company_summary?: string | null
           ai_company_summary_at?: string | null
+          ai_negative_tags?: string[] | null
+          ai_sector_name?: string | null
+          ai_sector_pe?: string | null
+          ai_tags?: string[] | null
           annual_revenue?: string | null
           apollo_candidates?: Json | null
           apollo_error?: string | null
@@ -7755,6 +8752,8 @@ export type Database = {
           ip_address?: unknown
           is_deleted?: boolean | null
           lead_form?: string | null
+          lead_received_at?: string | null
+          lead_status_crm?: string | null
           message?: string
           notes?: string | null
           page_origin?: string
@@ -7810,6 +8809,100 @@ export type Database = {
             columns: ["lead_form"]
             isOneToOne: false
             referencedRelation: "lead_forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      help_section_versions: {
+        Row: {
+          change_summary: string | null
+          changed_by: string | null
+          content_md: string
+          created_at: string | null
+          description: string | null
+          id: string
+          section_id: string
+          title: string
+          version_number: number
+        }
+        Insert: {
+          change_summary?: string | null
+          changed_by?: string | null
+          content_md: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          section_id: string
+          title: string
+          version_number: number
+        }
+        Update: {
+          change_summary?: string | null
+          changed_by?: string | null
+          content_md?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          section_id?: string
+          title?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_section_versions_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "help_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      help_sections: {
+        Row: {
+          content_md: string
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_published: boolean | null
+          order_index: number
+          parent_id: string | null
+          slug: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          content_md: string
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_published?: boolean | null
+          order_index?: number
+          parent_id?: string | null
+          slug: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          content_md?: string
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_published?: boolean | null
+          order_index?: number
+          parent_id?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_sections_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "help_sections"
             referencedColumns: ["id"]
           },
         ]
@@ -9593,6 +10686,78 @@ export type Database = {
         }
         Relationships: []
       }
+      lead_potential_buyers: {
+        Row: {
+          added_by: string | null
+          contact_email: string | null
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string | null
+          description: string | null
+          ebitda: number | null
+          employees: number | null
+          id: string
+          lead_id: string
+          lead_origin: string
+          logo_url: string | null
+          name: string
+          notes: string | null
+          priority: number | null
+          revenue: number | null
+          revenue_range: string | null
+          sector_focus: string[] | null
+          status: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          added_by?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          description?: string | null
+          ebitda?: number | null
+          employees?: number | null
+          id?: string
+          lead_id: string
+          lead_origin: string
+          logo_url?: string | null
+          name: string
+          notes?: string | null
+          priority?: number | null
+          revenue?: number | null
+          revenue_range?: string | null
+          sector_focus?: string[] | null
+          status?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          added_by?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          description?: string | null
+          ebitda?: number | null
+          employees?: number | null
+          id?: string
+          lead_id?: string
+          lead_origin?: string
+          logo_url?: string | null
+          name?: string
+          notes?: string | null
+          priority?: number | null
+          revenue?: number | null
+          revenue_range?: string | null
+          sector_focus?: string[] | null
+          status?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       lead_security: {
         Row: {
           cif: string | null
@@ -10978,6 +12143,10 @@ export type Database = {
           deleted_by: string | null
           description: string
           duration_minutes: number | null
+          edit_count: number | null
+          edit_reason: string | null
+          edited_at: string | null
+          edited_by: string | null
           end_time: string | null
           id: string
           is_billable: boolean | null
@@ -11006,6 +12175,10 @@ export type Database = {
           deleted_by?: string | null
           description: string
           duration_minutes?: number | null
+          edit_count?: number | null
+          edit_reason?: string | null
+          edited_at?: string | null
+          edited_by?: string | null
           end_time?: string | null
           id?: string
           is_billable?: boolean | null
@@ -11034,6 +12207,10 @@ export type Database = {
           deleted_by?: string | null
           description?: string
           duration_minutes?: number | null
+          edit_count?: number | null
+          edit_reason?: string | null
+          edited_at?: string | null
+          edited_by?: string | null
           end_time?: string | null
           id?: string
           is_billable?: boolean | null
@@ -11900,6 +13077,41 @@ export type Database = {
           website?: string | null
         }
         Relationships: []
+      }
+      nda_tracking_events: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          id: string
+          metadata: Json | null
+          performed_by: string | null
+          recipient_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          performed_by?: string | null
+          recipient_id: string
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          performed_by?: string | null
+          recipient_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nda_tracking_events_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "teaser_recipients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       news_articles: {
         Row: {
@@ -15796,6 +17008,7 @@ export type Database = {
           geography_focus: string[] | null
           id: string
           investment_style: string | null
+          investment_thesis: string | null
           last_news_scan_at: string | null
           last_portfolio_scraped_at: string | null
           last_scraped_at: string | null
@@ -15805,6 +17018,7 @@ export type Database = {
           revenue_max: number | null
           revenue_min: number | null
           scrape_source_urls: string[] | null
+          search_keywords: string[] | null
           searcher_lead_id: string | null
           sector_exclusions: string[] | null
           sector_exclusions_pe: string[] | null
@@ -15833,6 +17047,7 @@ export type Database = {
           geography_focus?: string[] | null
           id?: string
           investment_style?: string | null
+          investment_thesis?: string | null
           last_news_scan_at?: string | null
           last_portfolio_scraped_at?: string | null
           last_scraped_at?: string | null
@@ -15842,6 +17057,7 @@ export type Database = {
           revenue_max?: number | null
           revenue_min?: number | null
           scrape_source_urls?: string[] | null
+          search_keywords?: string[] | null
           searcher_lead_id?: string | null
           sector_exclusions?: string[] | null
           sector_exclusions_pe?: string[] | null
@@ -15870,6 +17086,7 @@ export type Database = {
           geography_focus?: string[] | null
           id?: string
           investment_style?: string | null
+          investment_thesis?: string | null
           last_news_scan_at?: string | null
           last_portfolio_scraped_at?: string | null
           last_scraped_at?: string | null
@@ -15879,6 +17096,7 @@ export type Database = {
           revenue_max?: number | null
           revenue_min?: number | null
           scrape_source_urls?: string[] | null
+          search_keywords?: string[] | null
           searcher_lead_id?: string | null
           sector_exclusions?: string[] | null
           sector_exclusions_pe?: string[] | null
@@ -16663,6 +17881,7 @@ export type Database = {
           created_at: string | null
           created_by: string | null
           custom_message: string | null
+          enable_watermark: boolean | null
           from_email: string | null
           from_name: string | null
           id: string
@@ -16681,12 +17900,14 @@ export type Database = {
           total_recipients: number | null
           total_sent: number | null
           updated_at: string | null
+          watermark_template: string | null
         }
         Insert: {
           completed_at?: string | null
           created_at?: string | null
           created_by?: string | null
           custom_message?: string | null
+          enable_watermark?: boolean | null
           from_email?: string | null
           from_name?: string | null
           id?: string
@@ -16705,12 +17926,14 @@ export type Database = {
           total_recipients?: number | null
           total_sent?: number | null
           updated_at?: string | null
+          watermark_template?: string | null
         }
         Update: {
           completed_at?: string | null
           created_at?: string | null
           created_by?: string | null
           custom_message?: string | null
+          enable_watermark?: boolean | null
           from_email?: string | null
           from_name?: string | null
           id?: string
@@ -16729,6 +17952,7 @@ export type Database = {
           total_recipients?: number | null
           total_sent?: number | null
           updated_at?: string | null
+          watermark_template?: string | null
         }
         Relationships: [
           {
@@ -16794,6 +18018,13 @@ export type Database = {
           bounce_type: string | null
           bounced_at: string | null
           campaign_id: string
+          cim_access_granted: boolean | null
+          cim_access_granted_at: string | null
+          cim_access_granted_by: string | null
+          cim_access_revoke_reason: string | null
+          cim_access_revoked_at: string | null
+          cim_access_revoked_by: string | null
+          cim_first_accessed_at: string | null
           click_count: number | null
           clicked_at: string | null
           contacto_id: string | null
@@ -16805,7 +18036,17 @@ export type Database = {
           error_message: string | null
           failed_at: string | null
           id: string
+          ioi_amount: number | null
+          ioi_notes: string | null
+          ioi_received_at: string | null
           mandato_empresa_id: string | null
+          nda_document_id: string | null
+          nda_language: string | null
+          nda_sent_at: string | null
+          nda_sent_by: string | null
+          nda_signed_at: string | null
+          nda_signed_by: string | null
+          nda_status: string | null
           nombre: string | null
           open_count: number | null
           opened_at: string | null
@@ -16817,12 +18058,22 @@ export type Database = {
           status: string | null
           tracking_id: string | null
           updated_at: string | null
+          watermark_text: string | null
+          watermarked_at: string | null
+          watermarked_path: string | null
           wave_id: string | null
         }
         Insert: {
           bounce_type?: string | null
           bounced_at?: string | null
           campaign_id: string
+          cim_access_granted?: boolean | null
+          cim_access_granted_at?: string | null
+          cim_access_granted_by?: string | null
+          cim_access_revoke_reason?: string | null
+          cim_access_revoked_at?: string | null
+          cim_access_revoked_by?: string | null
+          cim_first_accessed_at?: string | null
           click_count?: number | null
           clicked_at?: string | null
           contacto_id?: string | null
@@ -16834,7 +18085,17 @@ export type Database = {
           error_message?: string | null
           failed_at?: string | null
           id?: string
+          ioi_amount?: number | null
+          ioi_notes?: string | null
+          ioi_received_at?: string | null
           mandato_empresa_id?: string | null
+          nda_document_id?: string | null
+          nda_language?: string | null
+          nda_sent_at?: string | null
+          nda_sent_by?: string | null
+          nda_signed_at?: string | null
+          nda_signed_by?: string | null
+          nda_status?: string | null
           nombre?: string | null
           open_count?: number | null
           opened_at?: string | null
@@ -16846,12 +18107,22 @@ export type Database = {
           status?: string | null
           tracking_id?: string | null
           updated_at?: string | null
+          watermark_text?: string | null
+          watermarked_at?: string | null
+          watermarked_path?: string | null
           wave_id?: string | null
         }
         Update: {
           bounce_type?: string | null
           bounced_at?: string | null
           campaign_id?: string
+          cim_access_granted?: boolean | null
+          cim_access_granted_at?: string | null
+          cim_access_granted_by?: string | null
+          cim_access_revoke_reason?: string | null
+          cim_access_revoked_at?: string | null
+          cim_access_revoked_by?: string | null
+          cim_first_accessed_at?: string | null
           click_count?: number | null
           clicked_at?: string | null
           contacto_id?: string | null
@@ -16863,7 +18134,17 @@ export type Database = {
           error_message?: string | null
           failed_at?: string | null
           id?: string
+          ioi_amount?: number | null
+          ioi_notes?: string | null
+          ioi_received_at?: string | null
           mandato_empresa_id?: string | null
+          nda_document_id?: string | null
+          nda_language?: string | null
+          nda_sent_at?: string | null
+          nda_sent_by?: string | null
+          nda_signed_at?: string | null
+          nda_signed_by?: string | null
+          nda_status?: string | null
           nombre?: string | null
           open_count?: number | null
           opened_at?: string | null
@@ -16875,6 +18156,9 @@ export type Database = {
           status?: string | null
           tracking_id?: string | null
           updated_at?: string | null
+          watermark_text?: string | null
+          watermarked_at?: string | null
+          watermarked_path?: string | null
           wave_id?: string | null
         }
         Relationships: [
@@ -16918,6 +18202,20 @@ export type Database = {
             columns: ["mandato_empresa_id"]
             isOneToOne: false
             referencedRelation: "mandato_empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teaser_recipients_nda_document_id_fkey"
+            columns: ["nda_document_id"]
+            isOneToOne: false
+            referencedRelation: "documentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teaser_recipients_nda_document_id_fkey"
+            columns: ["nda_document_id"]
+            isOneToOne: false
+            referencedRelation: "v_documentos_con_versiones"
             referencedColumns: ["id"]
           },
           {
@@ -17406,6 +18704,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_absences: {
+        Row: {
+          absence_date: string
+          absence_type: Database["public"]["Enums"]["absence_type"]
+          approved_by: string | null
+          created_at: string | null
+          id: string
+          notes: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          absence_date: string
+          absence_type?: Database["public"]["Enums"]["absence_type"]
+          approved_by?: string | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          absence_date?: string
+          absence_type?: Database["public"]["Enums"]["absence_type"]
+          approved_by?: string | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_dashboard_layouts: {
         Row: {
           created_at: string
@@ -17474,6 +18805,36 @@ export type Database = {
           metadata?: Json | null
           title?: string
           type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_onboarding_progress: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          skipped: boolean | null
+          step_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          skipped?: boolean | null
+          step_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          skipped?: boolean | null
+          step_id?: string
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -17958,39 +19319,54 @@ export type Database = {
         Row: {
           context: string | null
           created_at: string | null
+          default_billable: boolean
           default_value_type:
             | Database["public"]["Enums"]["time_entry_value_type"]
             | null
           description: string | null
           id: string
           is_active: boolean | null
+          min_description_length: number
           name: string
+          require_description: boolean
+          require_lead: boolean
+          require_mandato: boolean
           sort_order: number | null
           updated_at: string | null
         }
         Insert: {
           context?: string | null
           created_at?: string | null
+          default_billable?: boolean
           default_value_type?:
             | Database["public"]["Enums"]["time_entry_value_type"]
             | null
           description?: string | null
           id?: string
           is_active?: boolean | null
+          min_description_length?: number
           name: string
+          require_description?: boolean
+          require_lead?: boolean
+          require_mandato?: boolean
           sort_order?: number | null
           updated_at?: string | null
         }
         Update: {
           context?: string | null
           created_at?: string | null
+          default_billable?: boolean
           default_value_type?:
             | Database["public"]["Enums"]["time_entry_value_type"]
             | null
           description?: string | null
           id?: string
           is_active?: boolean | null
+          min_description_length?: number
           name?: string
+          require_description?: boolean
+          require_lead?: boolean
+          require_mandato?: boolean
           sort_order?: number | null
           updated_at?: string | null
         }
@@ -18392,6 +19768,17 @@ export type Database = {
           },
         ]
       }
+      v_email_queue_stats: {
+        Row: {
+          avg_attempts: number | null
+          count: number | null
+          newest: string | null
+          oldest: string | null
+          queue_type: string | null
+          status: string | null
+        }
+        Relationships: []
+      }
       v_empleados_completo: {
         Row: {
           codigo_empleado: string | null
@@ -18756,6 +20143,39 @@ export type Database = {
         }
         Relationships: []
       }
+      v_status_transitions: {
+        Row: {
+          change_source: string | null
+          created_at: string | null
+          created_by: string | null
+          from_status: string | null
+          id: string | null
+          lead_id: string | null
+          lead_type: string | null
+          to_status: string | null
+        }
+        Insert: {
+          change_source?: never
+          created_at?: string | null
+          created_by?: string | null
+          from_status?: never
+          id?: string | null
+          lead_id?: string | null
+          lead_type?: string | null
+          to_status?: never
+        }
+        Update: {
+          change_source?: never
+          created_at?: string | null
+          created_by?: string | null
+          from_status?: never
+          id?: string | null
+          lead_id?: string | null
+          lead_type?: string | null
+          to_status?: never
+        }
+        Relationships: []
+      }
       v_time_entry_value_stats: {
         Row: {
           entries_count: number | null
@@ -18808,6 +20228,31 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "vw_mandate_pipeline"
             referencedColumns: ["mandato_id"]
+          },
+        ]
+      }
+      vw_campaign_funnel_stats: {
+        Row: {
+          campaign_id: string | null
+          cim_conversion: number | null
+          cim_opened: number | null
+          ioi_conversion: number | null
+          ioi_received: number | null
+          nda_conversion: number | null
+          nda_sent: number | null
+          nda_signed: number | null
+          open_rate: number | null
+          teaser_opened: number | null
+          teaser_sent: number | null
+          total_recipients: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teaser_recipients_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "teaser_campaigns"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -18963,6 +20408,8 @@ export type Database = {
         }[]
       }
       bootstrap_first_admin: { Args: { user_email: string }; Returns: boolean }
+      calculate_email_retry_at: { Args: { attempts: number }; Returns: string }
+      can_access_cim: { Args: { p_recipient_id: string }; Returns: boolean }
       check_is_admin: { Args: { check_user_id: string }; Returns: boolean }
       check_is_super_admin: {
         Args: { check_user_id: string }
@@ -19114,6 +20561,25 @@ export type Database = {
         }
         Returns: boolean
       }
+      enqueue_email: {
+        Args: {
+          p_attachments?: Json
+          p_from_email?: string
+          p_from_name?: string
+          p_html_content: string
+          p_metadata?: Json
+          p_priority?: number
+          p_queue_type?: string
+          p_reference_id?: string
+          p_reference_type?: string
+          p_scheduled_at?: string
+          p_subject: string
+          p_text_content?: string
+          p_to_email: string
+          p_to_name?: string
+        }
+        Returns: string
+      }
       generate_fase0_reference_number: {
         Args: { doc_type: string }
         Returns: string
@@ -19181,6 +20647,7 @@ export type Database = {
           vencidas: number
         }[]
       }
+      get_email_metrics: { Args: { p_period?: string }; Returns: Json }
       get_lead_ai_stats: { Args: never; Returns: Json }
       get_marketplace_analytics: { Args: { days_back?: number }; Returns: Json }
       get_news_filter_options: {
@@ -19265,6 +20732,7 @@ export type Database = {
         | { Args: never; Returns: boolean }
         | { Args: { _user_id: string }; Returns: boolean }
       is_full_admin: { Args: { check_user_id: string }; Returns: boolean }
+      is_nda_eligible: { Args: { p_recipient_id: string }; Returns: boolean }
       is_user_admin: { Args: { check_user_id: string }; Returns: boolean }
       is_user_super_admin: { Args: { check_user_id: string }; Returns: boolean }
       link_valuation_to_empresa: {
@@ -19507,8 +20975,10 @@ export type Database = {
       verify_valuation_token: { Args: { token: string }; Returns: boolean }
     }
     Enums: {
+      absence_type: "vacation" | "sick_leave" | "personal" | "other"
       access_level: "internal" | "client" | "public"
       admin_role: "super_admin" | "admin" | "editor" | "viewer"
+      ads_platform: "meta_ads" | "google_ads"
       dd_workstream:
         | "legal"
         | "financial"
@@ -19554,6 +21024,8 @@ export type Database = {
         | "fase0_bloqueado"
         | "mandato_propuesto"
         | "mandato_firmado"
+        | "lead_perdido_curiosidad"
+        | "ya_advisor"
       loss_reason_type:
         | "precio"
         | "competidor"
@@ -19740,8 +21212,10 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      absence_type: ["vacation", "sick_leave", "personal", "other"],
       access_level: ["internal", "client", "public"],
       admin_role: ["super_admin", "admin", "editor", "viewer"],
+      ads_platform: ["meta_ads", "google_ads"],
       dd_workstream: [
         "legal",
         "financial",
@@ -19791,6 +21265,8 @@ export const Constants = {
         "fase0_bloqueado",
         "mandato_propuesto",
         "mandato_firmado",
+        "lead_perdido_curiosidad",
+        "ya_advisor",
       ],
       loss_reason_type: [
         "precio",

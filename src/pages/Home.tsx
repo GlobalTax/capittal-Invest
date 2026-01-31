@@ -1,20 +1,14 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Meta } from "@/components/seo/Meta";
 import { useAnalytics } from "@/hooks/useAnalytics";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Dialog,
-  DialogContent,
-} from "@/components/ui/dialog";
-import { VideoSlideshow } from "@/components/home/VideoSlideshow";
+import { HeroCarousel } from "@/components/home/HeroCarousel";
 
 const Home = () => {
   const { trackCTAClick } = useAnalytics();
-  const [isVideoOpen, setIsVideoOpen] = useState(false);
 
   // Fetch home content from database
   const { data: homeContent } = useQuery({
@@ -51,7 +45,7 @@ const Home = () => {
   const hero = homeContent?.find(c => c.section === 'hero');
   const kpis = homeContent
     ?.filter(c => c.section.startsWith('kpi_'))
-    ?.sort((a, b) => a.display_order - b.display_order)
+    ?.sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
     ?.map(k => ({ value: k.value || '', label: k.label || '' })) || [
       { label: "Activos bajo Gestión", value: "€2.5bn" },
       { label: "Inversiones desde 2008", value: ">200" },
@@ -95,73 +89,11 @@ const Home = () => {
       />
 
       <div className="min-h-screen bg-background">
-        {/* Hero Section - Full Screen with Video/Image */}
-        <section className="relative h-screen flex items-center justify-center overflow-hidden">
-          {/* Background - Video or Image */}
-          <div className="absolute inset-0">
-            {hero?.video_url ? (
-              <video
-                src={hero.video_url}
-                poster={(hero as any).poster_image_url || hero.image_url || undefined}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="auto"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <img
-                src={hero?.image_url || "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop"}
-                alt="Nature background"
-                className="w-full h-full object-cover"
-              />
-            )}
-            <div className="absolute inset-0 bg-neutral-900/40" />
-          </div>
-
-          {/* Content - Title centered */}
-          <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-normal text-white tracking-tight leading-none">
-              {hero?.title || 'Partners by nature'}
-            </h1>
-          </div>
-
-          {/* Video button - Bottom left */}
-          <button
-            className="absolute bottom-12 left-8 md:left-12 lg:left-16 z-10 inline-flex items-center gap-3 text-white/90 hover:text-white transition-smooth group"
-            onClick={() => {
-              setIsVideoOpen(true);
-              trackCTAClick("Watch Video", "Hero");
-            }}
-          >
-            <span className="w-14 h-14 md:w-16 md:h-16 rounded-full border-2 border-white/50 flex items-center justify-center group-hover:border-white group-hover:bg-white/10 transition-smooth">
-              <Play className="w-5 h-5 md:w-6 md:h-6 ml-1" fill="currentColor" />
-            </span>
-            <span className="text-xs md:text-sm font-normal uppercase tracking-widest text-left">
-              {hero?.subtitle?.split(' ').slice(0, 2).join(' ') || 'Ver el'}<br />{hero?.subtitle?.split(' ').slice(2).join(' ') || 'vídeo completo'}
-            </span>
-          </button>
-
-          {/* Video Modal */}
-          <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
-            <DialogContent className="max-w-5xl p-0 bg-black border-none [&>button]:text-white [&>button]:hover:bg-white/20 [&>button]:z-50">
-              <div className="aspect-video w-full">
-                <VideoSlideshow autoPlay onComplete={() => {}} />
-              </div>
-            </DialogContent>
-          </Dialog>
-
-          {/* Scroll indicator */}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 animate-scroll-fade">
-            <div className="w-6 h-10 rounded-full border border-white/40 flex items-start justify-center pt-2 backdrop-blur-sm">
-              <div className="w-1 h-2 bg-white/80 rounded-full animate-scroll-wheel" />
-            </div>
-            <span className="text-xs uppercase tracking-[0.25em] text-white/60 font-light">
-              Scroll
-            </span>
-          </div>
-        </section>
+        {/* Hero Section - Carousel */}
+        <HeroCarousel 
+          kpis={kpis}
+          title={hero?.title}
+        />
 
         {/* La Firma Section */}
         <section className="py-24 md:py-32 bg-background">
@@ -176,20 +108,6 @@ const Home = () => {
                 compañías familiares y el middle-market. Nuestro propósito es ser el socio 
                 ideal de empresas líderes que generen valor sostenible e impacto positivo.
               </p>
-
-              {/* KPIs - Miura style */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-                {kpis.map((kpi) => (
-                  <div key={kpi.label} className="text-center md:text-left">
-                    <div className="text-4xl md:text-5xl lg:text-6xl font-display font-normal text-foreground mb-2">
-                      {kpi.value}
-                    </div>
-                    <div className="text-sm text-muted-foreground uppercase tracking-wider">
-                      {kpi.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
 
               <Button
                 asChild
