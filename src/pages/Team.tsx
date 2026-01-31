@@ -13,18 +13,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { FallbackNotice } from "@/components/ui/fallback-notice";
+import { fallbackTeamMembers, TeamMember } from "@/data/fallbackData";
 
-interface TeamMember {
-  id: string;
-  name: string;
-  position: string;
-  email: string | null;
-  linkedin_url: string | null;
-  image_url: string | null;
-  bio: string | null;
-  section: string | null;
-  display_order: number;
-}
+// TeamMember interface is now imported from fallbackData
 
 const TeamMemberSkeleton = () => (
   <div>
@@ -40,7 +32,7 @@ const Team = () => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
-  const { data: members, isLoading } = useQuery({
+  const { data: members, isLoading, isError } = useQuery({
     queryKey: ['team-members'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -52,10 +44,16 @@ const Team = () => {
       if (error) throw error;
       return data as TeamMember[];
     },
+    placeholderData: fallbackTeamMembers,
+    retry: 1,
   });
 
+  // Use fallback if no data or error
+  const displayMembers = (members && members.length > 0) ? members : fallbackTeamMembers;
+  const isUsingFallback = !members || members.length === 0 || isError;
+
   // Group members by section
-  const groupedMembers = members?.reduce((acc, member) => {
+  const groupedMembers = displayMembers?.reduce((acc, member) => {
     const section = member.section || 'Equipo';
     if (!acc[section]) acc[section] = [];
     acc[section].push(member);
@@ -94,7 +92,7 @@ const Team = () => {
         </section>
 
         {/* Filters */}
-        {sections.length > 1 && (
+        {sections.length > 1 && !isUsingFallback && (
           <section className="container mx-auto px-4 sm:px-6 lg:px-8 pb-12">
             <div className="flex gap-2 flex-wrap max-w-6xl mx-auto">
               <button
@@ -128,7 +126,9 @@ const Team = () => {
 
         {/* Team Grid */}
         <section className="container mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-          {isLoading ? (
+          {isUsingFallback && <FallbackNotice className="mb-8 rounded-lg" />}
+          
+          {isLoading && !displayMembers ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {[...Array(6)].map((_, i) => (
                 <TeamMemberSkeleton key={i} />

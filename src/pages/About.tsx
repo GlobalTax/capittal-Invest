@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { useEffect, useRef, useState, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { fallbackAboutContent, AboutContent } from '@/data/fallbackData';
+import { FallbackNotice } from '@/components/ui/fallback-notice';
 import { useScrollAnimation } from '@/hooks/useScrollAnimation';
 
 // Icon mapping
@@ -19,17 +21,7 @@ const iconMap: Record<string, LucideIcon> = {
   Target, TrendingUp, Users, Wallet, Briefcase, GitMerge, Clock, Leaf
 };
 
-interface AboutContent {
-  id: string;
-  section: string;
-  title: string | null;
-  subtitle: string | null;
-  content: string | null;
-  value: string | null;
-  label: string | null;
-  icon: string | null;
-  display_order: number;
-}
+// AboutContent interface is now imported from fallbackData
 
 // Animated Section wrapper component
 interface AnimatedSectionProps {
@@ -327,7 +319,7 @@ const ESGMetric = ({ value, label, icon: Icon, delay = 0 }: ESGMetricProps) => (
 );
 
 const About = () => {
-  const { data: content, isLoading } = useQuery({
+  const { data: content, isLoading, isError } = useQuery({
     queryKey: ['about-content'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -340,10 +332,15 @@ const About = () => {
       return data as AboutContent[];
     },
     staleTime: 5 * 60 * 1000, // 5 minutos
-    placeholderData: (previousData) => previousData,
+    placeholderData: fallbackAboutContent,
+    retry: 1,
   });
 
-  if (isLoading) {
+  // Use fallback if no data or error
+  const displayContent = (content && content.length > 0) ? content : fallbackAboutContent;
+  const isUsingFallback = !content || content.length === 0 || isError;
+
+  if (isLoading && !displayContent) {
     return (
       <div className="min-h-screen">
         <div className="container mx-auto px-4 py-20">
@@ -359,11 +356,11 @@ const About = () => {
     );
   }
 
-  const hero = content?.find(c => c.section === 'hero');
-  const kpis = content?.filter(c => c.section === 'kpi').sort((a, b) => a.display_order - b.display_order) || [];
-  const strategies = content?.filter(c => c.section === 'strategy').sort((a, b) => a.display_order - b.display_order) || [];
-  const valueCreation = content?.filter(c => c.section === 'value_creation').sort((a, b) => a.display_order - b.display_order) || [];
-  const esg = content?.find(c => c.section === 'esg');
+  const hero = displayContent?.find(c => c.section === 'hero');
+  const kpis = displayContent?.filter(c => c.section === 'kpi').sort((a, b) => a.display_order - b.display_order) || [];
+  const strategies = displayContent?.filter(c => c.section === 'strategy').sort((a, b) => a.display_order - b.display_order) || [];
+  const valueCreation = displayContent?.filter(c => c.section === 'value_creation').sort((a, b) => a.display_order - b.display_order) || [];
+  const esg = displayContent?.find(c => c.section === 'esg');
 
   return (
     <>
@@ -372,6 +369,9 @@ const About = () => {
         description="Gestora de capital privado especializada en adquisiciones estratégicas de empresas medianas con potencial de crecimiento."
         canonicalUrl="https://ethos-venture.lovable.app/about"
       />
+
+      {/* Fallback Notice */}
+      {isUsingFallback && <FallbackNotice />}
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 bg-gradient-to-b from-muted/50 to-background">

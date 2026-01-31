@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PortfolioCompany } from "@/types/portfolio";
+import { fallbackPortfolioCompanies, fallbackFilterOptions } from "@/data/fallbackData";
 
 interface PortfolioSearchParams {
   searchQuery?: string;
@@ -65,7 +66,8 @@ export const usePortfolioSearch = (params: PortfolioSearchParams) => {
     enabled: true,
     staleTime: 30 * 1000, // 30 seconds cache
     refetchOnWindowFocus: false,
-    placeholderData: (previousData) => previousData, // Keep previous data while loading
+    placeholderData: fallbackPortfolioCompanies,
+    retry: 1,
   });
 };
 
@@ -85,5 +87,7 @@ export const usePortfolioFilterOptions = () => {
       };
     },
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    placeholderData: fallbackFilterOptions,
+    retry: 1,
   });
 };
