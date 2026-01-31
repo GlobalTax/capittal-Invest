@@ -41,7 +41,8 @@ export const useNewsSearch = (params: NewsSearchParams) => {
       if (error) throw error;
       return data as NewsArticle[];
     },
-    enabled: true,
+    staleTime: 60 * 1000, // 1 minuto
+    placeholderData: (previousData) => previousData,
   });
 };
 
