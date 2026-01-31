@@ -1,289 +1,159 @@
 
+# Plan: Fallback de Contenido Estático
 
-## Plan: Mejorar Seccion ESG con Elementos Visuales
+## Objetivo
+Implementar un sistema de datos de respaldo (fallback) para todas las páginas que dependen de Supabase, asegurando que la aplicación muestre contenido significativo cuando la base de datos no esté disponible.
 
-### Objetivo
+## Análisis del Estado Actual
 
-Transformar la seccion ESG actual (basica con un solo icono y texto) en una experiencia visual rica que incluya iconos de los Objetivos de Desarrollo Sostenible (ODS), una linea de tiempo de compromisos ESG, y metricas de impacto animadas.
+### Páginas que requieren fallback
 
----
+| Página | Fuente de datos | ¿Tiene fallback? | Prioridad |
+|--------|----------------|------------------|-----------|
+| **Home** | `home_content`, `news_articles` | Parcial (solo KPIs y noticias) | Alta |
+| **About** | `about_content` | No - muestra skeletons infinitos | Alta |
+| **Portfolio** | `portfolio_companies` | No - muestra skeletons infinitos | Alta |
+| **Team** | `team_members` | No - muestra skeletons infinitos | Alta |
+| **Insights** | `news_articles` | Sí - usa `mockData.ts` | Completado |
+| **HeroCarousel** | `video_slides` | Sí - usa `defaultSlides` | Completado |
 
-## Diseno Propuesto
+### Recursos existentes
+- `src/data/mockData.ts` ya contiene datos de ejemplo para Portfolio, Team e Insights
+- El HeroCarousel ya implementa un patrón de fallback efectivo
 
-### Estructura Visual Nueva
+## Implementación
 
-```text
-+--------------------------------------------------+
-|              INVERSION RESPONSABLE               |
-|    Subtitulo y descripcion principal ESG         |
-+--------------------------------------------------+
-|                                                  |
-|     [ODS 8]  [ODS 9]  [ODS 12]  [ODS 13]        |
-|     Trabajo  Industria Consumo   Accion          |
-|     Decente  Innovacion Responsable Climatica    |
-|                                                  |
-+--------------------------------------------------+
-|              LINEA DE TIEMPO ESG                 |
-|                                                  |
-|  2020 -------- 2022 -------- 2024 -------- 2025 |
-|    |            |             |              |   |
-| Politica    Certificacion  Carbon        Nuevo   |
-| ESG         B Corp         Neutral       Fondo   |
-|                                                  |
-+--------------------------------------------------+
-|          METRICAS DE IMPACTO ESG                 |
-|                                                  |
-|   -30%         85%          100%         12      |
-|  Emisiones   Participadas  Gobernanza  Empleos   |
-|   CO2       con Plan ESG   Mejorada    Creados   |
-|                                                  |
-+--------------------------------------------------+
+### 1. Crear archivo centralizado de datos fallback
+
+**Archivo:** `src/data/fallbackData.ts`
+
+Contendrá datos estáticos de respaldo para:
+- Contenido de About (hero, KPIs, estrategias, ESG)
+- Contenido de Home (hero, KPIs)
+- Empresas del portfolio
+- Miembros del equipo (reutilizando/expandiendo mockData)
+
+### 2. Modificar página About.tsx
+
+Cambios:
+- Importar datos fallback
+- Modificar la consulta para usar `placeholderData` con los datos fallback
+- Eliminar el estado de loading infinito cuando hay error
+- Mostrar datos fallback si la consulta falla o devuelve vacío
+
+Lógica:
+```typescript
+const { data: content, isLoading, isError } = useQuery({
+  queryKey: ['about-content'],
+  queryFn: async () => { ... },
+  placeholderData: fallbackAboutContent, // Datos inmediatos
+});
+
+// Usar fallback si no hay datos
+const displayContent = content?.length > 0 ? content : fallbackAboutContent;
 ```
 
----
+### 3. Modificar página Portfolio.tsx
 
-## Componentes a Crear
+Cambios:
+- Importar empresas fallback desde `fallbackData.ts`
+- Modificar hooks `usePortfolioSearch` y `usePortfolioFilterOptions`
+- Mostrar empresas fallback si Supabase no responde
+- Actualizar las estadísticas para reflejar datos fallback
 
-### 1. SDG Icons Grid (Iconos ODS)
+### 4. Modificar página Team.tsx
 
-Grid de iconos representando los ODS prioritarios usando iconos de Lucide:
+Cambios:
+- Importar miembros fallback
+- Modificar la consulta para incluir fallback
+- Mostrar equipo de respaldo si la BD no responde
 
-| ODS | Icono Lucide | Color |
-|-----|--------------|-------|
-| ODS 8: Trabajo Decente | Briefcase | Rojo granate |
-| ODS 9: Industria e Innovacion | Factory | Naranja |
-| ODS 12: Consumo Responsable | Recycle | Mostaza |
-| ODS 13: Accion Climatica | CloudSun | Verde |
+### 5. Modificar hooks de búsqueda
 
-Cada icono tendra:
-- Animacion de entrada escalonada (stagger)
-- Hover con escala y sombra
-- Tooltip con nombre completo del ODS
+**Archivo:** `src/hooks/usePortfolioSearch.ts`
 
-### 2. Timeline de Compromisos ESG
-
-Linea de tiempo horizontal con hitos:
-- Nodos circulares conectados por linea
-- Animacion secuencial de izquierda a derecha
-- Cada nodo muestra anio y descripcion del compromiso
-
-Hitos propuestos (hardcoded inicialmente, configurable via BD despues):
-- 2020: Politica ESG Integrada
-- 2022: Certificacion ESG
-- 2024: Neutralidad de Carbono
-- 2025: Fondo de Impacto
-
-### 3. Metricas de Impacto ESG
-
-Grid de 4 metricas con contadores animados:
-- Reduccion emisiones CO2
-- Participadas con plan ESG
-- Mejoras en gobernanza
-- Empleos creados
-
----
-
-## Cambios a Implementar
-
-### Archivo: src/pages/About.tsx
-
-**Nuevos imports de iconos:**
+Añadir manejo de errores con fallback:
 ```typescript
-import { 
-  // ... iconos existentes
-  Briefcase, Factory, Recycle, CloudSun, 
-  CheckCircle, Calendar, Sprout, BarChart3,
-  TreeDeciduous, Handshake, Building2
-} from 'lucide-react';
+return useQuery({
+  queryKey: ["portfolio-search", params],
+  queryFn: async () => { ... },
+  placeholderData: fallbackPortfolioCompanies,
+  retry: 1,
+});
 ```
 
-**Nuevo componente SDGCard:**
+## Datos Fallback a Crear
+
+### About Content
 ```typescript
-// Tarjeta individual para cada ODS
-const SDGCard = ({ 
-  icon: Icon, 
-  title, 
-  description, 
-  color,
-  delay 
-}: SDGCardProps) => (
-  <AnimatedSection animation="scale-fade" delay={delay}>
-    <div className="group text-center p-6 rounded-xl 
-                    border border-border/50 hover:border-current 
-                    transition-all hover:shadow-lg cursor-pointer"
-         style={{ borderColor: color }}>
-      <div className="w-16 h-16 mx-auto mb-4 rounded-full 
-                      flex items-center justify-center"
-           style={{ backgroundColor: `${color}20` }}>
-        <Icon className="w-8 h-8" style={{ color }} />
-      </div>
-      <h4 className="font-medium text-foreground mb-1">{title}</h4>
-      <p className="text-sm text-muted-foreground">{description}</p>
-    </div>
-  </AnimatedSection>
-);
+const fallbackAboutContent = [
+  { section: 'hero', title: 'Creando valor...', subtitle: '...' },
+  { section: 'kpi', value: '12+', label: 'Años de Experiencia' },
+  { section: 'kpi', value: '150+', label: 'Operaciones' },
+  // ... más KPIs y estrategias
+];
 ```
 
-**Nuevo componente ESGTimeline:**
-```typescript
-// Linea de tiempo de compromisos
-const ESGTimeline = () => {
-  const milestones = [
-    { year: '2020', title: 'Politica ESG', desc: 'Integracion criterios' },
-    { year: '2022', title: 'Certificacion', desc: 'Estandares internacionales' },
-    { year: '2024', title: 'Carbon Neutral', desc: 'Huella cero' },
-    { year: '2025', title: 'Fondo Impacto', desc: 'Inversion sostenible' },
-  ];
+### Portfolio Companies
+Expandir datos existentes en mockData con la estructura correcta de la BD
 
-  return (
-    <div className="relative py-8">
-      {/* Linea conectora */}
-      <div className="absolute top-1/2 left-0 right-0 h-0.5 
-                      bg-gradient-to-r from-green-300 to-green-600" />
-      
-      <div className="relative flex justify-between">
-        {milestones.map((m, i) => (
-          <AnimatedSection key={m.year} animation="scale-fade" delay={i * 150}>
-            <div className="flex flex-col items-center">
-              <div className="w-4 h-4 rounded-full bg-green-500 
-                              ring-4 ring-green-100 mb-3" />
-              <span className="text-lg font-semibold">{m.year}</span>
-              <span className="text-sm font-medium">{m.title}</span>
-              <span className="text-xs text-muted-foreground">{m.desc}</span>
-            </div>
-          </AnimatedSection>
-        ))}
-      </div>
-    </div>
-  );
-};
+### Team Members
+```typescript
+const fallbackTeamMembers = [
+  { name: 'Equipo Directivo', position: 'Liderazgo', ... },
+  // Datos genéricos que indiquen al usuario que son datos de ejemplo
+];
 ```
 
-**Nuevo componente ESGMetric:**
+## Experiencia de Usuario
+
+Cuando Supabase no esté disponible:
+1. La página carga inmediatamente con datos fallback
+2. Se muestra un banner sutil indicando "Mostrando datos de ejemplo"
+3. No hay spinners infinitos ni páginas en blanco
+4. El usuario puede navegar toda la aplicación
+
+## Componente de aviso (opcional)
+
+Crear un pequeño banner informativo:
 ```typescript
-// Metrica individual ESG
-const ESGMetric = ({ value, label, icon: Icon, delay }: ESGMetricProps) => (
-  <AnimatedSection animation="fade-up" delay={delay}>
-    <div className="text-center">
-      <Icon className="w-8 h-8 mx-auto mb-3 text-green-600" />
-      <AnimatedValue 
-        value={value} 
-        className="block text-3xl font-semibold text-foreground mb-1" 
-      />
-      <p className="text-sm text-muted-foreground">{label}</p>
-    </div>
-  </AnimatedSection>
-);
-```
-
-**Seccion ESG actualizada:**
-```typescript
-{/* ESG Section - Mejorada */}
-<section className="py-24 bg-gradient-to-b from-green-50 to-background 
-                    dark:from-green-950/20 dark:to-background">
-  <div className="container mx-auto px-4">
-    {/* Header */}
-    <AnimatedSection animation="fade-up" className="text-center mb-16">
-      <div className="w-20 h-20 mx-auto mb-6 bg-green-100 rounded-2xl 
-                      flex items-center justify-center">
-        <Leaf className="w-10 h-10 text-green-600" />
-      </div>
-      <h2 className="text-3xl md:text-4xl font-normal mb-4">{esg.title}</h2>
-      <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-        {esg.subtitle}
-      </p>
-    </AnimatedSection>
-
-    {/* SDG Grid */}
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-20">
-      {sdgItems.map((sdg, i) => (
-        <SDGCard key={sdg.title} {...sdg} delay={i * 100} />
-      ))}
-    </div>
-
-    {/* Timeline */}
-    <AnimatedSection animation="fade-up" className="mb-20">
-      <h3 className="text-center text-xl font-normal mb-8">
-        Nuestro Camino ESG
-      </h3>
-      <ESGTimeline />
-    </AnimatedSection>
-
-    {/* Impact Metrics */}
-    <div className="bg-white/50 dark:bg-card/50 rounded-2xl p-8 max-w-4xl mx-auto">
-      <h3 className="text-center text-xl font-normal mb-8">
-        Impacto Medible
-      </h3>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-        {esgMetrics.map((metric, i) => (
-          <ESGMetric key={metric.label} {...metric} delay={i * 100} />
-        ))}
-      </div>
-    </div>
+// src/components/ui/fallback-notice.tsx
+const FallbackNotice = () => (
+  <div className="bg-amber-50 text-amber-800 text-sm py-2 px-4 text-center">
+    Mostrando datos de ejemplo. Algunos contenidos pueden no estar actualizados.
   </div>
-</section>
+);
 ```
 
----
+## Archivos a Modificar/Crear
 
-## Datos Estaticos Iniciales
-
-### SDG Items
-```typescript
-const sdgItems = [
-  { 
-    icon: Briefcase, 
-    title: 'ODS 8', 
-    description: 'Trabajo Decente', 
-    color: '#a21942' 
-  },
-  { 
-    icon: Factory, 
-    title: 'ODS 9', 
-    description: 'Industria e Innovacion', 
-    color: '#fd6925' 
-  },
-  { 
-    icon: Recycle, 
-    title: 'ODS 12', 
-    description: 'Consumo Responsable', 
-    color: '#bf8b2e' 
-  },
-  { 
-    icon: TreeDeciduous, 
-    title: 'ODS 13', 
-    description: 'Accion Climatica', 
-    color: '#3f7e44' 
-  },
-];
-```
-
-### ESG Metrics
-```typescript
-const esgMetrics = [
-  { value: '-30%', label: 'Reduccion CO2', icon: CloudSun },
-  { value: '85%', label: 'Participadas con Plan ESG', icon: CheckCircle },
-  { value: '100%', label: 'Gobernanza Mejorada', icon: Building2 },
-  { value: '+500', label: 'Empleos Creados', icon: Users },
-];
-```
-
----
-
-## Archivos Afectados
-
-| Archivo | Cambio |
+| Archivo | Acción |
 |---------|--------|
-| `src/pages/About.tsx` | Añadir componentes SDGCard, ESGTimeline, ESGMetric y rediseñar seccion ESG completa |
+| `src/data/fallbackData.ts` | Crear |
+| `src/components/ui/fallback-notice.tsx` | Crear |
+| `src/pages/About.tsx` | Modificar |
+| `src/pages/Portfolio.tsx` | Modificar |
+| `src/pages/Team.tsx` | Modificar |
+| `src/hooks/usePortfolioSearch.ts` | Modificar |
 
----
+## Detalles Técnicos
 
-## Resultado Visual Esperado
+### Estrategia de React Query
+- Usar `placeholderData` para datos inmediatos mientras se carga
+- Mantener `staleTime` existente para caching
+- Reducir `retry` a 1 para fallar rápido
+- Usar el patrón `data || fallbackData` para garantizar contenido
 
-1. **Seccion Hero ESG**: Fondo degradado verde suave con icono grande centrado
-2. **Grid ODS**: 4 tarjetas con iconos en colores oficiales ONU, animacion scale-fade escalonada
-3. **Timeline**: Linea horizontal con 4 nodos que aparecen secuencialmente
-4. **Metricas**: 4 contadores animados con iconos representativos
+### Detección de modo fallback
+```typescript
+const isUsingFallback = !content || content.length === 0 || isError;
+```
 
-Todas las animaciones se activan al hacer scroll y solo ocurren una vez para mantener profesionalismo.
+### Estructura de datos
+Los datos fallback seguirán exactamente la misma estructura que devuelve Supabase para evitar errores de tipado.
 
+## Beneficios
+- Experiencia fluida sin interrupciones
+- Navegación completa offline-first
+- Mejor percepción de velocidad de carga
+- Reducción de errores visibles al usuario
