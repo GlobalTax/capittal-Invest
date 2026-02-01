@@ -21,9 +21,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { ImageUpload } from '@/components/admin/ImageUpload';
-import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, Play } from 'lucide-react';
+import { Plus, Pencil, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'sonner';
-import { VideoSlideshow } from '@/components/home/VideoSlideshow';
 
 interface VideoSlide {
   id: string;
@@ -48,7 +47,6 @@ interface SlideFormData {
 export function AdminVideoSlides() {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [editingSlide, setEditingSlide] = useState<VideoSlide | null>(null);
   const [formData, setFormData] = useState<SlideFormData>({
     title: '',
@@ -234,18 +232,6 @@ export function AdminVideoSlides() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Play className="mr-2 h-4 w-4" />
-                Preview
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl p-0 overflow-hidden">
-              <VideoSlideshow autoPlay={true} onComplete={() => {}} />
-            </DialogContent>
-          </Dialog>
-          
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
             if (!open) resetForm();
             setIsDialogOpen(open);
