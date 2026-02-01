@@ -1,28 +1,35 @@
 
-# Plan: Eliminar Componente VideoSlideshow
 
-## Resumen
-Eliminar el componente `VideoSlideshow` que ya no se utiliza en la página principal, junto con su funcionalidad de preview en el panel de administración.
+# Plan: Actualizar Menú del Admin Sidebar
 
-## Archivos a Modificar
+## Problema
+El menú lateral del admin todavía muestra el icono de película (Film) con la etiqueta "Video Slideshow", aunque el componente de video ya fue eliminado y esa sección gestiona el carrusel de imágenes del Hero.
 
-### 1. Eliminar Archivo
-| Archivo | Acción |
-|---------|--------|
-| `src/components/home/VideoSlideshow.tsx` | **Eliminar completamente** |
+## Cambios a Realizar
 
-### 2. Actualizar Admin (`src/pages/admin/AdminVideoSlides.tsx`)
-Eliminar la funcionalidad de preview que usa `VideoSlideshow`:
+### Archivo: `src/components/admin/AdminSidebar.tsx`
 
-**Cambios:**
-- Línea 26: Eliminar `import { VideoSlideshow }`
-- Línea 51: Eliminar estado `isPreviewOpen`
-- Líneas 237-247: Eliminar el Dialog de preview con el botón "Preview"
+| Línea | Actual | Nuevo |
+|-------|--------|-------|
+| 10 | `Film` | `Image` |
+| 22 | `icon: Film, label: 'Video Slideshow'` | `icon: Image, label: 'Hero Carousel'` |
 
-**Resultado:** El admin seguirá funcionando para gestionar los slides (que usa `HeroCarousel`), pero sin el botón de preview del video que ya no existe.
+### Código Específico
 
-## Notas Técnicas
+**Import (línea 10):**
+```diff
+- Film,
++ Image,
+```
 
-- El `HeroCarousel` de la Home **NO se ve afectado** - sigue funcionando con los slides de la base de datos
-- La tabla `video_slides` y el admin para gestionarla se mantienen porque alimentan el carrusel actual
-- Solo eliminamos el componente de video que no se usa
+**navItems (línea 22):**
+```diff
+- { path: '/admin/video', icon: Film, label: 'Video Slideshow' },
++ { path: '/admin/video', icon: Image, label: 'Hero Carousel' },
+```
+
+## Resultado
+- El icono de película se reemplaza por un icono de imagen
+- La etiqueta "Video Slideshow" cambia a "Hero Carousel"
+- Refleja correctamente que esta sección gestiona el carrusel de imágenes del hero
+
