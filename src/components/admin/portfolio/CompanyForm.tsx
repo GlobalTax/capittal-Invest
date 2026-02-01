@@ -176,12 +176,9 @@ export const CompanyForm = ({ initialData, onSubmit, onCancel, isLoading }: Comp
                 <SelectValue placeholder="Seleccionar sector" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Technology">Tecnología</SelectItem>
-                <SelectItem value="Healthcare">Salud</SelectItem>
-                <SelectItem value="Finance">Finanzas</SelectItem>
-                <SelectItem value="Consumer">Consumo</SelectItem>
-                <SelectItem value="Industrial">Industrial</SelectItem>
-                <SelectItem value="Energy">Energía</SelectItem>
+                <SelectItem value="Servicios">Servicios</SelectItem>
+                <SelectItem value="Food & Consumer">Food & Consumer</SelectItem>
+                <SelectItem value="Industriales y Distribución">Industriales y Distribución</SelectItem>
               </SelectContent>
             </Select>
             {errors.sector && <p className="text-sm text-destructive mt-1">{errors.sector.message}</p>}
