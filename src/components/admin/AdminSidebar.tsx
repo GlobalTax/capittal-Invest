@@ -7,7 +7,7 @@ import {
   Newspaper,
   UserCog,
   Home,
-  Film,
+  Image,
   Info,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,7 +19,7 @@ const navItems = [
   { path: '/admin/home', icon: Home, label: 'Página de Inicio' },
   { path: '/admin/about', icon: Info, label: 'Sobre Nosotros' },
   { path: '/admin/portfolio', icon: Briefcase, label: 'Portfolio Companies' },
-  { path: '/admin/video', icon: Film, label: 'Video Slideshow' },
+  { path: '/admin/video', icon: Image, label: 'Hero Carousel' },
   { path: '/admin/news', icon: Newspaper, label: 'News Articles' },
   { path: '/admin/team', icon: Users, label: 'Team Members' },
 ];
