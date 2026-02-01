@@ -1,84 +1,86 @@
 
-# Plan: Sincronizar Datos de Fallback del Equipo
+# Plan: Actualizar Sectores de Inversión
 
-## Problema Identificado
+## Objetivo
+Cambiar los sectores de la aplicación a los tres sectores que os interesan:
+1. **Servicios** - Empresas de servicios profesionales y B2B
+2. **Food & Consumer** - Alimentación, bebidas y consumo
+3. **Industriales y Distribución** - Industria manufacturera y logística
 
-Los datos del equipo en el fallback (`fallbackData.ts`) no coinciden con los miembros reales de la base de datos:
+## Archivos a Modificar
 
-| Fuente | Miembros | Fotos |
-|--------|----------|-------|
-| **Supabase (real)** | Lluís Montanya, Samuel L. Navarro, Marc Ticó, Aleix Miró, etc. | URLs específicas del storage |
-| **Fallback (estático)** | Carlos Martínez Vega, Elena Rodríguez Blanco (ficticios) | `null` - muestra iniciales |
+### 1. Página de Sectores (`src/pages/Sectors.tsx`)
+Actualizar los 4 sectores actuales por los 3 nuevos:
 
-## Solución Propuesta
+| Actual | Nuevo |
+|--------|-------|
+| Technology | Servicios |
+| Consumer | Food & Consumer |
+| Education | Industriales y Distribución |
+| Services | (eliminar) |
 
-Actualizar `fallbackData.ts` con los datos reales del equipo, incluyendo las URLs de las fotos del storage de Supabase.
+Incluye:
+- Iconos apropiados (Briefcase, UtensilsCrossed, Factory)
+- Descripciones en español
+- Meta description actualizada
 
-### Ventajas
-- Consistencia visual entre modo online y offline
-- Los usuarios ven los mismos miembros del equipo
-- Las fotos funcionarán mientras el storage de Supabase esté disponible (generalmente más resiliente que las consultas a tablas)
+### 2. Formulario de Admin (`src/components/admin/portfolio/CompanyForm.tsx`)
+Actualizar el selector de sectores para reflejar las nuevas opciones:
 
-### Consideración
-Si el storage de Supabase también está caído, las fotos no cargarán. Sin embargo, el componente ya maneja este caso mostrando las iniciales como fallback visual.
-
-## Implementación
-
-### Archivo a Modificar
-`src/data/fallbackData.ts`
-
-### Cambios
-Reemplazar los 6 miembros ficticios actuales con los 8 miembros reales:
-
-```typescript
-export const fallbackTeamMembers: TeamMember[] = [
-  {
-    id: 'fallback-team-1',
-    name: 'Lluís Montanya',
-    position: 'M&A',
-    email: null,
-    linkedin_url: null,
-    image_url: 'https://fwhqtzkkvnjkazhaficj.supabase.co/storage/v1/object/public/case-studies-images/team/1756718155505_qft99m.png',
-    bio: 'Especialista en fusiones y adquisiciones con amplia experiencia en el mercado ibérico.',
-    section: 'Equipo M&A',
-    display_order: 1,
-  },
-  {
-    id: 'fallback-team-2',
-    name: 'Samuel L. Navarro',
-    position: 'M&A - TAX Partner',
-    email: null,
-    linkedin_url: null,
-    image_url: 'https://fwhqtzkkvnjkazhaficj.supabase.co/storage/v1/object/public/case-studies-images/team/1756718254153_74hs9r.png',
-    bio: 'Experto en fiscalidad de operaciones M&A y estructuración de transacciones.',
-    section: 'Socios',
-    display_order: 2,
-  },
-  // ... resto de miembros reales
-];
+```
+Sector actual → Nuevo
+Technology → Servicios
+Healthcare → Food & Consumer
+Finance → Industriales y Distribución
+Consumer → (eliminar)
+Industrial → (eliminar)
+Energy → (eliminar)
 ```
 
-### Miembros a Incluir (8 total)
+### 3. Datos de Fallback (`src/data/fallbackData.ts`)
+Actualizar las empresas de ejemplo para usar los nuevos sectores:
+- NovaTech → Servicios
+- BioHealth → Food & Consumer
+- LogiTrans → Industriales y Distribución
+- etc.
 
-1. **Lluís Montanya** - M&A
-2. **Samuel L. Navarro** - M&A - TAX Partner
-3. **Aleix Miró** - Abogado y Asesor Financiero
-4. **Marc Ticó** - Asociado M&A
-5. **Oriol Iglesias** - Analista M&A
-6. **Marc Canet** - Analista M&A
-7. **Albert Ticó** - Analista M&A
-8. **Marcel Padrós** - Analista M&A
+### 4. Base de Datos (Migración SQL)
+Actualizar los sectores de las empresas existentes:
 
-## Resultado Esperado
+```sql
+UPDATE portfolio_companies SET sector = 'Servicios' 
+WHERE sector IN ('Technology', 'Healthcare', 'Industrial Services');
 
-Cuando la base de datos no esté disponible:
-- Se mostrarán los mismos miembros del equipo real
-- Las fotos cargarán desde el storage (más resiliente)
-- Si el storage también falla, se mostrarán las iniciales como respaldo visual
-- El banner de "Mostrando datos de ejemplo" seguirá apareciendo
+UPDATE portfolio_companies SET sector = 'Food & Consumer' 
+WHERE sector IN ('Consumer', 'Energy');
 
-## Archivos Afectados
+UPDATE portfolio_companies SET sector = 'Industriales y Distribución' 
+WHERE sector IN ('Logistics', 'Industrial', 'Education');
+```
 
-| Archivo | Acción |
-|---------|--------|
-| `src/data/fallbackData.ts` | Actualizar sección `fallbackTeamMembers` |
+## Detalles Técnicos
+
+### Iconos por Sector
+| Sector | Icono Lucide |
+|--------|--------------|
+| Servicios | Briefcase |
+| Food & Consumer | UtensilsCrossed |
+| Industriales y Distribución | Factory |
+
+### Descripciones Propuestas
+
+**Servicios**
+> Empresas de servicios profesionales, consultoría, outsourcing y soluciones B2B con modelos de ingresos recurrentes y potencial de escalabilidad.
+
+**Food & Consumer**
+> Marcas de alimentación, bebidas y productos de consumo con fuerte posicionamiento en el mercado ibérico y potencial de crecimiento internacional.
+
+**Industriales y Distribución**
+> Empresas manufactureras, de logística y distribución con operaciones eficientes y oportunidades de consolidación sectorial.
+
+## Resultado Final
+
+- La página `/sectors` mostrará solo 3 sectores
+- El panel de admin permitirá seleccionar entre 3 sectores
+- Todas las empresas existentes serán reasignadas automáticamente
+- Los filtros del portfolio reflejarán los nuevos sectores
