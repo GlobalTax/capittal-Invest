@@ -1,86 +1,28 @@
 
-# Plan: Actualizar Sectores de Inversión
+# Plan: Eliminar Componente VideoSlideshow
 
-## Objetivo
-Cambiar los sectores de la aplicación a los tres sectores que os interesan:
-1. **Servicios** - Empresas de servicios profesionales y B2B
-2. **Food & Consumer** - Alimentación, bebidas y consumo
-3. **Industriales y Distribución** - Industria manufacturera y logística
+## Resumen
+Eliminar el componente `VideoSlideshow` que ya no se utiliza en la página principal, junto con su funcionalidad de preview en el panel de administración.
 
 ## Archivos a Modificar
 
-### 1. Página de Sectores (`src/pages/Sectors.tsx`)
-Actualizar los 4 sectores actuales por los 3 nuevos:
+### 1. Eliminar Archivo
+| Archivo | Acción |
+|---------|--------|
+| `src/components/home/VideoSlideshow.tsx` | **Eliminar completamente** |
 
-| Actual | Nuevo |
-|--------|-------|
-| Technology | Servicios |
-| Consumer | Food & Consumer |
-| Education | Industriales y Distribución |
-| Services | (eliminar) |
+### 2. Actualizar Admin (`src/pages/admin/AdminVideoSlides.tsx`)
+Eliminar la funcionalidad de preview que usa `VideoSlideshow`:
 
-Incluye:
-- Iconos apropiados (Briefcase, UtensilsCrossed, Factory)
-- Descripciones en español
-- Meta description actualizada
+**Cambios:**
+- Línea 26: Eliminar `import { VideoSlideshow }`
+- Línea 51: Eliminar estado `isPreviewOpen`
+- Líneas 237-247: Eliminar el Dialog de preview con el botón "Preview"
 
-### 2. Formulario de Admin (`src/components/admin/portfolio/CompanyForm.tsx`)
-Actualizar el selector de sectores para reflejar las nuevas opciones:
+**Resultado:** El admin seguirá funcionando para gestionar los slides (que usa `HeroCarousel`), pero sin el botón de preview del video que ya no existe.
 
-```
-Sector actual → Nuevo
-Technology → Servicios
-Healthcare → Food & Consumer
-Finance → Industriales y Distribución
-Consumer → (eliminar)
-Industrial → (eliminar)
-Energy → (eliminar)
-```
+## Notas Técnicas
 
-### 3. Datos de Fallback (`src/data/fallbackData.ts`)
-Actualizar las empresas de ejemplo para usar los nuevos sectores:
-- NovaTech → Servicios
-- BioHealth → Food & Consumer
-- LogiTrans → Industriales y Distribución
-- etc.
-
-### 4. Base de Datos (Migración SQL)
-Actualizar los sectores de las empresas existentes:
-
-```sql
-UPDATE portfolio_companies SET sector = 'Servicios' 
-WHERE sector IN ('Technology', 'Healthcare', 'Industrial Services');
-
-UPDATE portfolio_companies SET sector = 'Food & Consumer' 
-WHERE sector IN ('Consumer', 'Energy');
-
-UPDATE portfolio_companies SET sector = 'Industriales y Distribución' 
-WHERE sector IN ('Logistics', 'Industrial', 'Education');
-```
-
-## Detalles Técnicos
-
-### Iconos por Sector
-| Sector | Icono Lucide |
-|--------|--------------|
-| Servicios | Briefcase |
-| Food & Consumer | UtensilsCrossed |
-| Industriales y Distribución | Factory |
-
-### Descripciones Propuestas
-
-**Servicios**
-> Empresas de servicios profesionales, consultoría, outsourcing y soluciones B2B con modelos de ingresos recurrentes y potencial de escalabilidad.
-
-**Food & Consumer**
-> Marcas de alimentación, bebidas y productos de consumo con fuerte posicionamiento en el mercado ibérico y potencial de crecimiento internacional.
-
-**Industriales y Distribución**
-> Empresas manufactureras, de logística y distribución con operaciones eficientes y oportunidades de consolidación sectorial.
-
-## Resultado Final
-
-- La página `/sectors` mostrará solo 3 sectores
-- El panel de admin permitirá seleccionar entre 3 sectores
-- Todas las empresas existentes serán reasignadas automáticamente
-- Los filtros del portfolio reflejarán los nuevos sectores
+- El `HeroCarousel` de la Home **NO se ve afectado** - sigue funcionando con los slides de la base de datos
+- La tabla `video_slides` y el admin para gestionarla se mantienen porque alimentan el carrusel actual
+- Solo eliminamos el componente de video que no se usa
