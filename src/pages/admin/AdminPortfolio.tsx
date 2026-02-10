@@ -41,7 +41,10 @@ export const AdminPortfolio = () => {
         .order('created_at', { ascending: false });
 
       if (searchQuery) {
-        query = query.or(`name.ilike.%${searchQuery}%,sector.ilike.%${searchQuery}%`);
+        const sanitized = searchQuery.replace(/[%_,().*]/g, '');
+        if (sanitized) {
+          query = query.or(`name.ilike.%${sanitized}%,sector.ilike.%${sanitized}%`);
+        }
       }
 
       const { data, error } = await query;
@@ -69,10 +72,11 @@ export const AdminPortfolio = () => {
       });
       
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Error inesperado';
       toast({
         title: 'Error',
-        description: error.message,
+        description: message,
         variant: 'destructive',
       });
     }
@@ -93,10 +97,11 @@ export const AdminPortfolio = () => {
       });
       
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Error inesperado';
       toast({
         title: 'Error',
-        description: error.message,
+        description: message,
         variant: 'destructive',
       });
     }
@@ -119,10 +124,11 @@ export const AdminPortfolio = () => {
       });
 
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Error inesperado';
       toast({
         title: 'Error',
-        description: error.message,
+        description: message,
         variant: 'destructive',
       });
     } finally {

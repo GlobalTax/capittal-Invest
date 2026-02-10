@@ -1,30 +1,27 @@
+import { useCallback } from 'react';
+
 // Analytics event tracking hook (stub implementation)
 
 export const useAnalytics = () => {
-  const trackEvent = (eventName: string, properties?: Record<string, any>) => {
-    // Stub implementation - in production, this would send to analytics service
-    console.log("[Analytics]", eventName, properties);
-    
-    // Example integration points:
-    // - Google Analytics: gtag('event', eventName, properties)
-    // - Segment: analytics.track(eventName, properties)
-    // - Mixpanel: mixpanel.track(eventName, properties)
-  };
+  const trackEvent = useCallback((eventName: string, properties?: Record<string, unknown>) => {
+    // TODO: Integrate analytics service (Google Analytics, Segment, Mixpanel, etc.)
+    // Example: gtag('event', eventName, properties)
+  }, []);
 
-  const trackCTAClick = (ctaName: string, location: string) => {
+  const trackCTAClick = useCallback((ctaName: string, location: string) => {
     trackEvent("cta_clicked", {
       cta_name: ctaName,
       page_location: location,
       timestamp: new Date().toISOString(),
     });
-  };
+  }, [trackEvent]);
 
-  const trackPageView = (pageName: string) => {
+  const trackPageView = useCallback((pageName: string) => {
     trackEvent("page_viewed", {
       page_name: pageName,
       timestamp: new Date().toISOString(),
     });
-  };
+  }, [trackEvent]);
 
   return {
     trackEvent,

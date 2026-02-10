@@ -1,20 +1,37 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const ALLOWED_ORIGINS = (Deno.env.get('ALLOWED_ORIGINS') || '').split(',').filter(Boolean);
+const VALID_ROLES = ['super_admin', 'admin', 'editor', 'viewer'];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get('origin') || '';
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0] || '';
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Vary': 'Origin',
+  };
+}
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
+
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Obtener token de autorización
@@ -45,8 +62,6 @@ serve(async (req) => {
       });
 
     if (roleError || !isSuperAdmin) {
-      console.log('Unauthorized attempt to create admin user by:', user.email);
-      
       await supabase.from('security_events').insert({
         event_type: 'UNAUTHORIZED_ADMIN_USER_CREATION_ATTEMPT',
         severity: 'high',
@@ -73,6 +88,14 @@ serve(async (req) => {
       );
     }
 
+    // Validar que el rol es válido
+    if (!VALID_ROLES.includes(role)) {
+      return new Response(
+        JSON.stringify({ error: `Invalid role. Must be one of: ${VALID_ROLES.join(', ')}` }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -84,8 +107,6 @@ serve(async (req) => {
 
     // Generar password temporal seguro
     const tempPassword = generateSecurePassword();
-
-    console.log('Creating admin user:', { email, role });
 
     // Crear usuario en auth.users
     const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
@@ -99,7 +120,7 @@ serve(async (req) => {
     });
 
     if (createError) {
-      console.error('Failed to create auth user:', createError);
+      console.error('Failed to create auth user:', createError.message);
       return new Response(
         JSON.stringify({ error: createError.message }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -107,7 +128,7 @@ serve(async (req) => {
     }
 
     // Crear registro en admin_users usando función segura
-    const { data: adminRecord, error: adminError } = await supabase
+    const { error: adminError } = await supabase
       .rpc('create_admin_user_record', {
         p_user_id: newUser.user.id,
         p_email: email,
@@ -116,21 +137,16 @@ serve(async (req) => {
       });
 
     if (adminError) {
-      console.error('Failed to create admin record:', adminError);
-      
+      console.error('Failed to create admin record:', adminError.message);
+
       // Rollback: eliminar usuario de auth
       await supabase.auth.admin.deleteUser(newUser.user.id);
-      
+
       return new Response(
         JSON.stringify({ error: 'Failed to create admin record' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    console.log('Admin user created successfully:', email);
-
-    // TODO: Enviar email de invitación si send_invite = true
-    // Esto requeriría configurar un servicio de email (Resend, SendGrid, etc.)
 
     return new Response(
       JSON.stringify({
@@ -140,18 +156,19 @@ serve(async (req) => {
           email,
           full_name,
           role,
-          temporary_password: send_invite ? null : tempPassword // Solo devolver si no se envía invite
+          temporary_password: send_invite ? null : tempPassword
         },
-        message: send_invite 
-          ? 'User created. Invitation email sent.' 
+        message: send_invite
+          ? 'User created. Invitation email sent.'
           : 'User created. Share the temporary password securely.'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-  } catch (error: any) {
-    console.error('Create admin user error:', error);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Internal server error';
+    console.error('Create admin user error:', message);
     return new Response(
-      JSON.stringify({ error: error.message || 'Internal server error' }),
+      JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
@@ -159,20 +176,37 @@ serve(async (req) => {
 
 function generateSecurePassword(): string {
   const length = 16;
-  const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
-  const array = new Uint8Array(length);
+  const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+  const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const digits = '0123456789';
+  const special = '!@#$%^&*';
+  const charset = lowercase + uppercase + digits + special;
+
+  // Ensure at least one character from each category using rejection sampling
+  const array = new Uint8Array(length * 2);
   crypto.getRandomValues(array);
-  
-  let password = '';
-  for (let i = 0; i < length; i++) {
-    password += charset[array[i] % charset.length];
+
+  const chars: string[] = [];
+  let idx = 0;
+
+  // Pick one from each required category at random positions
+  const required = [lowercase, uppercase, digits, special];
+  for (const pool of required) {
+    chars.push(pool[array[idx++] % pool.length]);
   }
-  
-  // Asegurar que cumple requisitos (mayúscula, minúscula, número, especial)
-  if (!/[a-z]/.test(password)) password = 'a' + password.slice(1);
-  if (!/[A-Z]/.test(password)) password = 'A' + password.slice(1);
-  if (!/[0-9]/.test(password)) password = '1' + password.slice(1);
-  if (!/[!@#$%^&*]/.test(password)) password = '!' + password.slice(1);
-  
-  return password;
+
+  // Fill remaining positions
+  while (chars.length < length) {
+    chars.push(charset[array[idx++] % charset.length]);
+  }
+
+  // Shuffle using Fisher-Yates with crypto random
+  const shuffleArray = new Uint8Array(chars.length);
+  crypto.getRandomValues(shuffleArray);
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = shuffleArray[i] % (i + 1);
+    [chars[i], chars[j]] = [chars[j], chars[i]];
+  }
+
+  return chars.join('');
 }

@@ -24,6 +24,7 @@ import {
 import { Meta } from "@/components/seo/Meta";
 import { useToast } from "@/hooks/use-toast";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { supabase } from "@/integrations/supabase/client";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -56,8 +57,6 @@ const Contact = () => {
     trackCTAClick("Contact Form Submit", "Contact Page");
 
     try {
-      const { supabase } = await import("@/integrations/supabase/client");
-      
       const { data: response, error } = await supabase.functions.invoke(
         "submit-contact",
         {
@@ -72,8 +71,6 @@ const Contact = () => {
       );
 
       if (error) {
-        console.error("Contact form error:", error);
-        
         if (error.message?.includes("429") || error.message?.includes("Too many")) {
           toast({
             title: "Too many submissions",
@@ -93,16 +90,13 @@ const Contact = () => {
         return;
       }
 
-      console.log("Contact form success:", response);
-
       toast({
         title: "Message sent!",
         description: "We'll get back to you as soon as possible.",
       });
 
       form.reset();
-    } catch (error) {
-      console.error("Contact form submission error:", error);
+    } catch {
       toast({
         title: "Error",
         description: "Failed to send message. Please try again.",

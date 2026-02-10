@@ -26,21 +26,21 @@ interface UnifiedAuthContextType {
   // Base Supabase state
   user: User | null;
   isLoading: boolean;
-  
+
   // Detected user type
   userType: UserType;
-  
+
   // Admin profile (only populated for admins)
   adminProfile: AdminProfile | null;
-  
+
   // Verification states
   profileChecked: boolean;
   isProfileLoading: boolean;
-  
+
   // Role helpers
   isAdmin: boolean;
   hasAdminRole: (role: AdminRole) => boolean;
-  
+
   // Actions
   signIn: (email: string, password: string) => Promise<SignInResult>;
   signOut: () => Promise<void>;
@@ -64,7 +64,7 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isProfileLoading, setIsProfileLoading] = useState(false);
   const [profileChecked, setProfileChecked] = useState(false);
-  
+
   // Ref to prevent onAuthStateChange from overwriting state during signIn
   const signInInProgressRef = useRef(false);
 
@@ -73,8 +73,6 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
     type: UserType;
     admin: AdminProfile | null;
   }> => {
-    console.log('[AUTH DEBUG] detectUserType - Starting for userId:', userId);
-    
     // Check admin_users
     const { data: adminData, error: adminError } = await supabase
       .from('admin_users')
@@ -83,16 +81,9 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
       .eq('is_active', true)
       .maybeSingle();
 
-    console.log('[AUTH DEBUG] detectUserType - Query result:', { 
-      hasData: !!adminData, 
-      email: adminData?.email, 
-      role: adminData?.role,
-      error: adminError?.message 
-    });
-
     if (!adminError && adminData) {
-      return { 
-        type: 'admin', 
+      return {
+        type: 'admin',
         admin: adminData as AdminProfile
       };
     }
@@ -150,20 +141,17 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
     let mounted = true;
 
     const initializeAuth = async () => {
-      console.log('[AUTH DEBUG] initializeAuth - Starting');
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        console.log('[AUTH DEBUG] initializeAuth - Session:', session ? 'exists' : 'null', session?.user?.email);
-        
+
         if (mounted) {
           const currentUser = session?.user ?? null;
           setUser(currentUser);
           await loadProfile(currentUser);
           setIsLoading(false);
-          console.log('[AUTH DEBUG] initializeAuth - Complete');
         }
       } catch (error) {
-        console.error('[AUTH DEBUG] initializeAuth - Error:', error);
+        console.error('initializeAuth error:', error);
         if (mounted) {
           setIsLoading(false);
           setProfileChecked(true);
@@ -176,8 +164,6 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('[AUTH DEBUG] onAuthStateChange - Event:', event, 'User:', session?.user?.email, 'SignInInProgress:', signInInProgressRef.current);
-        
         if (!mounted) return;
 
         const currentUser = session?.user ?? null;
@@ -185,15 +171,12 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
 
         // Skip profile loading if signIn() already handled it
         if (signInInProgressRef.current) {
-          console.log('[AUTH DEBUG] onAuthStateChange - Skipping (signIn in progress)');
           return;
         }
 
         if (event === 'SIGNED_IN' && currentUser) {
-          console.log('[AUTH DEBUG] onAuthStateChange - Loading profile');
           await loadProfile(currentUser);
         } else if (event === 'SIGNED_OUT') {
-          console.log('[AUTH DEBUG] onAuthStateChange - Signed out, clearing state');
           setUserType(null);
           setAdminProfile(null);
           setProfileChecked(true);
@@ -209,30 +192,20 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Sign in (admin-focused)
   const signIn = async (
-    email: string, 
+    email: string,
     password: string
   ): Promise<SignInResult> => {
-    console.log('[AUTH DEBUG] signIn - Starting for:', email);
-    
     // Set flag to prevent onAuthStateChange from overwriting our state
     signInInProgressRef.current = true;
-    
+
     try {
       // Try the admin-auth edge function first for rate limiting and security
       try {
-        console.log('[AUTH DEBUG] signIn - Calling edge function');
         const { data: edgeData, error: edgeError } = await supabase.functions.invoke('admin-auth', {
           body: { email, password }
         });
 
-        console.log('[AUTH DEBUG] signIn - Edge function response:', { 
-          hasData: !!edgeData, 
-          hasSession: !!edgeData?.session,
-          hasError: !!edgeError || !!edgeData?.error 
-        });
-
         if (edgeError) {
-          console.error('[AUTH DEBUG] signIn - Edge function error:', edgeError);
           // Fall through to standard auth
         } else if (edgeData?.session) {
           // Set the session locally with tokens from edge function
@@ -243,7 +216,6 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
 
           if (!setSessionError) {
             const sessionUser = edgeData.session.user;
-            console.log('[AUTH DEBUG] signIn - Setting user state:', sessionUser?.email);
             setUser(sessionUser);
 
             // Use admin profile data from edge function response
@@ -256,49 +228,39 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
               is_active: true
             };
 
-            console.log('[AUTH DEBUG] signIn - Setting userType: admin');
             setUserType('admin');
-            console.log('[AUTH DEBUG] signIn - Setting adminProfile:', adminProfileData.email);
             setAdminProfile(adminProfileData);
-            console.log('[AUTH DEBUG] signIn - Setting profileChecked: true');
             setProfileChecked(true);
 
-            const result = { user: sessionUser, error: null, userType: 'admin' as UserType, adminProfile: adminProfileData };
-            console.log('[AUTH DEBUG] signIn - Returning success result:', { user: !!result.user, userType: result.userType });
-            return result;
+            return { user: sessionUser, error: null, userType: 'admin' as UserType, adminProfile: adminProfileData };
           }
         } else if (edgeData?.error) {
-          console.log('[AUTH DEBUG] signIn - Edge function returned error:', edgeData.error);
           // Handle specific errors from edge function (rate limit, etc.)
-          const error = new Error(edgeData.error) as Error & { 
-            remainingAttempts?: number; 
-            lockoutUntil?: string; 
+          const error = new Error(edgeData.error) as Error & {
+            remainingAttempts?: number;
+            lockoutUntil?: string;
           };
           error.remainingAttempts = edgeData.remaining_attempts;
           error.lockoutUntil = edgeData.lockout_until;
           return { user: null, error, userType: null, adminProfile: null };
         }
-      } catch (edgeFnError) {
-        console.log('[AUTH DEBUG] signIn - Edge function not available, falling back to direct auth');
+      } catch {
+        // Edge function not available, falling back to direct auth
       }
 
       // Standard sign in fallback
-      console.log('[AUTH DEBUG] signIn - Using standard auth fallback');
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
-        console.log('[AUTH DEBUG] signIn - Standard auth error:', error.message);
         return { user: null, error, userType: null, adminProfile: null };
       }
 
       if (data.user) {
-        console.log('[AUTH DEBUG] signIn - Standard auth success, detecting user type');
         setUser(data.user);
         const result = await detectUserType(data.user.id);
-        console.log('[AUTH DEBUG] signIn - Setting state:', { userType: result.type, hasAdmin: !!result.admin });
         setUserType(result.type);
         setAdminProfile(result.admin);
         setProfileChecked(true);
@@ -310,12 +272,11 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
 
         // Validate admin access
         if (result.type !== 'admin') {
-          console.log('[AUTH DEBUG] signIn - Not an admin, signing out');
           await supabase.auth.signOut();
-          return { 
-            user: null, 
-            error: new Error('No tienes permisos de administrador'), 
-            userType: null 
+          return {
+            user: null,
+            error: new Error('No tienes permisos de administrador'),
+            userType: null
           };
         }
 
@@ -324,12 +285,11 @@ export const UnifiedAuthProvider = ({ children }: { children: ReactNode }) => {
 
       return { user: null, error: new Error('Error desconocido'), userType: null, adminProfile: null };
     } catch (error) {
-      console.error('[AUTH DEBUG] signIn - Exception:', error);
+      console.error('signIn error:', error);
       return { user: null, error: error as Error, userType: null, adminProfile: null };
     } finally {
       // Reset flag after a small delay to ensure onAuthStateChange has processed
       setTimeout(() => {
-        console.log('[AUTH DEBUG] signIn - Resetting signInInProgress flag');
         signInInProgressRef.current = false;
       }, 100);
     }

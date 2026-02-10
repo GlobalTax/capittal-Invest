@@ -30,20 +30,10 @@ export const AdminLogin = () => {
 
   // Auto-redirect if already authenticated as admin (only check once on mount)
   useEffect(() => {
-    console.log('[LOGIN DEBUG] useEffect check:', {
-      isAdminLoading,
-      adminChecked,
-      hasCheckedExistingSession,
-      user: !!user,
-      userEmail: user?.email,
-      isAdmin
-    });
-    
     // Wait until admin check is complete and we haven't checked yet
     if (!isAdminLoading && adminChecked && !hasCheckedExistingSession) {
       setHasCheckedExistingSession(true);
       if (user && isAdmin) {
-        console.log('[LOGIN DEBUG] useEffect - Auto-redirecting to /admin');
         navigate('/admin', { replace: true });
       }
     }
@@ -80,10 +70,11 @@ export const AdminLogin = () => {
     // Validación con Zod
     const result = loginSchema.safeParse({ email, password });
     if (!result.success) {
-      const fieldErrors: any = {};
+      const fieldErrors: { email?: string; password?: string } = {};
       result.error.errors.forEach((err) => {
-        if (err.path[0]) {
-          fieldErrors[err.path[0]] = err.message;
+        const field = err.path[0] as keyof typeof fieldErrors;
+        if (field) {
+          fieldErrors[field] = err.message;
         }
       });
       setErrors(fieldErrors);
@@ -91,52 +82,43 @@ export const AdminLogin = () => {
     }
 
     setIsLoading(true);
-    console.log('[LOGIN DEBUG] handleSubmit - Starting login for:', email);
 
     try {
       const result = await signIn(email, password);
-      console.log('[LOGIN DEBUG] handleSubmit - signIn result:', {
-        user: !!result.user,
-        adminUser: !!result.adminUser,
-        adminEmail: result.adminUser?.email
-      });
-      
+
       // Verify admin access from result
       if (result.user && result.adminUser) {
         toast({
           title: 'Acceso exitoso',
           description: 'Bienvenido al panel de administración',
         });
-        
-        console.log('[LOGIN DEBUG] handleSubmit - About to delay before navigation');
+
         // Small delay to allow React to propagate context state changes
         await new Promise(resolve => setTimeout(resolve, 100));
-        
-        console.log('[LOGIN DEBUG] handleSubmit - Delay completed, navigating to /admin');
+
         navigate('/admin', { replace: true });
       } else {
-        console.log('[LOGIN DEBUG] handleSubmit - Access denied, throwing error');
         throw new Error('Access denied: Not an admin user');
       }
-    } catch (error: any) {
-      console.error('Login error:', error);
+    } catch (error: unknown) {
+      const err = error as Error & { remainingAttempts?: number; lockoutUntil?: string; message?: string };
       
       // Actualizar intentos restantes y lockout
-      if (error.remainingAttempts !== undefined) {
-        setRemainingAttempts(error.remainingAttempts);
+      if (err.remainingAttempts !== undefined) {
+        setRemainingAttempts(err.remainingAttempts);
       }
-      
-      if (error.lockoutUntil) {
-        setLockoutUntil(error.lockoutUntil);
+
+      if (err.lockoutUntil) {
+        setLockoutUntil(err.lockoutUntil);
       }
 
       let errorMessage = 'Credenciales inválidas';
-      
-      if (error.message?.includes('Too many')) {
+
+      if (err.message?.includes('Too many')) {
         errorMessage = 'Demasiados intentos fallidos. Intenta de nuevo más tarde.';
-      } else if (error.message?.includes('Access denied')) {
+      } else if (err.message?.includes('Access denied')) {
         errorMessage = 'Acceso denegado: No eres un usuario administrador.';
-      } else if (error.message?.includes('Account disabled')) {
+      } else if (err.message?.includes('Account disabled')) {
         errorMessage = 'Tu cuenta ha sido desactivada. Contacta al administrador.';
       }
       

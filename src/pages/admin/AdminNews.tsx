@@ -38,10 +38,11 @@ export const AdminNews = () => {
       });
       
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Error inesperado';
       toast({
         title: 'Error',
-        description: error.message,
+        description: message,
         variant: 'destructive',
       });
     }

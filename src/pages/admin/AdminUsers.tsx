@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useAdminAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -67,33 +67,24 @@ export const AdminUsers = () => {
   // Create admin user mutation
   const createAdminMutation = useMutation({
     mutationFn: async (userData: { email: string; full_name: string; role: AdminRole }) => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      const response = await fetch(
-        'https://fwhqtzkkvnjkazhaficj.supabase.co/functions/v1/create-admin-user',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session?.access_token}`,
-            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3aHF0emtrdm5qa2F6aGFmaWNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4Mjc5NTMsImV4cCI6MjA2NTQwMzk1M30.Qhb3pRgx3HIoLSjeIulRHorgzw-eqL3WwXhpncHMF7I',
-          },
-          body: JSON.stringify({
-            email: userData.email,
-            full_name: userData.full_name,
-            role: userData.role,
-            send_invite: false
-          }),
-        }
-      );
+      const { data, error } = await supabase.functions.invoke('create-admin-user', {
+        body: {
+          email: userData.email,
+          full_name: userData.full_name,
+          role: userData.role,
+          send_invite: false,
+        },
+      });
 
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to create user');
+      if (error) {
+        throw new Error(error.message || 'Failed to create user');
       }
-      
-      return result;
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      return data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['admin-users'] });
@@ -101,18 +92,19 @@ export const AdminUsers = () => {
       setNewUserEmail('');
       setNewUserName('');
       setNewUserRole('editor');
-      
+
       toast({
         title: 'Usuario creado',
-        description: data.user.temporary_password 
-          ? `Password temporal: ${data.user.temporary_password}` 
+        description: data.user?.temporary_password
+          ? 'Usuario creado con contraseña temporal. Compártela de forma segura.'
           : 'Usuario creado exitosamente',
       });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : 'Error al crear usuario';
       toast({
         title: 'Error',
-        description: error.message,
+        description: message,
         variant: 'destructive',
       });
     },
@@ -135,10 +127,11 @@ export const AdminUsers = () => {
         description: 'El rol del usuario ha sido actualizado exitosamente',
       });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : 'Error al actualizar rol';
       toast({
         title: 'Error',
-        description: error.message,
+        description: message,
         variant: 'destructive',
       });
     },
@@ -160,10 +153,11 @@ export const AdminUsers = () => {
         description: 'El usuario ha sido desactivado exitosamente',
       });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : 'Error al desactivar usuario';
       toast({
         title: 'Error',
-        description: error.message,
+        description: message,
         variant: 'destructive',
       });
     },
