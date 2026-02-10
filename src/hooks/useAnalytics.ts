@@ -1,14 +1,11 @@
 // Analytics event tracking hook (stub implementation)
 
 export const useAnalytics = () => {
-  const trackEvent = (eventName: string, properties?: Record<string, any>) => {
-    // Stub implementation - in production, this would send to analytics service
-    console.log("[Analytics]", eventName, properties);
-    
-    // Example integration points:
-    // - Google Analytics: gtag('event', eventName, properties)
-    // - Segment: analytics.track(eventName, properties)
-    // - Mixpanel: mixpanel.track(eventName, properties)
+  const trackEvent = (eventName: string, properties?: Record<string, unknown>) => {
+    // Stub: integrate with Google Analytics, Segment, or Mixpanel
+    if (import.meta.env.DEV) {
+      console.log("[Analytics]", eventName, properties);
+    }
   };
 
   const trackCTAClick = (ctaName: string, location: string) => {

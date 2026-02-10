@@ -67,8 +67,8 @@ export const usePortfolioSearch = (params: PortfolioSearchParams) => {
       if (error) throw error;
       return (data || []).map(company => ({
         ...company,
-        timeline: (company.timeline as any) || [],
-        metrics: company.metrics as any,
+        timeline: (Array.isArray(company.timeline) ? company.timeline : []) as PortfolioCompany['timeline'],
+        metrics: (company.metrics || null) as PortfolioCompany['metrics'],
       })) as PortfolioCompany[];
     },
     enabled: true,

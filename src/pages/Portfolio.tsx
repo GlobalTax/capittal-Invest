@@ -84,7 +84,7 @@ const Portfolio = () => {
   });
 
   // Fetch portfolio companies with search and filters
-  const { data: dbCompanies, isLoading: isLoadingCompanies, isFetching } = usePortfolioSearch({
+  const { data: dbCompanies, isLoading: isLoadingCompanies, isFetching, isError } = usePortfolioSearch({
     searchQuery: searchTerm || undefined,
     sector: activeSector || undefined,
     stage: activeStage || undefined,
@@ -95,9 +95,10 @@ const Portfolio = () => {
 
   const isFiltering = isFetching && !isLoadingCompanies;
 
-  // Use fallback if no data
-  const companies = (dbCompanies && dbCompanies.length > 0) ? dbCompanies : fallbackPortfolioCompanies;
-  const isUsingFallback = !dbCompanies || dbCompanies.length === 0;
+  // Only use fallback data when the query failed (network/DB error),
+  // not when the database legitimately returned an empty result
+  const isUsingFallback = isError && (!dbCompanies || dbCompanies.length === 0);
+  const companies = isUsingFallback ? fallbackPortfolioCompanies : (dbCompanies || []);
 
   const sectors = (filterOptions?.sectors && filterOptions.sectors.length > 0) 
     ? filterOptions.sectors 
