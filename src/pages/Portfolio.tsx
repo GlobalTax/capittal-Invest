@@ -32,6 +32,11 @@ import { fallbackPortfolioCompanies, fallbackFilterOptions } from "@/data/fallba
 
 const ITEMS_PER_PAGE = 12;
 
+// Sanitize search input for PostgREST filter strings
+function sanitizeSearchTerm(term: string): string {
+  return term.replace(/[%_(),."'\\]/g, '');
+}
+
 const Portfolio = () => {
   const [searchInput, setSearchInput] = useState("");
   const searchTerm = useDeferredValue(searchInput);
@@ -57,7 +62,10 @@ const Portfolio = () => {
         .eq('is_active', true);
 
       if (searchTerm) {
-        query = query.or(`name.ilike.%${searchTerm}%,sector.ilike.%${searchTerm}%,investment_thesis.ilike.%${searchTerm}%`);
+        const sanitized = sanitizeSearchTerm(searchTerm);
+        if (sanitized) {
+          query = query.or(`name.ilike.%${sanitized}%,sector.ilike.%${sanitized}%,investment_thesis.ilike.%${sanitized}%`);
+        }
       }
       if (activeSector) {
         query = query.eq('sector', activeSector);

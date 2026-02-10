@@ -1,8 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.7";
 
+const allowedOrigin = Deno.env.get('ALLOWED_ORIGIN') || 'https://capittal-invest.com';
+
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': allowedOrigin,
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
@@ -14,10 +16,19 @@ interface ContactFormData {
   message: string;
 }
 
+// Escape HTML to prevent XSS in emails
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 // Email service stub
 async function sendEmailStub(to: string, subject: string, html: string): Promise<{ success: boolean }> {
   console.log('[EMAIL STUB] Sending email:', { to, subject });
-  console.log('[EMAIL STUB] HTML content:', html);
   // TODO: Integrate Resend API when ready
   return { success: true };
 }
@@ -167,32 +178,39 @@ serve(async (req: Request) => {
     });
 
     // Send confirmation email to user (stub)
+    const safeName = escapeHtml(name);
+    const safeMessage = escapeHtml(message);
+    const safeCompany = escapeHtml(company);
+    const safeSubject = escapeHtml(subject);
+    const safeEmail = escapeHtml(email);
+
     await sendEmailStub(
       email,
-      'Thank you for contacting Ethos Ventures',
+      'Gracias por contactar con Capittal Invest',
       `
-        <h1>Thank you for contacting us, ${name}!</h1>
-        <p>We have received your message and will get back to you as soon as possible.</p>
-        <p><strong>Your message:</strong></p>
-        <p>${message}</p>
-        <p>Best regards,<br>The Ethos Ventures Team</p>
+        <h1>Gracias por contactarnos, ${safeName}!</h1>
+        <p>Hemos recibido tu mensaje y te responderemos lo antes posible.</p>
+        <p><strong>Tu mensaje:</strong></p>
+        <p>${safeMessage}</p>
+        <p>Un saludo,<br>El equipo de Capittal Invest</p>
       `
     );
 
     // Send notification email to admin (stub)
+    const adminEmail = Deno.env.get('ADMIN_NOTIFICATION_EMAIL') || 'admin@capittal-invest.com';
     await sendEmailStub(
-      'admin@ethos-ventures.com', // Replace with actual admin email
-      `New contact submission from ${name}`,
+      adminEmail,
+      `Nuevo contacto de ${safeName}`,
       `
-        <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Company:</strong> ${company}</p>
-        <p><strong>Subject:</strong> ${subject}</p>
-        <p><strong>Message:</strong></p>
-        <p>${message}</p>
+        <h2>Nuevo formulario de contacto</h2>
+        <p><strong>Nombre:</strong> ${safeName}</p>
+        <p><strong>Email:</strong> ${safeEmail}</p>
+        <p><strong>Empresa:</strong> ${safeCompany}</p>
+        <p><strong>Asunto:</strong> ${safeSubject}</p>
+        <p><strong>Mensaje:</strong></p>
+        <p>${safeMessage}</p>
         <hr>
-        <p><small>IP: ${ipAddress} | User Agent: ${userAgent}</small></p>
+        <p><small>IP: ${escapeHtml(ipAddress)} | User Agent: ${escapeHtml(userAgent)}</small></p>
       `
     );
 

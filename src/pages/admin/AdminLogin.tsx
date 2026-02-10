@@ -23,27 +23,17 @@ export const AdminLogin = () => {
   const [remainingAttempts, setRemainingAttempts] = useState<number | null>(null);
   const [lockoutUntil, setLockoutUntil] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-  
+
   const { signIn, user, adminChecked, isAdmin, isAdminLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   // Auto-redirect if already authenticated as admin (only check once on mount)
   useEffect(() => {
-    console.log('[LOGIN DEBUG] useEffect check:', {
-      isAdminLoading,
-      adminChecked,
-      hasCheckedExistingSession,
-      user: !!user,
-      userEmail: user?.email,
-      isAdmin
-    });
-    
     // Wait until admin check is complete and we haven't checked yet
     if (!isAdminLoading && adminChecked && !hasCheckedExistingSession) {
       setHasCheckedExistingSession(true);
       if (user && isAdmin) {
-        console.log('[LOGIN DEBUG] useEffect - Auto-redirecting to /admin');
         navigate('/admin', { replace: true });
       }
     }
@@ -54,7 +44,7 @@ export const AdminLogin = () => {
     if (lockoutUntil) {
       const lockoutDate = new Date(lockoutUntil);
       const now = new Date();
-      
+
       if (now < lockoutDate) {
         const interval = setInterval(() => {
           const currentNow = new Date();
@@ -64,7 +54,7 @@ export const AdminLogin = () => {
             clearInterval(interval);
           }
         }, 1000);
-        
+
         return () => clearInterval(interval);
       } else {
         setLockoutUntil(null);
@@ -91,47 +81,38 @@ export const AdminLogin = () => {
     }
 
     setIsLoading(true);
-    console.log('[LOGIN DEBUG] handleSubmit - Starting login for:', email);
 
     try {
       const result = await signIn(email, password);
-      console.log('[LOGIN DEBUG] handleSubmit - signIn result:', {
-        user: !!result.user,
-        adminUser: !!result.adminUser,
-        adminEmail: result.adminUser?.email
-      });
-      
+
       // Verify admin access from result
       if (result.user && result.adminUser) {
         toast({
           title: 'Acceso exitoso',
           description: 'Bienvenido al panel de administración',
         });
-        
-        console.log('[LOGIN DEBUG] handleSubmit - About to delay before navigation');
+
         // Small delay to allow React to propagate context state changes
         await new Promise(resolve => setTimeout(resolve, 100));
-        
-        console.log('[LOGIN DEBUG] handleSubmit - Delay completed, navigating to /admin');
+
         navigate('/admin', { replace: true });
       } else {
-        console.log('[LOGIN DEBUG] handleSubmit - Access denied, throwing error');
         throw new Error('Access denied: Not an admin user');
       }
     } catch (error: any) {
       console.error('Login error:', error);
-      
+
       // Actualizar intentos restantes y lockout
       if (error.remainingAttempts !== undefined) {
         setRemainingAttempts(error.remainingAttempts);
       }
-      
+
       if (error.lockoutUntil) {
         setLockoutUntil(error.lockoutUntil);
       }
 
       let errorMessage = 'Credenciales inválidas';
-      
+
       if (error.message?.includes('Too many')) {
         errorMessage = 'Demasiados intentos fallidos. Intenta de nuevo más tarde.';
       } else if (error.message?.includes('Access denied')) {
@@ -139,7 +120,7 @@ export const AdminLogin = () => {
       } else if (error.message?.includes('Account disabled')) {
         errorMessage = 'Tu cuenta ha sido desactivada. Contacta al administrador.';
       }
-      
+
       toast({
         title: 'Error de autenticación',
         description: errorMessage,
@@ -151,7 +132,7 @@ export const AdminLogin = () => {
   };
 
   const isLockedOut = lockoutUntil && new Date(lockoutUntil) > new Date();
-  const lockoutMinutes = isLockedOut 
+  const lockoutMinutes = isLockedOut
     ? Math.ceil((new Date(lockoutUntil!).getTime() - new Date().getTime()) / 60000)
     : 0;
 
@@ -176,7 +157,7 @@ export const AdminLogin = () => {
               </AlertDescription>
             </Alert>
           )}
-          
+
           {remainingAttempts !== null && remainingAttempts < 3 && remainingAttempts > 0 && !isLockedOut && (
             <Alert variant="default" className="mb-4">
               <AlertTriangle className="h-4 w-4" />

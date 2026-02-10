@@ -153,6 +153,7 @@ const Home = () => {
                   <img
                     src={strategy.image}
                     alt={strategy.title}
+                    loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -212,6 +213,7 @@ const Home = () => {
               <img
                 src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1200&h=800&fit=crop"
                 alt="Sostenibilidad"
+                loading="lazy"
                 className="absolute inset-0 w-full h-full object-cover"
               />
             </div>
@@ -226,6 +228,7 @@ const Home = () => {
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=800&fit=crop"
                 alt="Equipo"
+                loading="lazy"
                 className="absolute inset-0 w-full h-full object-cover"
               />
             </div>

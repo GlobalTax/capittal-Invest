@@ -12,6 +12,11 @@ interface PortfolioSearchParams {
   offset?: number;
 }
 
+// Sanitize search input for PostgREST filter strings
+function sanitizeSearchTerm(term: string): string {
+  return term.replace(/[%_(),."'\\]/g, '');
+}
+
 export const usePortfolioSearch = (params: PortfolioSearchParams) => {
   return useQuery({
     queryKey: ["portfolio-search", params],
@@ -21,9 +26,12 @@ export const usePortfolioSearch = (params: PortfolioSearchParams) => {
         .select('*')
         .eq('is_active', true);
 
-      // Apply search filter
+      // Apply search filter (sanitized)
       if (params.searchQuery) {
-        query = query.or(`name.ilike.%${params.searchQuery}%,sector.ilike.%${params.searchQuery}%,investment_thesis.ilike.%${params.searchQuery}%`);
+        const sanitized = sanitizeSearchTerm(params.searchQuery);
+        if (sanitized) {
+          query = query.or(`name.ilike.%${sanitized}%,sector.ilike.%${sanitized}%,investment_thesis.ilike.%${sanitized}%`);
+        }
       }
 
       // Apply sector filter
