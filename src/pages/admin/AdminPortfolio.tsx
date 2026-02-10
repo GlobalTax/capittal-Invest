@@ -49,7 +49,7 @@ export const AdminPortfolio = () => {
       if (error) throw error;
       return (data || []).map(company => ({
         ...company,
-        timeline: (company.timeline as any) || [],
+        timeline: (Array.isArray(company.timeline) ? company.timeline : []) as PortfolioCompany['timeline'],
       })) as PortfolioCompany[];
     },
   });

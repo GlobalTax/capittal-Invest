@@ -12,7 +12,7 @@ export const Meta = ({
   title,
   description,
   keywords,
-  ogImage = "https://lovable.dev/opengraph-image-p98pqg.png",
+  ogImage = "/og-image.png",
   canonicalUrl,
 }: MetaProps) => {
   useEffect(() => {

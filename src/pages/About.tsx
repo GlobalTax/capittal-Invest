@@ -367,7 +367,7 @@ const About = () => {
       <Meta 
         title="Sobre Nosotros"
         description="Gestora de capital privado especializada en adquisiciones estratégicas de empresas medianas con potencial de crecimiento."
-        canonicalUrl="https://ethos-venture.lovable.app/about"
+        canonicalUrl="https://capittal-invest.com/about"
       />
 
       {/* Fallback Notice */}

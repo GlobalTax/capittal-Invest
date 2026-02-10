@@ -78,7 +78,7 @@ export function AdminHome() {
           subtitle: hero.subtitle || '',
           image_url: hero.image_url || '',
           video_url: hero.video_url || '',
-          poster_image_url: (hero as any).poster_image_url || '',
+          poster_image_url: hero.poster_image_url || '',
         });
         // Set initial tab based on existing content
         if (hero.video_url) {
@@ -254,7 +254,7 @@ export function AdminHome() {
         subtitle: hero.subtitle || '',
         image_url: hero.image_url || '',
         video_url: hero.video_url || '',
-        poster_image_url: (hero as any).poster_image_url || '',
+        poster_image_url: hero.poster_image_url || '',
       });
       setHeroImageFile(null);
       setHeroVideoFile(null);
