@@ -1,5 +1,6 @@
 import { Meta } from "@/components/seo/Meta";
 import { Overline } from "@/components/ui/typography";
+import { getCanonicalUrl } from "@/lib/url";
 
 const Privacy = () => {
   return (
@@ -7,7 +8,7 @@ const Privacy = () => {
       <Meta
         title="Política de Privacidad"
         description="Política de privacidad y protección de datos de Capittal Invest"
-        canonicalUrl={`${window.location.origin}/privacy`}
+        canonicalUrl={getCanonicalUrl("/privacy")}
       />
 
       <div className="min-h-screen">

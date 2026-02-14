@@ -10,6 +10,7 @@ import { Meta } from "@/components/seo/Meta";
 import { useNewsSearch, useNewsFilterOptions } from "@/hooks/useNewsSearch";
 import { insights } from "@/data/mockData";
 import { ArrowRight, Search, Loader2 } from "lucide-react";
+import { getCanonicalUrl } from "@/lib/url";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -54,7 +55,7 @@ const Insights = () => {
       <Meta
         title="Análisis"
         description="Perspectivas sobre inversión, construcción y escalado de negocios excepcionales del equipo de Capittal Invest"
-        canonicalUrl={`${window.location.origin}/insights`}
+        canonicalUrl={getCanonicalUrl("/insights")}
       />
 
       <div className="min-h-screen">

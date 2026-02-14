@@ -29,6 +29,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { FallbackNotice } from "@/components/ui/fallback-notice";
 import { fallbackPortfolioCompanies, fallbackFilterOptions } from "@/data/fallbackData";
+import { getCanonicalUrl } from "@/lib/url";
 
 const ITEMS_PER_PAGE = 12;
 
@@ -57,7 +58,10 @@ const Portfolio = () => {
         .eq('is_active', true);
 
       if (searchTerm) {
-        query = query.or(`name.ilike.%${searchTerm}%,sector.ilike.%${searchTerm}%,investment_thesis.ilike.%${searchTerm}%`);
+        const sanitized = searchTerm.replace(/[%_,().*]/g, '');
+        if (sanitized) {
+          query = query.or(`name.ilike.%${sanitized}%,sector.ilike.%${sanitized}%,investment_thesis.ilike.%${sanitized}%`);
+        }
       }
       if (activeSector) {
         query = query.eq('sector', activeSector);
@@ -119,7 +123,7 @@ const Portfolio = () => {
       <Meta
         title="Portfolio"
         description="Explora nuestro portfolio de empresas excepcionales en tecnología, consumo, educación y servicios"
-        canonicalUrl={`${window.location.origin}/portfolio`}
+        canonicalUrl={getCanonicalUrl("/portfolio")}
       />
 
       <div className="min-h-screen">
@@ -391,7 +395,10 @@ const Portfolio = () => {
                 <CustomPagination
                   currentPage={currentPage}
                   totalPages={totalPages}
-                  onPageChange={setCurrentPage}
+                  onPageChange={(page) => {
+                    setCurrentPage(page);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                 />
               )}
             </>

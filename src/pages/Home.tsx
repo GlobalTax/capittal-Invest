@@ -6,6 +6,31 @@ import { ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { HeroCarousel } from "@/components/home/HeroCarousel";
+import { getCanonicalUrl } from "@/lib/url";
+
+const strategies = [
+  {
+    title: "Buy-outs",
+    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=600&fit=crop",
+    href: "/strategy",
+  },
+  {
+    title: "Impacto",
+    image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=600&fit=crop",
+    href: "/strategy",
+  },
+  {
+    title: "Capital a largo plazo",
+    image: "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=600&h=600&fit=crop",
+    href: "/strategy",
+  },
+];
+
+const fallbackNews = [
+  { id: '1', title: 'Nueva inversión estratégica en el sector tecnológico', slug: '', published_at: '2026-01-15T10:00:00.000Z' },
+  { id: '2', title: 'Expansión internacional de nuestra cartera de participadas', slug: '', published_at: '2026-01-10T10:00:00.000Z' },
+  { id: '3', title: 'Resultados récord en el primer trimestre del año', slug: '', published_at: '2026-01-05T10:00:00.000Z' },
+];
 
 const Home = () => {
   const { trackCTAClick } = useAnalytics();
@@ -55,32 +80,8 @@ const Home = () => {
       { label: "Profesionales", value: "35" },
     ];
 
-  const strategies = [
-    {
-      title: "Buy-outs",
-      image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=600&fit=crop",
-      href: "/strategy",
-    },
-    {
-      title: "Impacto",
-      image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=600&fit=crop",
-      href: "/strategy",
-    },
-    {
-      title: "Capital a largo plazo",
-      image: "https://images.unsplash.com/photo-1559827291-72ee739d0d9a?w=600&h=600&fit=crop",
-      href: "/strategy",
-    },
-  ];
-
   // Fallback news if none from database
-  const displayNews = recentNews && recentNews.length > 0 
-    ? recentNews 
-    : [
-        { id: '1', title: 'Nueva inversión estratégica en el sector tecnológico', slug: '', published_at: new Date().toISOString() },
-        { id: '2', title: 'Expansión internacional de nuestra cartera de participadas', slug: '', published_at: new Date().toISOString() },
-        { id: '3', title: 'Resultados récord en el primer trimestre del año', slug: '', published_at: new Date().toISOString() },
-      ];
+  const displayNews = recentNews && recentNews.length > 0 ? recentNews : fallbackNews;
 
   return (
     <>
@@ -88,7 +89,7 @@ const Home = () => {
         title="Partners by nature"
         description="Capittal Invest es una firma de capital privado especializada en invertir y desarrollar compañías familiares y el middle-market."
         keywords="private equity, capital privado, inversión, growth equity"
-        canonicalUrl={window.location.origin}
+        canonicalUrl={getCanonicalUrl()}
       />
 
       <div className="min-h-screen bg-background">

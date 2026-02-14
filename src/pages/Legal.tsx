@@ -1,5 +1,6 @@
 import { Meta } from "@/components/seo/Meta";
 import { Overline } from "@/components/ui/typography";
+import { getCanonicalUrl } from "@/lib/url";
 
 const Legal = () => {
   return (
@@ -7,7 +8,7 @@ const Legal = () => {
       <Meta
         title="Aviso Legal"
         description="Aviso legal y condiciones de uso del sitio web de Capittal Invest"
-        canonicalUrl={`${window.location.origin}/legal`}
+        canonicalUrl={getCanonicalUrl("/legal")}
       />
 
       <div className="min-h-screen">

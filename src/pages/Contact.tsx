@@ -25,6 +25,7 @@ import { Meta } from "@/components/seo/Meta";
 import { useToast } from "@/hooks/use-toast";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { supabase } from "@/integrations/supabase/client";
+import { getCanonicalUrl } from "@/lib/url";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -112,7 +113,7 @@ const Contact = () => {
       <Meta
         title="Contact"
         description="Get in touch with the Capittal Invest team to discuss investment opportunities"
-        canonicalUrl={`${window.location.origin}/contact`}
+        canonicalUrl={getCanonicalUrl("/contact")}
       />
 
       <div className="min-h-screen">

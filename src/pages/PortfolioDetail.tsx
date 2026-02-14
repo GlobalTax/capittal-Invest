@@ -9,6 +9,7 @@ import { usePreviewContent } from "@/hooks/usePreviewContent";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { portfolioCompanies } from "@/data/mockData";
+import { getCanonicalUrl } from "@/lib/url";
 
 const PortfolioDetail = () => {
   const { id } = useParams();
@@ -99,7 +100,7 @@ const PortfolioDetail = () => {
       <Meta 
         title={company.name}
         description={company.description || company.investment_thesis || ''}
-        canonicalUrl={`${window.location.origin}/portfolio/${company.slug || id}`}
+        canonicalUrl={getCanonicalUrl(`/portfolio/${company.slug || id}`)}
       />
 
       <div className="min-h-screen">

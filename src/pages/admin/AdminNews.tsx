@@ -73,25 +73,33 @@ export const AdminNews = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {articles?.map((article) => (
-              <TableRow key={article.id}>
-                <TableCell className="font-medium">{article.title}</TableCell>
-                <TableCell>
-                  <Badge variant="outline">{article.category}</Badge>
-                </TableCell>
-                <TableCell>
-                  {article.published_at 
-                    ? format(new Date(article.published_at), 'MMM dd, yyyy')
-                    : 'Not set'}
-                </TableCell>
-                <TableCell>
-                  <Switch
-                    checked={article.is_published}
-                    onCheckedChange={() => togglePublished(article.id, article.is_published)}
-                  />
+            {articles?.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="text-center py-12 text-muted-foreground">
+                  No hay artículos de noticias.
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              articles?.map((article) => (
+                <TableRow key={article.id}>
+                  <TableCell className="font-medium">{article.title}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{article.category}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    {article.published_at
+                      ? format(new Date(article.published_at), 'MMM dd, yyyy')
+                      : 'Not set'}
+                  </TableCell>
+                  <TableCell>
+                    <Switch
+                      checked={article.is_published}
+                      onCheckedChange={() => togglePublished(article.id, article.is_published)}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </Card>
