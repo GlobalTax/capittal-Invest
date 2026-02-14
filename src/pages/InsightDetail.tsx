@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { insights } from "@/data/mockData";
 import { sanitizeHtml } from "@/lib/utils";
+import { getCanonicalUrl } from "@/lib/url";
 
 const InsightDetail = () => {
   const { slug } = useParams();
@@ -114,7 +115,7 @@ const InsightDetail = () => {
       <Meta 
         title={insight.title}
         description={insight.excerpt || ''}
-        canonicalUrl={`${window.location.origin}/insights/${insight.slug}`}
+        canonicalUrl={getCanonicalUrl(`/insights/${insight.slug}`)}
       />
 
       <div className="min-h-screen">

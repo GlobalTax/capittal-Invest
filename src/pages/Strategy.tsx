@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Overline, SectionHeader } from "@/components/ui/typography";
 import { Meta } from "@/components/seo/Meta";
+import { getCanonicalUrl } from "@/lib/url";
 import { Target, TrendingUp, Users, Zap } from "lucide-react";
 
 const Strategy = () => {
@@ -36,7 +37,7 @@ const Strategy = () => {
       <Meta
         title="Estrategia"
         description="Nuestra estrategia de inversión se centra en growth equity en tecnología, consumo, educación y servicios"
-        canonicalUrl={`${window.location.origin}/strategy`}
+        canonicalUrl={getCanonicalUrl("/strategy")}
       />
 
       <div className="min-h-screen">

@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Overline } from "@/components/ui/typography";
 import { Meta } from "@/components/seo/Meta";
+import { getCanonicalUrl } from "@/lib/url";
 import { Briefcase, UtensilsCrossed, Factory } from "lucide-react";
 
 const Sectors = () => {
@@ -30,7 +31,7 @@ const Sectors = () => {
       <Meta
         title="Sectores"
         description="Invertimos en empresas de Servicios, Food & Consumer e Industriales y Distribución con fuerte potencial de crecimiento"
-        canonicalUrl={`${window.location.origin}/sectors`}
+        canonicalUrl={getCanonicalUrl("/sectors")}
       />
 
       <div className="min-h-screen">

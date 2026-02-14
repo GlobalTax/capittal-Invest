@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { FallbackNotice } from "@/components/ui/fallback-notice";
 import { fallbackTeamMembers, TeamMember } from "@/data/fallbackData";
+import { getCanonicalUrl } from "@/lib/url";
 
 // TeamMember interface is now imported from fallbackData
 
@@ -73,7 +74,7 @@ const Team = () => {
       <Meta
         title="Equipo"
         description="Conoce al equipo de Capittal - profesionales comprometidos con ayudarte a alcanzar tus objetivos de M&A"
-        canonicalUrl={`${window.location.origin}/team`}
+        canonicalUrl={getCanonicalUrl("/team")}
       />
 
       <div className="min-h-screen">

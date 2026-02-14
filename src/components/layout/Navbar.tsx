@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,18 +21,24 @@ export const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
   const isHomePage = location.pathname === "/";
 
-  // Detect scroll for blur effect and hero section
-  useEffect(() => {
-    const handleScroll = () => {
+  // Detect scroll for blur effect and hero section (throttled)
+  const ticking = useRef(false);
+  const handleScroll = useCallback(() => {
+    if (ticking.current) return;
+    ticking.current = true;
+    requestAnimationFrame(() => {
       const scrollY = window.scrollY;
       setScrolled(scrollY > 20);
-      // Check if we're past the hero section (viewport height)
       setIsHeroSection(scrollY < window.innerHeight - 100);
-    };
-    handleScroll();
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+      ticking.current = false;
+    });
   }, []);
+
+  useEffect(() => {
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
 
   // Reset hero section state on route change
   useEffect(() => {

@@ -14,10 +14,19 @@ interface ContactFormData {
   message: string;
 }
 
+function escapeHtml(text: string): string {
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;',
+  };
+  return text.replace(/[&<>"']/g, (char) => map[char]);
+}
+
 // Email service stub
 async function sendEmailStub(to: string, subject: string, html: string): Promise<{ success: boolean }> {
-  console.log('[EMAIL STUB] Sending email:', { to, subject });
-  console.log('[EMAIL STUB] HTML content:', html);
   // TODO: Integrate Resend API when ready
   return { success: true };
 }
@@ -35,18 +44,23 @@ function mapSubjectToServiceType(subject: string): "vender" | "comprar" | "otros
 }
 
 serve(async (req: Request) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');
+
+    if (!supabaseUrl || !supabaseKey) {
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Parse request body
     const { name, email, company, subject, message }: ContactFormData = await req.json();
 
     // Validate required fields
@@ -82,9 +96,6 @@ serve(async (req: Request) => {
     }
 
     if (rateLimitOk === false) {
-      console.log('[RATE LIMIT] Exceeded for:', email);
-      
-      // Log security event
       await supabase.from('security_events').insert({
         event_type: 'RATE_LIMIT_EXCEEDED',
         severity: 'high',
@@ -98,31 +109,27 @@ serve(async (req: Request) => {
       });
 
       return new Response(
-        JSON.stringify({ 
+        JSON.stringify({
           error: 'Too many submissions. Please try again later.',
-          retryAfter: 3600 
+          retryAfter: 3600
         }),
-        { 
-          status: 429, 
-          headers: { 
-            ...corsHeaders, 
+        {
+          status: 429,
+          headers: {
+            ...corsHeaders,
             'Content-Type': 'application/json',
             'Retry-After': '3600',
-          } 
+          }
         }
       );
     }
 
-    // Extract IP address and user agent
-    const ipAddress = req.headers.get('x-forwarded-for')?.split(',')[0] || 
-                     req.headers.get('x-real-ip') || 
+    const ipAddress = req.headers.get('x-forwarded-for')?.split(',')[0] ||
+                     req.headers.get('x-real-ip') ||
                      'unknown';
     const userAgent = req.headers.get('user-agent') || 'unknown';
 
-    // Map subject to service_type
     const serviceType = mapSubjectToServiceType(subject);
-
-    console.log('[CONTACT] Processing submission:', { email, company, subject, serviceType });
 
     // Insert into contact_leads table
     const { data: contactLead, error: insertError } = await supabase
@@ -132,7 +139,7 @@ serve(async (req: Request) => {
         email: email,
         company: company,
         service_type: serviceType,
-        referral: message, // Store message in referral field
+        referral: message,
         ip_address: ipAddress,
         user_agent: userAgent,
         status: 'new',
@@ -147,8 +154,6 @@ serve(async (req: Request) => {
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
-
-    console.log('[CONTACT] Lead created successfully:', contactLead.id);
 
     // Log security event for audit trail
     await supabase.from('security_events').insert({
@@ -166,60 +171,68 @@ serve(async (req: Request) => {
       },
     });
 
+    // Sanitize user input before inserting into HTML templates
+    const safeName = escapeHtml(name);
+    const safeMessage = escapeHtml(message);
+    const safeEmail = escapeHtml(email);
+    const safeCompany = escapeHtml(company);
+    const safeSubject = escapeHtml(subject);
+
     // Send confirmation email to user (stub)
-    await sendEmailStub(
+    const emailSent = await sendEmailStub(
       email,
-      'Thank you for contacting Ethos Ventures',
+      'Thank you for contacting Capittal Invest',
       `
-        <h1>Thank you for contacting us, ${name}!</h1>
+        <h1>Thank you for contacting us, ${safeName}!</h1>
         <p>We have received your message and will get back to you as soon as possible.</p>
         <p><strong>Your message:</strong></p>
-        <p>${message}</p>
-        <p>Best regards,<br>The Ethos Ventures Team</p>
+        <p>${safeMessage}</p>
+        <p>Best regards,<br>The Capittal Invest Team</p>
       `
     );
 
     // Send notification email to admin (stub)
     await sendEmailStub(
-      'admin@ethos-ventures.com', // Replace with actual admin email
-      `New contact submission from ${name}`,
+      'admin@capittal-invest.com',
+      `New contact submission from ${safeName}`,
       `
         <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Company:</strong> ${company}</p>
-        <p><strong>Subject:</strong> ${subject}</p>
+        <p><strong>Name:</strong> ${safeName}</p>
+        <p><strong>Email:</strong> ${safeEmail}</p>
+        <p><strong>Company:</strong> ${safeCompany}</p>
+        <p><strong>Subject:</strong> ${safeSubject}</p>
         <p><strong>Message:</strong></p>
-        <p>${message}</p>
+        <p>${safeMessage}</p>
         <hr>
-        <p><small>IP: ${ipAddress} | User Agent: ${userAgent}</small></p>
+        <p><small>IP: ${ipAddress} | User Agent: ${escapeHtml(userAgent)}</small></p>
       `
     );
 
-    // Update email_sent status
-    await supabase
-      .from('contact_leads')
-      .update({
-        email_sent: true,
-        email_sent_at: new Date().toISOString(),
-      })
-      .eq('id', contactLead.id);
-
-    console.log('[CONTACT] Email stubs executed successfully');
+    // Update email_sent status only if email was actually sent
+    if (emailSent.success) {
+      await supabase
+        .from('contact_leads')
+        .update({
+          email_sent: false,
+          email_sent_at: null,
+        })
+        .eq('id', contactLead.id);
+    }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         message: 'Contact submission received successfully',
         id: contactLead.id,
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
-  } catch (error: any) {
-    console.error('[CONTACT] Unexpected error:', error);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[CONTACT] Unexpected error:', message);
     return new Response(
-      JSON.stringify({ error: 'An unexpected error occurred', details: error.message }),
+      JSON.stringify({ error: 'An unexpected error occurred' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

@@ -12,6 +12,11 @@ interface PortfolioSearchParams {
   offset?: number;
 }
 
+// Sanitize search input to prevent PostgREST filter injection
+function sanitizeSearchTerm(term: string): string {
+  return term.replace(/[%_,().*]/g, '');
+}
+
 export const usePortfolioSearch = (params: PortfolioSearchParams) => {
   return useQuery({
     queryKey: ["portfolio-search", params],
@@ -21,9 +26,12 @@ export const usePortfolioSearch = (params: PortfolioSearchParams) => {
         .select('*')
         .eq('is_active', true);
 
-      // Apply search filter
+      // Apply search filter with sanitized input
       if (params.searchQuery) {
-        query = query.or(`name.ilike.%${params.searchQuery}%,sector.ilike.%${params.searchQuery}%,investment_thesis.ilike.%${params.searchQuery}%`);
+        const sanitized = sanitizeSearchTerm(params.searchQuery);
+        if (sanitized) {
+          query = query.or(`name.ilike.%${sanitized}%,sector.ilike.%${sanitized}%,investment_thesis.ilike.%${sanitized}%`);
+        }
       }
 
       // Apply sector filter
@@ -42,11 +50,10 @@ export const usePortfolioSearch = (params: PortfolioSearchParams) => {
       }
 
       // Apply pagination
-      if (params.limit) {
-        query = query.limit(params.limit);
-      }
-      if (params.offset) {
+      if (params.offset !== undefined && params.offset > 0) {
         query = query.range(params.offset, params.offset + (params.limit || 20) - 1);
+      } else if (params.limit) {
+        query = query.limit(params.limit);
       }
 
       // Order by featured first, then display order
@@ -59,12 +66,11 @@ export const usePortfolioSearch = (params: PortfolioSearchParams) => {
       if (error) throw error;
       return (data || []).map(company => ({
         ...company,
-        timeline: (company.timeline as any) || [],
-        metrics: company.metrics as any,
+        timeline: (Array.isArray(company.timeline) ? company.timeline : []) as PortfolioCompany['timeline'],
+        metrics: company.metrics as PortfolioCompany['metrics'],
       })) as PortfolioCompany[];
     },
-    enabled: true,
-    staleTime: 30 * 1000, // 30 seconds cache
+    staleTime: 30 * 1000,
     refetchOnWindowFocus: false,
     placeholderData: fallbackPortfolioCompanies,
     retry: 1,
@@ -76,9 +82,9 @@ export const usePortfolioFilterOptions = () => {
     queryKey: ["portfolio-filter-options"],
     queryFn: async () => {
       const { data, error } = await supabase.rpc("get_portfolio_filter_options");
-      
+
       if (error) throw error;
-      
+
       const result = data && data.length > 0 ? data[0] : { sectors: [], stages: [], countries: [] };
       return result as {
         sectors: string[];
@@ -86,7 +92,7 @@ export const usePortfolioFilterOptions = () => {
         countries: string[];
       };
     },
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    staleTime: 5 * 60 * 1000,
     placeholderData: fallbackFilterOptions,
     retry: 1,
   });

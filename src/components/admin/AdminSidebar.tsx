@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { useAdminAuth } from '@/hooks/useAuth';
 import {
   LayoutDashboard,
   Briefcase,

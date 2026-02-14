@@ -1,33 +1,46 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
+const ALLOWED_ORIGINS = (Deno.env.get('ALLOWED_ORIGINS') || '').split(',').filter(Boolean);
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get('origin') || '';
+  const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0] || '';
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Vary': 'Origin',
+  };
+}
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
+
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return new Response(
+        JSON.stringify({ error: 'Server configuration error' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { email, password } = await req.json();
-    
-    // Fix: Handle multiple IPs from x-forwarded-for (take only the first one)
+
     const forwardedFor = req.headers.get('x-forwarded-for');
-    const ipAddress = forwardedFor 
-      ? forwardedFor.split(',')[0].trim() 
+    const ipAddress = forwardedFor
+      ? forwardedFor.split(',')[0].trim()
       : (req.headers.get('x-real-ip') || 'unknown');
     const userAgent = req.headers.get('user-agent') || 'unknown';
-
-    console.log('Admin auth attempt:', { email, ipAddress });
 
     // 1. Verificar rate limit
     const { data: rateLimitCheck, error: rateLimitError } = await supabase
@@ -43,9 +56,6 @@ serve(async (req) => {
     }
 
     if (rateLimitCheck && !rateLimitCheck.allowed) {
-      console.log('Rate limit exceeded for:', email);
-      
-      // Registrar intento bloqueado
       await supabase.rpc('log_login_attempt', {
         p_email: email,
         p_ip_address: ipAddress,
@@ -70,9 +80,6 @@ serve(async (req) => {
     });
 
     if (authError) {
-      console.log('Authentication failed:', authError.message);
-      
-      // Registrar intento fallido
       await supabase.rpc('log_login_attempt', {
         p_email: email,
         p_ip_address: ipAddress,
@@ -94,9 +101,6 @@ serve(async (req) => {
       .rpc('get_admin_user_info', { check_user_id: authData.user.id });
 
     if (adminError || !adminData || adminData.length === 0) {
-      console.log('Not an admin user:', email);
-      
-      // Log intento de acceso no autorizado
       await supabase.from('security_events').insert({
         event_type: 'UNAUTHORIZED_ADMIN_ACCESS_ATTEMPT',
         severity: 'high',
@@ -109,7 +113,6 @@ serve(async (req) => {
         },
       });
 
-      // Registrar intento fallido
       await supabase.rpc('log_login_attempt', {
         p_email: email,
         p_ip_address: ipAddress,
@@ -127,8 +130,6 @@ serve(async (req) => {
 
     // Verificar si está activo
     if (!adminUser.is_active) {
-      console.log('Admin user is inactive:', email);
-      
       await supabase.rpc('log_login_attempt', {
         p_email: email,
         p_ip_address: ipAddress,
@@ -155,7 +156,6 @@ serve(async (req) => {
       user_id: authData.user.id,
       ip_address: ipAddress,
       details: {
-        email: adminUser.email,
         role: adminUser.role,
         user_agent: userAgent,
         timestamp: new Date().toISOString()
@@ -170,8 +170,6 @@ serve(async (req) => {
       p_user_agent: userAgent
     });
 
-    console.log('Admin login successful:', email);
-
     return new Response(
       JSON.stringify({
         session: authData.session,
@@ -185,10 +183,11 @@ serve(async (req) => {
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-  } catch (error: any) {
-    console.error('Admin auth error:', error);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Internal server error';
+    console.error('Admin auth error:', message);
     return new Response(
-      JSON.stringify({ error: error.message || 'Internal server error' }),
+      JSON.stringify({ error: 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

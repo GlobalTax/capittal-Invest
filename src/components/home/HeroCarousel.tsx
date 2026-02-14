@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { useQuery } from "@tanstack/react-query";
@@ -90,15 +90,17 @@ export const HeroCarousel = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [progress, setProgress] = useState(0);
 
-  const autoplayPlugin = Autoplay({
-    delay: autoplayDelay,
-    stopOnInteraction: false,
-    stopOnMouseEnter: true,
-  });
+  const autoplayPlugin = useRef(
+    Autoplay({
+      delay: autoplayDelay,
+      stopOnInteraction: false,
+      stopOnMouseEnter: true,
+    })
+  );
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: true, duration: 30 },
-    [autoplayPlugin]
+    [autoplayPlugin.current]
   );
 
   const onSelect = useCallback(() => {
@@ -126,21 +128,32 @@ export const HeroCarousel = ({
     };
   }, [emblaApi, onSelect]);
 
-  // Progress bar animation
+  // Progress bar animation (pauses when tab is hidden)
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) return 0;
-        return prev + 100 / (autoplayDelay / 50);
-      });
-    }, 50);
+    let animationId: number;
+    let lastTime = performance.now();
 
-    return () => clearInterval(interval);
+    const animate = (now: number) => {
+      if (document.hidden) {
+        lastTime = now;
+        animationId = requestAnimationFrame(animate);
+        return;
+      }
+      const delta = now - lastTime;
+      lastTime = now;
+      setProgress((prev) => {
+        const next = prev + (delta / autoplayDelay) * 100;
+        return next >= 100 ? 100 : next;
+      });
+      animationId = requestAnimationFrame(animate);
+    };
+
+    animationId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationId);
   }, [autoplayDelay, selectedIndex]);
 
   const getKenBurnsClass = (direction?: string, isActive?: boolean) => {
     if (!isActive) return "";
-    const duration = `${autoplayDelay}ms`;
     const base = {
       right: "animate-ken-burns-right",
       left: "animate-ken-burns-left",
